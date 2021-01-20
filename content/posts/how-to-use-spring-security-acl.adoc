@@ -1,0 +1,404 @@
+---
+title: 如何使用 Spring Security ACL
+tags:
+  - Spring
+  - Spring Security
+  - Spring Security ACL
+  - Spring Security ACL demo
+description: 使用 Spring Security ACL 的例子
+date: 2020-07-18 12:17:26
+updated: 2020-11-18 23:23:26
+---
+
+
+在link:/2020/07/02/spring-security-acl-conception-and-component/[上一篇文章]中，我们了解了 Spring Security ACL 的基本概念。
+但是几乎没有涉及实现与使用的部分。这篇文章我们就来看一看如何在使用了 Spring 的项目中使用 Spring Security。
+
+== 导入 Jar 包
+
+Spring Security ACL 的 GAV 是 `org.springframework.security:spring-security-acl:<version>`，
+被加入到了 link:https://docs.spring.io/platform/docs/1.0.1.RELEASE/reference/htmlsingle/#appendix-dependency-versions[Spring IO Platform bom] 中，所以可以使用 Spring 的依赖管理插件来管理版本号。
+
+但是 Spring 没有提供相应的 boot starter，使用的时候需要自己进行配置。
+毕竟 ACL 中提供的默认实现很可能达不到需求，还不如自己动手。
+
+== 存储 ACL
+
+ACL 需要被持久化起来，否则系统重启后就丢掉了权限信息。
+
+=== 基于 JDBC 的持久化
+
+Spring Security ACL 提供了默认的 `AclService` 和 `MutableAclService` 实现：`JdbcAclService` 和 `JdbcMutableAclService`。
+
+因为是基于 `JDBC` 的实现，所以就可能存在性能问题（绝大多数情况下不需要更新 ACL，但使用 JDBC 时总是会访问数据库，得到一模一样的 ACL）。
+于是 ACL 又设计了一个缓存机制来减少对数据库的请求。缓存的接口是 `AclCache`，Spring 提供了基于 Eh-Cache 和 Spring Cache 的两个实现。
+
+> `AclCache` 接口被安排在了 `org.springframework.security.acls.model` 包中。
+> 个人觉得这不是一个必须的元素，算不上核心概念，不应该和其他核心概念放到一起。
+
+==== 创建数据库
+
+`JdbcAclService` 需要创建四张表，创建表的 SQL 已经在 jar 包里了（*但是有坑*），我们只是来看看这几张表分别保存了什么内容。
+
+acl_sid::
+- id: 主键
+- principal: 一个布尔值，表示这个 sid 是不是 `PrincipalSid`，如果值为 `false` 则表示 sid 是 `GrantedAuthoritySid`
++
+____
+这个设计简直把扩展堵死了 🙄️
+____
+- sid: `Sid` 实例中保存的字符串，也就是 `Principal.getName()` 或 `GrantedAuthority.getAuthority()` 或自己写代码生成的字符串
+
+acl_class::
+- id: 主键
+- class: Domain Object 类型的全限定名
++
+`ObjectIdentity` 的默认实现使用 全限定名+id 的方式确定一个 Domain Object
+- class_id_type: 可选字段，保存 `ObjectIdentity` 中 `identifier` 的类型，默认是 `Long`
++
+*这就是坑的所在*。Jar 包中给出的 SQL 有不同的数据库的版本，只有 `PostgreSql` 和 `HSQL` 的版本中有这个字段。
+如果不创建这个字段，那么 `ObjectIdentity` 就只能支持 `Long` 类型的 id。
+`JdbcService` 默认也不会查询这个字段，需要特别配置。
+
+acl_object_identity::
+- id: 主键
+- object_id_class: 外键依赖 `acl_class.id`
+- object_id_identity: `ObjectIdentity.getIdentifer()` 的值，与 `object_id_class` 组成唯一键
+- parent_object: 外键依赖 `acl_object_identity.id`，在 `Acl` 继承时使用
+- owner_sid: 外键依赖 `acl_sid.id`，是 `Acl` 实例的 owner，拥有修改 `Acl` 的权限
+- entries_inheriting: 布尔值，表示 child acl 是否要继承 parent acl 的 ACE
+
+这张表里保存的都是 `Acl` 持有的信息，也就是说，这张表的一行记录对应了一个 `Acl` 实例。
+
+acl_entry::
+- id: 主键
+- acl_object_identity: 外键依赖 `acl_object_identity.id`，表示属于哪一个 `Acl`
+- ace_order: 表示这一条 ACE 在 `Acl` 中的顺序，和 `acl_object_identity` 组成唯一键
+- sid: 外键依赖 `acl_sid.id`，表示这条 ACE 的权限对应哪一个 `Sid`
+- mask: 表示权限的 32 位二进制数字
+- granting: 布尔值，表示这条 ACE 是否生效
+- audit_success
+- audit_failure: 这两条是用于审计的信息，对应了 `AuditableAccessControlEntry` 接口，本文不会涉及
+
+这张表保存的是 ACE 的信息，一行记录对应了一个 ACE 实例。
+
+==== 配置 JdbcAclService
+
+在动手之前，我们先来看看 `JdbcAclService` 都有什么依赖：
+
+image::jdbc-acl-service-dependencies.png[]
+
+因为 ACL 没有 Spring Boot 的 auto configure，所以除了 `DataSource`，我们需要自己来配置这些依赖。
+
+除非项目中不需要修改 ACL，否则都会选择创建一个 `JdbcMutableAclService` 而不是 `JdbcAclService`。
+
+===== 注入 JdbcMutableAclService
+
+[source,java]
+----
+@Bean
+public MutableAclService mutableAclService() {
+  JdbcMutableAclService jdbcMutableAclService = new JdbcMutableAclService(datasource, lookupStrategy(), aclCache());
+  jdbcMutableAclService.setAclClassIdSupported(true); <1>
+  jdbcMutableAclService.setClassIdentityQuery("SELECT @@IDENTITY"); <2>
+  jdbcMutableAclService.setSidIdentityQuery("SELECT @@IDENTITY"); <3>
+  return jdbcMutableAclService;
+}
+----
+<1> 如果要支持 `acl_class.class_id_type` 字段，则需要将 `aclClassIdSupported` 设置为 `true`。这样 `JdbcAclService` 在查询时和 `JdbcMutableAclService` 更新时才会考虑这个字段的值。
+<2> `classIdentityQuery` 会在创建 `Acl` 对象时用到，用来获取刚刚插入的 `acl_class.id`。默认值是 `call identity()`，这是 `H2` 数据库的方言，这里的例子是 `MySql` 的方言。
+<3> 与 2 相同，只是用来获取刚刚插入的 `acl_sid.id`
+
+接着，我们需要配置 `LookupStrategy` 和 `AclCache`。
+
+===== 注入 LookupStrategy
+
+`LookupStratege` 只有一个实现：`BasicLookupStrategy`
+
+[source,java]
+----
+@Bean
+public LookupStrategy lookupStrategy() {
+  BasicLookupStrategy basicLookupStrategy = new BasicLookupStrategy(datasource, aclCache(), aclAuthorizationStrategy(), permissionGrantingStrategy());
+  basicLookupStrategy.setAclClassIdSupported(true); <1>
+  return basicLookupStrategy;
+}
+----
+<1> `BasicLookupStrategy` 也会自己组装 sql，需要调用这个方法以支持 `acl_class.class_id_type`。
+
+接着，我们先来看一下 `AclAuthorizationStrategy` 和 `PermissionGratingStrategy` 这两个简单一点的依赖。
+
+===== 注入 AclAuthorizationStrategy
+
+[source,java]
+----
+@Bean
+public AclAuthorizationStrategy aclAuthorizationStrategy() {
+  return new AclAuthorizationStrategyImpl(new SimpleGrantedAuthority("owner"));
+}
+----
+
+`AclAuthorizationStrategy` 是用来判断当前的 `Autentication` 是否有权限修改 `Acl` 的接口，它只有 `AclAuthorizationStrategyImpl` 这一个实现。
+这个接口规定了三种权限：
+
+- change ownership 修改 Acl 的 owner
+- change auditing 修改 Acl 的审计信息
+- change general 修改 ACE
+
+实现中有三个 `GrantedAuthority` 属性，对应了上面的三种权限，表示对 `Acl` 进行某种操作时，`Authentication` 需要满足对应的 `GrantedAuthority`。
+
+它的构造方法接受一个或三个 `GrantedAuthority`:
+
+- 如果只有一个参数，那么三个权限都是这个 `GrantedAuthority`
+- 如果有三个参数，那么就会按上面的顺序赋值给这三个权限
+
+在判断权限时，如果是 `Acl` 的 owner，且不是在修改审计信息时，就可以直接获得权限；否则就需要 `Authentication` 具备对应的 `GrantedAuthority`。
+
+===== 注入 PermissionGrantingStrategy
+
+[source,java]
+----
+@Bean
+public PermissionGrantingStrategy permissionGrantingStrategy() {
+  return new DefaultPermissionGrantingStrategy(new ConsoleAuditLogger());
+}
+----
+
+`PermissionGrantingStrategy` 抽象了 `isGranted` 方法，被 `AclImpl` 调用，是真正执行权限判断的地方。
+这个接口只有这一个实现。
+
+===== 注入 AclCache
+
+`AclCache` 有两种实现，这里为了简单，我们就使用 Spring 提供的这种实现
+
+[source,java]
+----
+@Bean
+public AclCache aclCache() {
+  return new SpringCacheBasedAclCache(cache(), permissionGrantingStrategy(), aclAuthorizationStrategy());
+}
+
+@Bean
+public Cache cache() {
+  return new NoOpCache("any");
+}
+----
+
+`Cache` 是 Spring 提供的接口，有多个实现，这里为了简单，就选择了 `NoOpCache`。
+
+到这里，`JdbcAclService` 的配置就暂时告一段落了，这些配置已经足够我们在创建、更新、删除 Domain Object 之后修改 `Acl` 对象了。接下来我们就来看看如何更新 `Acl`。
+
+=== 创建 ACL
+
+创建 ACL 发生在创建 Domain Object 的时候。我们可以编写代码创建 `Acl` 对象：
+
+[source,java]
+----
+public void onCreate(Class<?> domainClass, String id, Authentication authentication) {
+  ObjectIdentity objectIdentity = new ObjectIdentityImpl(domainClass, id);
+  PrincipalSid sid = new PrincipalSid(authentication);
+  MutableAcl acl = findOrCreate(objectIdentity);
+  acl.insertAce(acl.getEntries().size(), BasePermission.ADMINISTRATION, sid, true);
+  // ... <1>
+  mutableAclService.updateAcl(acl);
+}
+
+private MutableAcl findOrCreate(ObjectIdentity objectIdentity) {
+  try {
+    return (MutableAcl) mutableAclService.readAclById(objectIdentity); <2>
+  } catch (NotFoundException e) {
+    return mutableAclService.createAcl(objectIdentity);
+  }
+}
+----
+<1> 这里可以向 `Acl` 中插入任意需要的 ACE
+<2> 这里的强制转换不会出错是因为 `AclImpl` 是 `Acl` 和 `MutableAcl` 的共有且唯一的实现
+
+我们来梳理一下这段代码的逻辑：
+
+. 根据 domainClass 和 id 创建 `ObjectIdentity`，它可以用来标识一个 domain object
+. 根据当前的 `Authentication` 创建一个 `PrincipalSid`，它后续会被用作 ACE 的 sid
+. 根据 `ObjectIdentity` 对象查找或创建 `Acl` 对象
++
+创建时会使用当前的 `Authentication` 新建一个 `PrincipalSid` 对象，和这里的不是同一个对象
+. 向 `Acl` 中插入 ACE
++
+这里可添加当前用户的 ACE，也可以添加某种 `GrantedAuthority` 的权限
+. 保存 `Acl`
+
+接着我们来看一下添加 ACE 的细节，也就是 `Acl.insertAce()` 方法。
+
+==== insertAce
+
+这个方法的作用是向 `Acl` 实例的 `List<AccessControlEntry>` 中插入 ACE 实例。
+
+第一个参数指定了这个 ACE 在列表中的索引值。
+
+第二个参数指定这个 ACE 的权限是什么。这里我们使用了 `BasePermission` 这个实现提供的值。
+但无论如何，`Permission` 接口的 `getMask()` 方法一定返回的是一个 32 位的二进制数字。（类型是 int，但取值范围是 0~2^32^-1，这也就是所能设计的权限的个数。）
+
+第三个参数是一个 `Sid`，表示这个 `Sid` 拥有对应的权限。
+
+第四个参数是 granting，代表这条 ACE 是否生效，作用类似于 enable。
+
+调用了这个方法之后，一个新的 ACE 就被加入到 `Acl` 中了。接下来的权限判断就可以使用到这个新的 ACE。
+
+=== 更新 ACL
+
+更新 ACL 可能更多的出现在协作软件中，比如邀请他人一起编写文档等操作。
+
+==== 添加新的 ACE
+
+我们就以邀请协作作为例子，看看如何添加 ACE：
+
+[source,java]
+----
+public void onInvite(Class<?> domainClass, String id, String invitedUserPrincipalName) {
+  ObjectIdentity objectIdentity = new ObjectIdentityImpl(domainClass, id);
+  PrincipalSid sid = new PrincipalSid(invitedUserPrincipalName); <1>
+  MutableAcl acl = findAcl(objectIdentity);
+  acl.insertAce(acl.getEntries().size(), BasePermission.WRITE, sid, true);
+  mutableAclService.updateAcl(acl);
+}
+
+private MutableAcl findAcl(ObjectIdentity objectIdentity) {
+  return (MutableAcl) mutableAclService.readAclById(objectIdentity);
+}
+----
+<1> `PrincipalSid` 其实保存的是 `Authentication.getName()` 的返回值，本质上就是 principal name，所以可以直接使用一个字符串作为 principal name。
+
+这里，我们给了一个具体的被邀请者一个 WRITE 权限。我们甚至可以给一组用户权限，只需要提供不同的 `Sid`。
+
+[source,java]
+----
+GrantedAuthoritySid sid = new GrantedAuthoritySid("teamA");
+----
+
+==== 更新已有的 ACE
+
+还是前面的例子，假设某个协作者完成了自己的工作，不想误操作导致修改，希望将权限修改为只读。
+那么这个时候就会使用到 `MutableAcl.updateAce()` 方法。
+
+这个方法只有两个参数，第一个是要修改的 ACE 的索引，第二个是需要修改成的权限，那么我们的代码可能写出来是这个样子：
+
+[source,java]
+----
+List<AccessControlEntry> aces = acl.getEntries();
+aces.stream()
+  .filter(ace -> ace.getSid().equals(sid))
+  .mapToInt(aces::indexOf)
+  .forEach(idx -> acl.updateAce(idx, permission));
+----
+
+这样我们就能将任何匹配到 `Sid` 的 ACE 的权限修改为指定的 `Permission`。
+
+==== 删除已有的 ACE
+
+还是前面的例子，假设我们协作完成了，需要关闭其他人的权限，那么我们就需要删除对应的 ACE。
+
+> 个人更倾向于软删除，也就是将 ACE 的 `granting` 字段设置为 `false`。但是 Spring ACL 在模型设计上没有提供修改的方法，具体实现上，这个字段也被标记为 `final`。
+
+删除 ACE 同样需要它的索引：
+
+[source,java]
+----
+List<AccessControlEntry> aces = acl.getEntries();
+aces.stream()
+  .filter(ace -> ace.getSid().equals(sid))
+  .mapToInt(aces::indexOf)
+  .forEach(acl::deleteAce);
+----
+
+=== 删除 ACL
+
+一个 ACL 关联到一个 domain object，当一个 domain object 被删除时，ACL 也应该被删除。
+
+`MutaleAclService` 也定义了 `deleteAcl` 方法用来删除 ACL，它被 `JdbcMutableAclService` 实现。
+
+[source,java]
+----
+mutableAclService.deleteAcl(acl, true);
+----
+
+其中的第二个参数表示是否要删除子 Acl。（因为 ACL 可以继承）
+
+> 在具体的实现中，默认的 sql 会删除整个 ACL。所以如果想要实现软删除，那么不仅需要调用对应的 setter 方法来修改对应的 sql，还需要修改表结构来支持软删除。
+
+== 使用 ACL 保护业务调用
+
+现在我们知道了如何操作 ACL，那么接下来看看如果使用 ACL 来判断请求是否有权限调用业务方法。
+
+在link:/2020/07/02/spring-security-acl-conception-and-component/#_acl_验证逻辑的入口[上一篇文章]中，我们介绍过 Spring ACL 提供的三种使用 ACL 的机制，接下来我们以 expression based access control 作为例子，看看如何使用 ACL 保护业务方法。
+
+在这个例子中，我们使用 `PostAuthorize` 来保护业务方法：
+
+[source,java]
+----
+@PostAuthorize("hasPermission(returnObject, 'READ')")
+public DomainObject find(String id) {
+  //...
+  return domainObject;
+}
+----
+
+这个例子中，业务方法返回的 domainObject 会被作为表达式中的 returnObject 传递给 `hasPermission` 方法，验证当前用户是否有指定的 READ 权限。
+
+这里的 `hasPermission` 方法会调用到 `SecurityExpressionRoot`，最终到达 `AclPermissionEvaluator.hasPermission()` 方法。
+
+在这个方法中，returnObject 会被交给 `ObjectIdnetityRetrievalStrategy` 接口，得到 `ObjectIdentity`，用来查找对应的 `Acl` 实例。
+
+> 具体实现上，其实是通过反射得到 className 和 `getId()` 方法，然后调用这个方法得到 identity。所以这里的 returnObject 一定要有 `getId()` 方法。
+
+我们传递的 `'READ'` 参数，就是 permission，但这里被当作了 `Object`。`AclPermissionEvaluator` 通过自己实现的 `resolvePermission()` 方法来处理不同类型的参数。
+我们的 `'READ'` 会被当做字符串处理，交给 `PermissionFactory` 的默认实现处理。
+默认实现中提供了两个 `Map`，分别保存了 `permission name -> BasePermission` 和 `mask int -> BasePermission` 的映射关系。
+我们的 `'READ'` 也就这样被映射到了 `BasePermission.READ`。
+
+=== 启用 Method Security
+
+解释完了上面的方法，接下来就是要让这个表达式生效了。
+
+Spring Security 默认没用启用 Method Security，而 `PostAuthorize` 则需要这个支持。
+
+要启用这个功能很简单，我们只需要：
+
+. enable pre/post security
+. 创建 `AclPermissionEvaluator`
+. 创建 `MethodSecurityExpressionHanler`，并将 `AclPermissionEvaluator` 设置为它的 `PermissionEvaluator`
+
+[source,java]
+----
+@Configuration
+@EnableGlobalMethodSecurity(prePostEnabled = true)
+public class MethodSecurityConfig {
+  @Autowired private AclService aclService;
+
+  @Bean
+  public MethodSecurityExpressionHandler methodSecurityExpressionHandler() {
+    MethodSecurityExpressionHandler handler = new DefaultMethodSecurityExpressionHandler();
+    handler.setPermissionEvaluator(new AclPermissionEvaluator(aclService)); <1>
+    return handler;
+  }
+}
+----
+<1> 我们可以给它提供一个 `AclSerivce` 而不是 `MutableAclService`，因为它不会修改 ACL
+
+这样我们的表达式就能生效了，当一个没有 READ 权限的用户尝试访问 domain object 的时候，就会得到一个 403 响应。
+
+____
+这里就不再讲使用 `AclEntryVoter` 和 after invocation 的例子了，无论使用哪种方式，都需要自己进行相应的配置。读者如果感兴趣可以自己研究研究。
+____
+
+== 总结
+
+这篇文章从代码的角度简单研究了如何使用 ACL。
+
+相信你也看出来了，没有 Spring Boot auto configure 的支持，使用 ACL 需要些大量的配置代码。
+这还不止。在研究源码时，发现 ACL 的实现其实比较简单，覆盖的场景看起来特别单一。
+如果实际项目想要使用，应该需要花一些工作来提供项目和适配的实现。
+
+> 举个例子，`AclEntryVoter` 的实现中，要求 `MethodInvocation` 的餐宿中一定要有 domain object，这一点可能就和一些项目的实践相违背。
+
+尽管如此，我仍然认为 ACL 是一种不错的设计，很好的分离了业务和访问控制的关注点，抽象的接口也可以方便的进行扩展，值得去试一试。
+
+> 查看系列文章： link:/spring-security-servlet/[点这里]
