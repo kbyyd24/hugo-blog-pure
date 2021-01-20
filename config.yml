@@ -163,11 +163,11 @@ params:
     enable: true
     # 微信打赏
     wechatpay:
-      qrcode: images/wechatpay.png
+      qrcode: /images/wechatpay.png
       title: 微信支付
     # 支付宝打赏
     alipay:
-      qrcode: images/alipay.jpeg
+      qrcode: /images/alipay.jpeg
       title: 支付宝
 
   # PV
