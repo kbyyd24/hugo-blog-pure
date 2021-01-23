@@ -63,11 +63,11 @@ menu:
       url: /about/
       weight: 5
 
-    - identifier: links
-      name: links
-      title: Links
-      url: /links/
-      weight: 5
+    # - identifier: links
+    #   name: links
+    #   title: Links
+    #   url: /links/
+    #   weight: 5
 
 
 params:
