@@ -189,14 +189,14 @@ ACL 提供了一个接口 `AclService` 用来获取 `Acl` 对象。
 
 === 针对 pre invocation
 
-在link:/2020/05/31/spring-security-servlet-overview/#_accessdecisionvoter[前面的文章]中，
+在link:../spring-security-servlet-overview/#_accessdecisionvoter[前面的文章]中，
 我们了解过 `AccessDecisionVoter` 是在实际调用发生前进行权限验证的接口。
 
 ACL 中提供了实现 `AclEntryVoter` 来实现验证逻辑。
 
 === 针对 post invocation
 
-在link:/2020/06/13/spring-security-authorization/#_afterinvocationmanager[前面的另一篇文章]中，
+在link:../spring-security-authorization/#_afterinvocationmanager[前面的另一篇文章]中，
 我们了解过 `AfterInvocationProvider` 是在实际调用发生后进行权限验证的接口。
 
 ACL 中提供了 `AbstractAclProvider` 来实现验证逻辑。
@@ -247,4 +247,4 @@ public void createAcl(Object domainObject) {
 最后简单介绍了更新 `Acl` 的方法，更详细的内容会在另外的博客里以 demo 的形式呈现。
 
 
-> 查看系列文章： link:/spring-security-servlet/[点这里]
+> 查看系列文章： link:../../series/spring-security-servlet/[点这里]

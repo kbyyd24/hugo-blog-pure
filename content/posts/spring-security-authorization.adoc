@@ -45,7 +45,7 @@ super.afterInvocation(token, returnedObject);
 
 这个方法的目标是调用 `AccessDecisionManager.decide()` 方法，完成 pre-invocation handling 操作。
 
-在前面的link:/2020/05/31/spring-security-servlet-overview#_权限验证[概览]中介绍过，`AccessDecisionManager.decide()` 方法有三个参数。其中的 secureObject 已经被子类传进来了。
+在前面的link:../spring-security-servlet-overview#_权限验证[概览]中介绍过，`AccessDecisionManager.decide()` 方法有三个参数。其中的 secureObject 已经被子类传进来了。
 那么在真正调用前，就会去获取 `Authentication` 对象和 `Collection<ConfigAttribute>` 集合，然后进行 pre-invocation handling 操作。
 
 > 后面会介绍 `ConfigAttribute`
@@ -68,7 +68,7 @@ super.afterInvocation(token, returnedObject);
 
 ==== afterInfocation 方法
 
-`afterInvocation` 方法主要目的是为了根据 `returnedObject` 进行权限验证，这使用到了 `AfterInvocationManager` 这个接口，这是在link:/2020/05/31/spring-security-servlet-overview#_权限验证[概览]里没有提到的，它被用来进行 after invocation handling。
+`afterInvocation` 方法主要目的是为了根据 `returnedObject` 进行权限验证，这使用到了 `AfterInvocationManager` 这个接口，这是在link:../spring-security-servlet-overview#_权限验证[概览]里没有提到的，它被用来进行 after invocation handling。
 
 在这个方法中，如果有必要的话，就会使用 `AfterInvocationManager.decide()` 方法来处理 `returnedObject`，得到一个新的结果作为 `returntedObject`。
 
@@ -92,7 +92,7 @@ super.afterInvocation(token, returnedObject);
 
 == AccessDecisionManager
 
-这是在link:/2020/05/31/spring-security-servlet-overview#_权限验证[概览]中介绍过的内容，这里可以快速的回顾一下。
+这是在link:../spring-security-servlet-overview#_权限验证[概览]中介绍过的内容，这里可以快速的回顾一下。
 
 image::access-decision-voting.png[role="center"]
 
@@ -166,4 +166,4 @@ image::config-attribute.png[role="center"]
 
 对于 `AccessDecisionManager` 和 `AfterInfocationManager`，则没有详细介绍内部的逻辑，而是介绍了它们如何利用子类和其他接口来完成权限验证的。其内部具体的细节逻辑，读者可以自己研究。
 
-> 查看系列文章： link:/spring-security-servlet/[点这里]
+> 查看系列文章： link:../../series/spring-security-servlet/[点这里]

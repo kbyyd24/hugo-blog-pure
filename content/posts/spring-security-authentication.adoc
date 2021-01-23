@@ -12,7 +12,7 @@ updated: 2020-06-07 22:04:29
 
 == 身份认证相关组件
 
-在link:/2020/05/31/spring-security-servlet-overview/[上一篇文章]中，我们了解到了 Spring Security 会将 `DelegatingFilterProxy` 插入到 Servlet Filter Chain 中，然后将要过滤的请求通过 `FilterChainProxy` 代理给匹配的 `SecurityFilterChain`；这些 `SecurityFilterChain` 中包含着真正做安全相关工作的 `Filter`。
+在link:../spring-security-servlet-overview/[上一篇文章]中，我们了解到了 Spring Security 会将 `DelegatingFilterProxy` 插入到 Servlet Filter Chain 中，然后将要过滤的请求通过 `FilterChainProxy` 代理给匹配的 `SecurityFilterChain`；这些 `SecurityFilterChain` 中包含着真正做安全相关工作的 `Filter`。
 
 image::filter-chain.png[title="后面提到的 Filter 都是红色方框中的",role="center"]
 
@@ -226,4 +226,4 @@ protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 
 另外，也了解到了实现完 `Filter` 后，需要实现 `WebSecurityConfigurerAdapter`，将 `Filter` 加入到 `SecurityFilterChain` 中。
 
-> 查看系列文章： link:/spring-security-servlet/[点这里]
+> 查看系列文章： link:../../series/spring-security-servlet/[点这里]

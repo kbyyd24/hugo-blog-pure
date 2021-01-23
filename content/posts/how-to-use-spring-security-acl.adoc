@@ -11,7 +11,7 @@ updated: 2020-11-18 23:23:26
 ---
 
 
-在link:/2020/07/02/spring-security-acl-conception-and-component/[上一篇文章]中，我们了解了 Spring Security ACL 的基本概念。
+在link:../spring-security-acl-conception-and-component/[上一篇文章]中，我们了解了 Spring Security ACL 的基本概念。
 但是几乎没有涉及实现与使用的部分。这篇文章我们就来看一看如何在使用了 Spring 的项目中使用 Spring Security。
 
 == 导入 Jar 包
@@ -328,7 +328,7 @@ mutableAclService.deleteAcl(acl, true);
 
 现在我们知道了如何操作 ACL，那么接下来看看如果使用 ACL 来判断请求是否有权限调用业务方法。
 
-在link:/2020/07/02/spring-security-acl-conception-and-component/#_acl_验证逻辑的入口[上一篇文章]中，我们介绍过 Spring ACL 提供的三种使用 ACL 的机制，接下来我们以 expression based access control 作为例子，看看如何使用 ACL 保护业务方法。
+在link:../spring-security-acl-conception-and-component/#_acl_验证逻辑的入口[上一篇文章]中，我们介绍过 Spring ACL 提供的三种使用 ACL 的机制，接下来我们以 expression based access control 作为例子，看看如何使用 ACL 保护业务方法。
 
 在这个例子中，我们使用 `PostAuthorize` 来保护业务方法：
 
@@ -401,4 +401,4 @@ ____
 
 尽管如此，我仍然认为 ACL 是一种不错的设计，很好的分离了业务和访问控制的关注点，抽象的接口也可以方便的进行扩展，值得去试一试。
 
-> 查看系列文章： link:/spring-security-servlet/[点这里]
+> 查看系列文章： link:../../series/spring-security-servlet/[点这里]
