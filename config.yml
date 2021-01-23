@@ -15,7 +15,7 @@ googleAnalytics: ""      # UA-XXXXXXXX-X
 taxonomies:
     category : categories
     tag : tags
-    series : series
+    # series : series
 outputFormats:          # use for search. recommend not to modify 
   SearchIndex:
     mediaType: "application/json"
@@ -45,10 +45,10 @@ menu:
       url: /posts/
       weight: 2
 
-    - identifier: categories
-      name: Categories
-      title: Categories
-      url: /categories/
+    - identifier: series
+      name: series
+      title: Series
+      url: /series/
       weight: 3
 
     - identifier: tags
@@ -101,6 +101,7 @@ params:
     books: icon-book-fill
     links: icon-friendship
     about: icon-cup-fill
+    series: icon-folder-open
 
   # profile
   profile:
