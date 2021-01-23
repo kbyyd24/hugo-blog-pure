@@ -1,6 +1,6 @@
 = Yuexiang's Blog
 
-image::https://github.com/kbyyd24/kbyyd24.github.io/workflows/gp_pages/badge.svg?branch=hexo-source[deploy]
+image::https://github.com/kbyyd24/kbyyd24.github.io/workflows/Deploy/badge.svg?branch=hexo-source[deploy]
 
 == Where is the blog
 
