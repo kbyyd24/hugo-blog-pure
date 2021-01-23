@@ -48,7 +48,7 @@ menu:
     - identifier: series
       name: series
       title: Series
-      url: /series/
+      url: /series-index/
       weight: 3
 
     - identifier: tags
