@@ -145,7 +145,7 @@ params:
     gitalk: # gitalk. https://gitalk.github.io/
       owner: kbyyd24 #必须. GitHub repository 所有者，可以是个人或者组织。
       admin: kbyyd24 #必须. GitHub repository 的所有者和合作者 (对这个 repository 有写权限的用户)。
-      repo:  blog-comment #必须. GitHub repository.
+      repo:  kbyyd24.github.io #必须. GitHub repository.
       ClientID: 4ba7c7b26f45ed375aeb #必须. GitHub Application Client ID.
       ClientSecret: d659c90563b4d8c01cf6ad3b519a6ac4e435a764 #必须. GitHub Application Client Secret.
     valine: # Valine. https://valine.js.org
