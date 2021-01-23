@@ -7,7 +7,7 @@ tags:
   - java
 ---
 
-在[上一篇文章](https://blog.gaoyuexiang.cn/2020/02/22/use-gradle-to-build-java-project-without-plugin/)中，我们在没有使用任何插件的情况下，练习了使用 `Gradle` 构建 `Java` 项目，最后得到一个脆弱的构建脚本和不符合约定的目录结构。
+在[上一篇文章](../use-gradle-to-build-java-project-without-plugin/)中，我们在没有使用任何插件的情况下，练习了使用 `Gradle` 构建 `Java` 项目，最后得到一个脆弱的构建脚本和不符合约定的目录结构。
 
 对此，`Gradle` 使用了插件来解决这些问题。
 

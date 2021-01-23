@@ -27,7 +27,7 @@ Eureka 是 Spring Cloud Netflix 的服务注册与发现工具。一般情况下
 # 为什么这些服务没有注销？
 
 因为 `@PreDestroy` 是用来处理 `SIGTERM` 等信号的，所以只有在通过这些信息关闭 Eureka client 时，Eureka client 才会向 Eureka Server 发送 shutdown 请求。
-但是如果是通过 `kill -9` 这样的指令，或者是 [不优雅的 stop docker](/2020/06/18/graceful-shutdown-docker-container/) ，即发送 `SIGKILL` 信号，都不会触发 `PreDestroy`，那么这些 Eureka client 也就不会被注销了。
+但是如果是通过 `kill -9` 这样的指令，或者是 [不优雅的 stop docker](../graceful-shutdown-docker-container/) ，即发送 `SIGKILL` 信号，都不会触发 `PreDestroy`，那么这些 Eureka client 也就不会被注销了。
 
 那么问题又来了。
 
