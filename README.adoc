@@ -1,0 +1,41 @@
+= Yuexiang's Blog
+
+image::https://github.com/kbyyd24/kbyyd24.github.io/workflows/gp_pages/badge.svg?branch=hexo-source[deploy]
+
+== Where is the blog
+
+https://blog.gaoyuexiang.cn
+
+== How to clone the repo
+
+=== clone this repo
+
+[source, shell]
+----
+git clone git@github.com:kbyyd24/kbyyd24.github.io.git
+----
+
+=== clone the theme
+
+[source, shell]
+----
+git submodule update --init
+----
+
+== How to run local
+
+=== Install dependencies
+
+[source, shell]
+----
+brew install hugo
+gem install asciidoctor
+----
+
+=== Start the server
+
+[source, shell]
+----
+hugo server
+----
+
