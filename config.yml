@@ -139,14 +139,14 @@ params:
 
   # Comment
   comment:
-    type: valine # type disqus/gitalk/valine 启用哪种评论系统
+    type: gitalk # type disqus/gitalk/valine 启用哪种评论系统
     disqus: blog-gaoyuexiang-cn # enter disqus shortname here
     gitalk: # gitalk. https://gitalk.github.io/
       owner: kbyyd24 #必须. GitHub repository 所有者，可以是个人或者组织。
       admin: kbyyd24 #必须. GitHub repository 的所有者和合作者 (对这个 repository 有写权限的用户)。
       repo:  blog-comment #必须. GitHub repository.
-      ClientID: #必须. GitHub Application Client ID.
-      ClientSecret: #必须. GitHub Application Client Secret.
+      ClientID: 4ba7c7b26f45ed375aeb #必须. GitHub Application Client ID.
+      ClientSecret: d659c90563b4d8c01cf6ad3b519a6ac4e435a764 #必须. GitHub Application Client Secret.
     valine: # Valine. https://valine.js.org
       appid: Voz5TpLaiKvWLiVk63CrRybt-gzGzoHsz # your leancloud application appid
       appkey: xzDAABvBBG6vK7iwgd1VKUnw # your leancloud application appkey
