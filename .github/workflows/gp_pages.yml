@@ -34,6 +34,6 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          cname: blog.gaoyuexiang.cn
+          # cname: blog.gaoyuexiang.cn
           # PUBLISH_BRANCH: gh-pages
           # publish_dir: ./public
