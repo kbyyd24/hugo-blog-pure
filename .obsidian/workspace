@@ -1,0 +1,93 @@
+{
+  "main": {
+    "id": "2e743c4be56645a7",
+    "type": "split",
+    "children": [
+      {
+        "id": "99d7db21b5bfe826",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "content/posts/Spring高级装配之运行时注入.md",
+            "mode": "preview"
+          }
+        }
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "cbd2c3aa1d52cf68",
+    "type": "split",
+    "children": [
+      {
+        "id": "6bee0d3d9e740c20",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "498c1f89f618e19a",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {}
+            }
+          },
+          {
+            "id": "cffa06a4a6d067ec",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "da3018352f177233",
+    "type": "split",
+    "children": [
+      {
+        "id": "b1ef0b3342100cae",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "0574971f8050ddaa",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "content/posts/Spring高级装配之运行时注入.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "active": "99d7db21b5bfe826",
+  "lastOpenFiles": [
+    "content/posts/Spring高级装配之运行时注入.md"
+  ]
+}
