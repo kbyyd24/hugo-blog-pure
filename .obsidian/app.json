@@ -1,5 +1,6 @@
 {
   "readableLineLength": false,
   "strictLineBreaks": true,
-  "showFrontmatter": true
+  "showFrontmatter": true,
+  "showLineNumber": true
 }

@@ -9,8 +9,8 @@
         "state": {
           "type": "markdown",
           "state": {
-            "file": "content/posts/Spring高级装配之运行时注入.md",
-            "mode": "preview"
+            "file": "content/posts/JUnit-Alternative.md",
+            "mode": "source"
           }
         }
       }
@@ -68,7 +68,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "content/posts/Spring高级装配之运行时注入.md",
+                "file": "content/posts/JUnit-Alternative.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -88,6 +88,10 @@
   },
   "active": "99d7db21b5bfe826",
   "lastOpenFiles": [
-    "content/posts/Spring高级装配之运行时注入.md"
+    "content/posts/JUnit-Alternative.md",
+    "content/posts/Java_8_Lambdas_Functional_Programming_Note_Collector.md",
+    "content/posts/Spring高级装配之运行时注入.md",
+    "content/posts/use-gradle-to-build-java-project.md",
+    "content/posts/SpringMVC中Controller的测试.md"
   ]
 }
