@@ -2,7 +2,5 @@
   "baseFontSize": 16,
   "translucency": true,
   "cssTheme": "Blue Topaz",
-  "enabledCssSnippets": [
-    "width"
-  ]
+  "enabledCssSnippets": []
 }
