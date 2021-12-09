@@ -6,13 +6,27 @@
       {
         "id": "99d7db21b5bfe826",
         "type": "leaf",
+        "dimension": 68.120590121873,
         "state": {
           "type": "markdown",
           "state": {
             "file": "content/posts/JUnit-Alternative.md",
             "mode": "source"
           }
-        }
+        },
+        "group": "a88f31b692297072"
+      },
+      {
+        "id": "9354a796ac65bfea",
+        "type": "leaf",
+        "dimension": 31.879409878127003,
+        "state": {
+          "type": "outline",
+          "state": {
+            "file": "content/posts/JUnit-Alternative.md"
+          }
+        },
+        "group": "a88f31b692297072"
       }
     ],
     "direction": "vertical"
@@ -39,7 +53,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "",
+                "query": "复杂度",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -78,8 +92,19 @@
                 "unlinkedCollapsed": true
               }
             }
+          },
+          {
+            "id": "da4f81ba370d12fc",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "content/posts/JUnit-Alternative.md"
+              }
+            }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "horizontal",
@@ -89,6 +114,7 @@
   "active": "99d7db21b5bfe826",
   "lastOpenFiles": [
     "content/posts/JUnit-Alternative.md",
+    "content/posts/eureka-self-preservation-mode.md",
     "content/posts/Java_8_Lambdas_Functional_Programming_Note_Collector.md",
     "content/posts/Spring高级装配之运行时注入.md",
     "content/posts/use-gradle-to-build-java-project.md",
