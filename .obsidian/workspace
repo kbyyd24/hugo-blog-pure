@@ -8,11 +8,8 @@
         "type": "leaf",
         "dimension": 68.120590121873,
         "state": {
-          "type": "markdown",
-          "state": {
-            "file": "content/posts/JUnit-Alternative.md",
-            "mode": "source"
-          }
+          "type": "empty",
+          "state": {}
         },
         "group": "a88f31b692297072"
       },
@@ -22,9 +19,7 @@
         "dimension": 31.879409878127003,
         "state": {
           "type": "outline",
-          "state": {
-            "file": "content/posts/JUnit-Alternative.md"
-          }
+          "state": {}
         },
         "group": "a88f31b692297072"
       }
@@ -82,7 +77,6 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "content/posts/JUnit-Alternative.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -98,9 +92,7 @@
             "type": "leaf",
             "state": {
               "type": "outline",
-              "state": {
-                "file": "content/posts/JUnit-Alternative.md"
-              }
+              "state": {}
             }
           }
         ],
