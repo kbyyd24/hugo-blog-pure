@@ -1,7 +1,6 @@
 ---
 title: JUnit 不好用？也许你可以试试这些测试工具
 date: 2021-11-26T00:01:57+08:00
-draft: true
 tags:
   - JUnit
   - Spock
@@ -12,9 +11,13 @@ tags:
 
 在我们日常的 TDD 开发中，永远绕不过去的就是要编写测试。而对于一个 Java 程序员，JUnit 似乎是一个不二的选择。它的确是一个十分优秀的工具，在大多数情况下都能够帮助我们完成测试的工作。
 
-但是在开发过程中，我发现 JUnit 并不总是那么好用。它在一些情况下需要耗费大量的精力才能编写完成。如果不注意测试代码的可读性的话，编写完成的测试代码有时就会变得像天书一样难懂。
+但是在开发过程中，我发现 JUnit 并不总是那么好用。它在一些情况下需要耗费挺多精力才能编写出让人满意的测试。
 
 # JUnit 不擅长的事情
+
+一个让人满意的测试，应该能够清晰的体现被测试的目标、测试的目的以及测试的输入输出，并且应遵循 `DRY` 原则，尽可能的减少测试中的重复内容。
+
+JUnit 可以通过设计测试方法名和组织方法内的代码的方式清晰的表达意图，也可以通过参数化测试来减少相同测试目的的测试代码重复。但是它在这些地方都做的不够好。
 
 ## 清晰表达测试的目的
 
@@ -22,7 +25,9 @@ tags:
 
 ### 如何命名测试方法
 
-第一个体现就是在使用 Java 编写测试时，采用什么样的命名风格来命名测试。是为了代码风格的统一而选择驼峰？还是为了更高的可读性选择下划线？（如果用 Kotlin 来编写测试就不会有这个问题 **TODO add 表情包** ）
+第一个体现就是在使用 Java 编写测试时，采用什么样的命名风格来命名测试。是为了代码风格的统一而选择驼峰？还是为了更高的可读性选择下划线？这个问题在不同的项目中有不同的实践，看起来是没有一个统一的认识。
+
+而这个问题的根源是 JUnit 的测试名称是 Java 的方法名，而 Java 的方法名又不能在其中插入空格。所以除了下面要介绍的两种测试工具外，采用 [Kotlin](https://kotlinlang.org/docs/coding-conventions.html#names-for-test-methods) 来编写 JUnit 也是一种方式。
 
 ### 如何组织方法内的代码
 
@@ -41,12 +46,12 @@ JUnit 提供了各种 `Source` 注解来为参数化测试提供数据，但是�
 
 这就导致了第二个原因：这两个注解需要单独写一个**静态**或一个 `ArgumentProvider` 的实现，这就导致很难把测试参数写到测试代码旁边。并且 `Arguments.of()` 方法并不利于阅读测试参数。
 
+> `MethodSource` 要求使用**静态**方法，这在使用 Kotlin 编写 JUnit 时需要把这些方法写道 `companion object` 里面，并且加上 `@JvmStatic` 注解。因为 Kotlin 里面没有 `static` 关键字。
+
 这两点导致测试的可读性下降。而按照“测试即文档”的原则，我们应该尽力去保证测试的可读性。
 
 第三个原因则是来自 `ParameterizedTest` 注解。它的 `name` 字段可以使用参数的索引值来把参数填入模板中，生成更加可读的测试名称。
-
 但是它的功能也仅限于此了。因为这个模板只能使用索引值，不能使用索引后再调用里面的方法或者字段。所以如果我们的参数是一个复杂对象，那么一定要重写 `toString` 方法才能得到满意的输出。但是这又违背了编写测试的原则之一——不能为了测试而添加实现代码。
-
 如果我们一定要得到一个更加表意的测试名称，那么添加一个专用的测试参数也能做到。但是这又会导致 IDE 或者构建工具的警告，因为它们认为这个参数没有被使用。
 
 ---
@@ -169,6 +174,7 @@ given: "a mars rover at position 1,2 and direction is north"
 #### 简洁的断言
 
 在上面的例子中，我们看到 `Spock` 的断言十分简洁，不需要像使用 `assertj` 一样写很长的 `assertThat(xxx).isEqualTo(yyy)`，只需要一个返回 boolean 的表达式就可以了。
+甚至可以把多行断言提取到一个方法中，返回他们与运算的结果。
 
 #### 使用 data table 构造参数化测试
 
@@ -220,7 +226,7 @@ def "should move mars rover from position 1,2 forward to #movedPosition.x,#moved
 
 ## 缺点
 
-我在第一个项目里面使用 `Spock` 时，几乎没有发现它有什么缺点，以至于在后来的项目中总是在问 TL 能不能把它加到项目里来 **TODO add 表情包**
+我在第一个项目里面使用 `Spock` 时，几乎没有发现它有什么缺点，以至于在后来的项目中总是在问 TL 能不能把它加到项目里来 🤪
 
 但是后来在一个 Kotlin 项目中尝试使用它时，却遇到一些问题。
 
@@ -267,13 +273,11 @@ class MarsRoverFixture {
 
 对于上一个问题，我们当时还有一个 workaround，那就是使用 `JUnit5` + `MockK` 来编写那些需要 mock 的测试。但是那个时候的 `Kotlin` 版本还比较低，没有遇到和 JUnit 的兼容问题。
 
-兼容问题是 JUnit 在编写 Spring 集成测试的时候，如果有 mock bean 的需求，需要使用 [springmock](https://github.com/Ninja-Squad/springmockk) 里面的 `@MockkBean` 注解。但是从 kotlin 1.5.30 开始，这个库就不能和 Spock 编写的 Spring 集成测试兼容，会出现 NPE 问题。尝试了一下升级这个库的 kotlin 和 mockk 版本，没有成功。如果对这个问题感兴趣，可以暗中观察一下这个 [issue](https://github.com/Ninja-Squad/springmockk/issues/67) 。
+兼容问题是 JUnit 在编写 Spring 集成测试的时候，如果有 mock bean 的需求，需要使用 [springmock](https://github.com/Ninja-Squad/springmockk) 里面的 `@MockkBean` 注解。但是从 kotlin 1.5.30 开始，这个库就不能和 Spock 编写的 Spring 集成测试兼容，会出现 NPE 问题。这个问题在使用 `Kotlin` 对 `Specification` 子类进行反射时会出现。如果对这个问题感兴趣，可以看看这个 [issue](https://github.com/Ninja-Squad/springmockk/issues/67) 。
 
 #### Groovy 语言的学习成本
 
-就像前面提到过的，使用 `Groovy` 还是有一些非技术因素考虑的。比如这门语言学习难度如何、普及率如何、能不能比较容易的找到会用的人等等。
-
-~~个人觉得这门语言简单到任何一个熟悉 Java 语法的程序员都能很快熟悉这个语言~~
+就像前面提到过的，使用 `Groovy` 还是有一些学习成本的。如果团队里没有熟悉它的人，可能会走一点弯路。
 
 # 使用 Kotest 作为测试框架
 
@@ -404,7 +408,7 @@ class MarsRoverKotestTest : FunSpec({
 })
 ```
 
-虽然这个 data driven test 相对于 `Spock` 的 data table 来讲没有那么直观，但是对比 JUnit 的话，已经算是一个巨大的进步了。
+虽然这个 data driven test 相对于 `Spock` 的 data table 来讲没有那么直观，但是对比 JUnit 的话，能够方便的自定义测试方法名，并且测试数据与测试代码放在一起，已经算是一个巨大的进步了。
 
 ## 缺点
 
@@ -432,6 +436,26 @@ class MarsRoverKotestTest : FunSpec({
 如果这些痛点你都能忍，那我也不建议使用这个框架，毕竟上面已经有更好的选择了。
 
 ---
-end
+
+# 总结
+
+现在我们有了两个 JUnit 以外的测试框架选择。当然它们也不是完美的，JUnit 仍然是那个最稳定、风险最低的那一个。但如果你像尝试一下这两个框架的话，可以考虑一下这些方面：
+
+1. 生产代码的编程语言
+	1. 如果是 Kotlin，那么可以考虑 `Kotest`，不要考虑 `Spock`
+	2. 如果是 Java，那么这两个都值得考虑
+2. 语言熟悉程度
+	1. Kotlin 明显是比 Groovy 更加流行，这个角度考虑的话 `Kotest` 是更优的选择
+3. 测试框架的流行程度（这方面我不知道有什么评价标准，只是作为参考）
+	1. 两个框架在 GitHub 上的 star 数量半斤八两，一个 3.1k，一个 3.2k（JUnit 也才 4.9k）
+	2. 在 MVNRepository 上，[Spock](https://mvnrepository.com/search?q=spockframework) 的 usage 明显高于 [Kotest](https://mvnrepository.com/search?q=kotest)
+4. IDEA 的集成
+	1. `Spock` 在这方面完全没有问题
+	2. `Kotest` 需要安装插件，并且在 Windows + WSL 的模式下不能运行单个测试
+5. Gradle 集成
+	1. `Spock` 完美集成
+	2. `Kotest` 不能执行单个测试
+
+
 
 

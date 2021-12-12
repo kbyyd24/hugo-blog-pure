@@ -1,27 +1,18 @@
 {
   "main": {
-    "id": "2e743c4be56645a7",
+    "id": "82d44034c30105d6",
     "type": "split",
     "children": [
       {
-        "id": "99d7db21b5bfe826",
+        "id": "a12d228f57dfb3ba",
         "type": "leaf",
-        "dimension": 68.120590121873,
         "state": {
-          "type": "empty",
-          "state": {}
-        },
-        "group": "a88f31b692297072"
-      },
-      {
-        "id": "9354a796ac65bfea",
-        "type": "leaf",
-        "dimension": 31.879409878127003,
-        "state": {
-          "type": "outline",
-          "state": {}
-        },
-        "group": "a88f31b692297072"
+          "type": "markdown",
+          "state": {
+            "file": "content/posts/junit_alternative.md",
+            "mode": "source"
+          }
+        }
       }
     ],
     "direction": "vertical"
@@ -77,6 +68,7 @@
             "state": {
               "type": "backlink",
               "state": {
+                "file": "content/posts/junit_alternative.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -92,7 +84,9 @@
             "type": "leaf",
             "state": {
               "type": "outline",
-              "state": {}
+              "state": {
+                "file": "content/posts/junit_alternative.md"
+              }
             }
           }
         ],
@@ -100,11 +94,12 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
-  "active": "99d7db21b5bfe826",
+  "active": "a12d228f57dfb3ba",
   "lastOpenFiles": [
+    "content/posts/junit_alternative.md",
+    "content/posts/JavaScritp_The_Good_Parts_Object.md",
     "content/posts/JUnit-Alternative.md",
     "content/posts/eureka-self-preservation-mode.md",
     "content/posts/Java_8_Lambdas_Functional_Programming_Note_Collector.md",
