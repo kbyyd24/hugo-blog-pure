@@ -46,7 +46,7 @@ JUnit 提供了各种 `Source` 注解来为参数化测试提供数据，但是�
 
 这就导致了第二个原因：这两个注解需要单独写一个**静态**或一个 `ArgumentProvider` 的实现，这就导致很难把测试参数写到测试代码旁边。并且 `Arguments.of()` 方法并不利于阅读测试参数。
 
-> `MethodSource` 要求使用**静态**方法，这在使用 Kotlin 编写 JUnit 时需要把这些方法写道 `companion object` 里面，并且加上 `@JvmStatic` 注解。因为 Kotlin 里面没有 `static` 关键字。
+> `MethodSource` 要求使用**静态**方法，这在使用 Kotlin 编写 JUnit 时需要把这些方法写到 `companion object` 里面，并且加上 `@JvmStatic` 注解。因为 Kotlin 里面没有 `static` 关键字。
 
 这两点导致测试的可读性下降。而按照“测试即文档”的原则，我们应该尽力去保证测试的可读性。
 
@@ -439,7 +439,7 @@ class MarsRoverKotestTest : FunSpec({
 
 # 总结
 
-现在我们有了两个 JUnit 以外的测试框架选择。当然它们也不是完美的，JUnit 仍然是那个最稳定、风险最低的那一个。但如果你像尝试一下这两个框架的话，可以考虑一下这些方面：
+现在我们有了两个 JUnit 以外的测试框架选择。当然它们也不是完美的，JUnit 仍然是那个最稳定、风险最低的那一个。但如果你想尝试一下这两个框架的话，可以考虑一下这些方面：
 
 1. 生产代码的编程语言
 	1. 如果是 Kotlin，那么可以考虑 `Kotest`，不要考虑 `Spock`
