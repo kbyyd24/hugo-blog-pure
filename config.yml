@@ -208,3 +208,7 @@ params:
     # - tag
     - recent_posts
 
+security:
+  exec:
+    allow:
+      - ^asciidoctor
