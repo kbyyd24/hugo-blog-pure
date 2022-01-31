@@ -1,8 +1,121 @@
-<!doctype html><html lang=zh><head><title>如何使用 Spring Security ACL - 无糖拿铁，谢谢</title><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,minimal-ui"><meta name=renderer content="webkit"><meta http-equiv=cache-control content="no-transform"><meta http-equiv=cache-control content="no-siteapp"><meta name=apple-mobile-web-app-capable content="yes"><meta name=apple-mobile-web-app-status-bar-style content="black"><meta name=format-detection content="telephone=no,email=no,adress=no"><meta name=theme-color content="#000000"><meta http-equiv=window-target content="_top"><meta name=description content="使用 Spring Security ACL 的例子"><meta name=generator content="Hugo 0.79.1 with theme pure"><title>如何使用 Spring Security ACL - 无糖拿铁，谢谢</title><link rel=stylesheet href=https://blog.gaoyuexiang.cn/css/style.min.544edf4e480fd84dba4b535b9c42ace7af9a975d149b3f584c0e3a6f120cee55.css><link rel=stylesheet href=https://cdn.staticfile.org/highlight.js/9.15.10/styles/github.min.css async><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.css async><meta property="og:title" content="如何使用 Spring Security ACL"><meta property="og:description" content="使用 Spring Security ACL 的例子"><meta property="og:type" content="article"><meta property="og:url" content="https://blog.gaoyuexiang.cn/posts/how-to-use-spring-security-acl/"><meta property="article:published_time" content="2020-07-18T12:17:26+00:00"><meta property="article:modified_time" content="2020-07-18T12:17:26+00:00"><meta itemprop=name content="如何使用 Spring Security ACL"><meta itemprop=description content="使用 Spring Security ACL 的例子"><meta itemprop=datePublished content="2020-07-18T12:17:26+00:00"><meta itemprop=dateModified content="2020-07-18T12:17:26+00:00"><meta itemprop=wordCount content="4532"><meta itemprop=keywords content="Spring,Spring Security,Spring Security ACL,Spring Security ACL demo,"><meta name=twitter:card content="summary"><meta name=twitter:title content="如何使用 Spring Security ACL"><meta name=twitter:description content="使用 Spring Security ACL 的例子"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script><script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]--></head><body class="main-center theme-blue" itemscope itemtype=http://schema.org/WebPage><header class=header itemscope itemtype=http://schema.org/WPHeader><div class=slimContent><div class=navbar-header><div class="profile-block text-center"><a id=avatar href=https://github.com/kbyyd24 target=_blank><img class="img-circle img-rotate" src="https://avatars3.githubusercontent.com/u/9191275?s=460&u=a7ea5a50516804b275b4f7a36b36efc36c75e095&v=4" width=200 height=200></a><h2 id=name class="hidden-xs hidden-sm">无糖拿铁</h2><h3 id=title class="hidden-xs hidden-sm hidden-md">无糖拿铁，谢谢</h3><small id=location class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i>Chengdu, China</small></div><div class=search id=search-form-wrap><form class="search-form sidebar-form"><div class=input-group><input type=text class="search-form-input form-control" placeholder=搜索>
-<span class=input-group-btn><button type=submit class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button></span></div><div class=ins-search><div class=ins-search-mask></div><div class=ins-search-container><div class=ins-input-wrapper><input type=text class=ins-search-input placeholder=想要查找什么... x-webkit-speech>
-<button type=button class="close ins-close ins-selectable" data-dismiss=modal aria-label=Close><span aria-hidden=true>×</span></button></div><div class=ins-section-wrapper><div class=ins-section-container></div></div></div></div></form></div><button class="navbar-toggle collapsed" type=button data-toggle=collapse data-target=#main-navbar aria-controls=main-navbar aria-expanded=false>
+<!doctype html><html lang=zh>
+<head>
+<title>
+如何使用 Spring Security ACL - 无糖拿铁，谢谢
+</title>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
+<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,minimal-ui">
+<meta name=renderer content="webkit">
+<meta http-equiv=cache-control content="no-transform">
+<meta http-equiv=cache-control content="no-siteapp">
+<meta name=apple-mobile-web-app-capable content="yes">
+<meta name=apple-mobile-web-app-status-bar-style content="black">
+<meta name=format-detection content="telephone=no,email=no,adress=no">
+<meta name=theme-color content="#000000">
+<meta http-equiv=window-target content="_top">
+<meta name=description content="使用 Spring Security ACL 的例子">
+<meta name=generator content="Hugo 0.92.1 with theme pure">
+<title>如何使用 Spring Security ACL - 无糖拿铁，谢谢</title>
+<link rel=stylesheet href=https://blog.gaoyuexiang.cn/css/style.min.e64d754037c0ee0ec4e20ab1d6f07740ace61729bc03850559b8caa21ae4a597.css>
+<link rel=stylesheet href=https://cdn.staticfile.org/highlight.js/9.15.10/styles/github.min.css async>
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.css async>
+<meta property="og:title" content="如何使用 Spring Security ACL">
+<meta property="og:description" content="使用 Spring Security ACL 的例子">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://blog.gaoyuexiang.cn/posts/how-to-use-spring-security-acl/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2020-07-18T12:17:26+00:00">
+<meta property="article:modified_time" content="2020-07-18T12:17:26+00:00">
+<meta itemprop=name content="如何使用 Spring Security ACL">
+<meta itemprop=description content="使用 Spring Security ACL 的例子"><meta itemprop=datePublished content="2020-07-18T12:17:26+00:00">
+<meta itemprop=dateModified content="2020-07-18T12:17:26+00:00">
+<meta itemprop=wordCount content="4406">
+<meta itemprop=keywords content="Spring,Spring Security,Spring Security ACL,Spring Security ACL demo,"><meta name=twitter:card content="summary">
+<meta name=twitter:title content="如何使用 Spring Security ACL">
+<meta name=twitter:description content="使用 Spring Security ACL 的例子"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
+<script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]-->
+</head>
+<body class="main-center theme-blue" itemscope itemtype=http://schema.org/WebPage><header class=header itemscope itemtype=http://schema.org/WPHeader>
+<div class=slimContent>
+<div class=navbar-header>
+<div class="profile-block text-center">
+<a id=avatar href=https://github.com/kbyyd24 target=_blank>
+<img class="img-circle img-rotate" src="https://avatars3.githubusercontent.com/u/9191275?s=460&u=a7ea5a50516804b275b4f7a36b36efc36c75e095&v=4" width=200 height=200>
+</a>
+<h2 id=name class="hidden-xs hidden-sm">无糖拿铁</h2>
+<h3 id=title class="hidden-xs hidden-sm hidden-md">无糖拿铁，谢谢</h3>
+<small id=location class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i>Chengdu, China</small>
+</div><div class=search id=search-form-wrap>
+<form class="search-form sidebar-form">
+<div class=input-group>
+<input type=text class="search-form-input form-control" placeholder=搜索>
+<span class=input-group-btn>
+<button type=submit class="search-form-submit btn btn-flat" onclick=return!1><i class="icon icon-search"></i></button>
+</span>
+</div>
+<div class=ins-search>
+<div class=ins-search-mask></div>
+<div class=ins-search-container>
+<div class=ins-input-wrapper>
+<input type=text class=ins-search-input placeholder=想要查找什么... x-webkit-speech>
+<button type=button class="close ins-close ins-selectable" data-dismiss=modal aria-label=Close><span aria-hidden=true>×</span></button>
+</div>
+<div class=ins-section-wrapper>
+<div class=ins-section-container></div>
+</div>
+</div>
+</div>
+</form>
+</div>
+<button class="navbar-toggle collapsed" type=button data-toggle=collapse data-target=#main-navbar aria-controls=main-navbar aria-expanded=false>
 <span class=sr-only>Toggle navigation</span>
-<span class=icon-bar></span><span class=icon-bar></span><span class=icon-bar></span></button></div><nav id=main-navbar class="collapse navbar-collapse" itemscope itemtype=http://schema.org/SiteNavigationElement role=navigation><ul class="nav navbar-nav main-nav"><li class="menu-item menu-item-home"><a href=/><i class="icon icon-home-fill"></i><span class=menu-title>Home</span></a></li><li class="menu-item menu-item-archives"><a href=/posts/><i class="icon icon-archives-fill"></i><span class=menu-title>Archives</span></a></li><li class="menu-item menu-item-series"><a href=/series-index/><i class="icon icon-folder-open"></i><span class=menu-title>Series</span></a></li><li class="menu-item menu-item-tags"><a href=/tags/><i class="icon icon-tags"></i><span class=menu-title>Tags</span></a></li><li class="menu-item menu-item-about"><a href=/about/><i class="icon icon-cup-fill"></i><span class=menu-title>About</span></a></li></ul></nav></div></header><aside class=sidebar itemscope itemtype=http://schema.org/WPSideBar><div class=slimContent><div class=widget><h3 class=widget-title>标签</h3><div id=tag-cloud-list class=widget-body><a href=https://blog.gaoyuexiang.cn/tags/12-factor/ class=tag-list-link rel=1>12-factor<span class=tag-list-count>1</span></a>
+<span class=icon-bar></span>
+<span class=icon-bar></span>
+<span class=icon-bar></span>
+</button>
+</div>
+<nav id=main-navbar class="collapse navbar-collapse" itemscope itemtype=http://schema.org/SiteNavigationElement role=navigation>
+<ul class="nav navbar-nav main-nav">
+<li class="menu-item menu-item-home">
+<a href=/>
+<i class="icon icon-home-fill"></i>
+<span class=menu-title>Home</span>
+</a>
+</li>
+<li class="menu-item menu-item-archives">
+<a href=/posts/>
+<i class="icon icon-archives-fill"></i>
+<span class=menu-title>Archives</span>
+</a>
+</li>
+<li class="menu-item menu-item-series">
+<a href=/series-index/>
+<i class="icon icon-folder-open"></i>
+<span class=menu-title>Series</span>
+</a>
+</li>
+<li class="menu-item menu-item-tags">
+<a href=/tags/>
+<i class="icon icon-tags"></i>
+<span class=menu-title>Tags</span>
+</a>
+</li>
+<li class="menu-item menu-item-about">
+<a href=/about/>
+<i class="icon icon-cup-fill"></i>
+<span class=menu-title>About</span>
+</a>
+</li>
+</ul>
+</nav>
+</div>
+</header>
+<aside class=sidebar itemscope itemtype=http://schema.org/WPSideBar>
+<div class=slimContent>
+<div class=widget>
+<h3 class=widget-title> 标签</h3>
+<div id=tag-cloud-list class=widget-body>
+<a href=https://blog.gaoyuexiang.cn/tags/12-factor/ class=tag-list-link rel=1>12-factor<span class=tag-list-count>1</span></a>
 <a href=https://blog.gaoyuexiang.cn/tags/architecture/ class=tag-list-link rel=2>architecture<span class=tag-list-count>2</span></a>
 <a href=https://blog.gaoyuexiang.cn/tags/auto-configure/ class=tag-list-link rel=1>auto-configure<span class=tag-list-count>1</span></a>
 <a href=https://blog.gaoyuexiang.cn/tags/classpathscanningcandidatecomponentprovider/ class=tag-list-link rel=1>classpathscanningcandidatecomponentprovider<span class=tag-list-count>1</span></a>
@@ -69,66 +182,265 @@
 <a href=https://blog.gaoyuexiang.cn/tags/%E7%AB%AF%E5%8F%A3%E4%B8%8E%E9%80%82%E9%85%8D%E5%99%A8%E6%9E%B6%E6%9E%84/ class=tag-list-link rel=2>端口与适配器架构<span class=tag-list-count>2</span></a>
 <a href=https://blog.gaoyuexiang.cn/tags/%E8%87%AA%E6%88%91%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/ class=tag-list-link rel=1>自我保护模式<span class=tag-list-count>1</span></a>
 <a href=https://blog.gaoyuexiang.cn/tags/%E9%87%8D%E6%9E%84/ class=tag-list-link rel=1>重构<span class=tag-list-count>1</span></a>
-<a href=https://blog.gaoyuexiang.cn/tags/%E9%9C%B0%E5%BC%B9%E5%BC%8F%E4%BF%AE%E6%94%B9/ class=tag-list-link rel=1>霰弹式修改<span class=tag-list-count>1</span></a></div><script>document.onreadystatechange=()=>{if(document.readyState==='complete'){tagCloud('#tag-cloud-list a',8,20);}};function tagCloud(where,min,max){let iMax=0;let iMin=0;$(where).each(function(){let weight=Number($(this).attr("rel"));if(iMax<weight)iMax=weight;if(iMin>weight||iMin==0)iMin=weight;});let step=(max-min)/(iMax-iMin);$(where).each(function(){let weight=$(this).attr("rel")-iMin;$(this).css({"font-size":min+(weight*step)+'px'});});};</script></div><div class=widget><h3 class=widget-title>最新文章</h3><div class=widget-body><ul class="recent-post-list list-unstyled no-thumbnail"><li><div class=item-inner><p class=item-title><a href=https://blog.gaoyuexiang.cn/posts/junit_alternative/ class=title>JUnit 不好用？也许你可以试试这些测试工具</a></p><p class=item-date><time datetime="2021-11-26 00:01:57 +0800 +0800" itemprop=datePublished>2021-11-26</time></p></div></li><li><div class=item-inner><p class=item-title><a href=https://blog.gaoyuexiang.cn/posts/domain-centeric-architectures/ class=title>以领域为核心的架构们如何指导我们写代码</a></p><p class=item-date><time datetime="2021-05-25 22:13:57 +0800 +0800" itemprop=datePublished>2021-05-25</time></p></div></li><li><div class=item-inner><p class=item-title><a href=https://blog.gaoyuexiang.cn/posts/divergent-change-and-shotgun-surgery/ class=title>发散式变化与霰弹式修改</a></p><p class=item-date><time datetime="2021-04-25 20:22:33 +0800 +0800" itemprop=datePublished>2021-04-25</time></p></div></li><li><div class=item-inner><p class=item-title><a href=https://blog.gaoyuexiang.cn/posts/how-to-scan-classes-in-java-package-with-annotation/ class=title>要扫描 Java 的 package 中有某个注解的类，应该怎么做？</a></p><p class=item-date><time datetime="2021-03-21 19:52:45 +0800 +0800" itemprop=datePublished>2021-03-21</time></p></div></li><li><div class=item-inner><p class=item-title><a href=https://blog.gaoyuexiang.cn/posts/jackson-inheritance/ class=title>使用 Jackson 处理抽象类的序列化和反序列化</a></p><p class=item-date><time datetime="2020-10-02 21:38:48 +0000 UTC" itemprop=datePublished>2020-10-02</time></p></div></li></ul></div></div></div></aside><aside class="sidebar sidebar-toc collapse" id=collapseToc itemscope itemtype=http://schema.org/WPSideBar><div class=slimContent><h4 class=toc-title>文章目录</h4><nav id=toc class="js-toc toc"></nav></div></aside><main class=main role=main><div class=content><article id=- class="article article-type-" itemscope itemtype=http://schema.org/BlogPosting><div class=article-header><h1 itemprop=name><a class=article-title href=/posts/how-to-use-spring-security-acl/>如何使用 Spring Security ACL</a></h1><div class=article-meta><span class=article-date><i class="icon icon-calendar-check"></i>&nbsp;
-<a href=https://blog.gaoyuexiang.cn/posts/how-to-use-spring-security-acl/ class=article-date><time datetime="2020-07-18 12:17:26 +0000 UTC" itemprop=datePublished>2020-07-18</time></a></span>
-<span class=article-tag><i class="icon icon-tags"></i>&nbsp;
-<a class=article-tag-link href=/tags/spring/>Spring</a>
-<a class=article-tag-link href=/tags/spring-security/>Spring Security</a>
-<a class=article-tag-link href=/tags/spring-security-acl/>Spring Security ACL</a>
-<a class=article-tag-link href=/tags/spring-security-acl-demo/>Spring Security ACL demo</a></span>
-<span class="article-read hidden-xs"><i class="icon icon-eye-fill" aria-hidden=true></i><span id=https://blog.gaoyuexiang.cn/posts/how-to-use-spring-security-acl/ class=leancloud_visitors data-flag-title="如何使用 Spring Security ACL">0</span></span>
+<a href=https://blog.gaoyuexiang.cn/tags/%E9%9C%B0%E5%BC%B9%E5%BC%8F%E4%BF%AE%E6%94%B9/ class=tag-list-link rel=1>霰弹式修改<span class=tag-list-count>1</span></a>
+</div>
+<script>document.onreadystatechange=()=>{document.readyState==='complete'&&tagCloud('#tag-cloud-list a',8,20)};function tagCloud(c,d,e){let b=0,a=0;$(c).each(function(){let c=Number($(this).attr("rel"));b<c&&(b=c),(a>c||a==0)&&(a=c)});let f=(e-d)/(b-a);$(c).each(function(){let b=$(this).attr("rel")-a;$(this).css({"font-size":d+b*f+'px'})})}</script>
+</div>
+<div class=widget>
+<h3 class=widget-title>最新文章</h3>
+<div class=widget-body>
+<ul class="recent-post-list list-unstyled no-thumbnail">
+<li>
+<div class=item-inner>
+<p class=item-title>
+<a href=https://blog.gaoyuexiang.cn/posts/junit_alternative/ class=title>JUnit 不好用？也许你可以试试这些测试工具</a>
+</p>
+<p class=item-date>
+<time datetime="2021-11-26 00:01:57 +0800 +0800" itemprop=datePublished>2021-11-26</time>
+</p>
+</div>
+</li>
+<li>
+<div class=item-inner>
+<p class=item-title>
+<a href=https://blog.gaoyuexiang.cn/posts/domain-centeric-architectures/ class=title>以领域为核心的架构们如何指导我们写代码</a>
+</p>
+<p class=item-date>
+<time datetime="2021-05-25 22:13:57 +0800 +0800" itemprop=datePublished>2021-05-25</time>
+</p>
+</div>
+</li>
+<li>
+<div class=item-inner>
+<p class=item-title>
+<a href=https://blog.gaoyuexiang.cn/posts/divergent-change-and-shotgun-surgery/ class=title>发散式变化与霰弹式修改</a>
+</p>
+<p class=item-date>
+<time datetime="2021-04-25 20:22:33 +0800 +0800" itemprop=datePublished>2021-04-25</time>
+</p>
+</div>
+</li>
+<li>
+<div class=item-inner>
+<p class=item-title>
+<a href=https://blog.gaoyuexiang.cn/posts/how-to-scan-classes-in-java-package-with-annotation/ class=title>要扫描 Java 的 package 中有某个注解的类，应该怎么做？</a>
+</p>
+<p class=item-date>
+<time datetime="2021-03-21 19:52:45 +0800 +0800" itemprop=datePublished>2021-03-21</time>
+</p>
+</div>
+</li>
+<li>
+<div class=item-inner>
+<p class=item-title>
+<a href=https://blog.gaoyuexiang.cn/posts/jackson-inheritance/ class=title>使用 Jackson 处理抽象类的序列化和反序列化</a>
+</p>
+<p class=item-date>
+<time datetime="2020-10-02 21:38:48 +0000 UTC" itemprop=datePublished>2020-10-02</time>
+</p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</aside>
+<aside class="sidebar sidebar-toc collapse" id=collapseToc itemscope itemtype=http://schema.org/WPSideBar>
+<div class=slimContent>
+<h4 class=toc-title>文章目录</h4>
+<nav id=toc class="js-toc toc">
+</nav>
+</div>
+</aside>
+<main class=main role=main><div class=content>
+<article id=- class="article article-type-" itemscope itemtype=http://schema.org/BlogPosting>
+<div class=article-header>
+<h1 itemprop=name>
+<a class=article-title href=/posts/how-to-use-spring-security-acl/>如何使用 Spring Security ACL</a>
+</h1>
+<div class=article-meta>
+<span class=article-date>
+<i class="icon icon-calendar-check"></i>&nbsp;
+<a href=https://blog.gaoyuexiang.cn/posts/how-to-use-spring-security-acl/ class=article-date>
+<time datetime="2020-07-18 12:17:26 +0000 UTC" itemprop=datePublished>2020-07-18</time>
+</a>
+</span>
+<span class=article-tag>
+<i class="icon icon-tags"></i>&nbsp;
+<a class=article-tag-link href=/tags/spring/> Spring </a>
+<a class=article-tag-link href=/tags/spring-security/> Spring Security </a>
+<a class=article-tag-link href=/tags/spring-security-acl/> Spring Security ACL </a>
+<a class=article-tag-link href=/tags/spring-security-acl-demo/> Spring Security ACL demo </a>
+</span>
+<span class="article-read hidden-xs">
+<i class="icon icon-eye-fill" aria-hidden=true></i>
+<span id=https://blog.gaoyuexiang.cn/posts/how-to-use-spring-security-acl/ class=leancloud_visitors data-flag-title="如何使用 Spring Security ACL">0</span>
+</span>
 <span class=post-comment><i class="icon icon-comment"></i>&nbsp;<a href=/posts/how-to-use-spring-security-acl/#comments class=article-comment-link>评论</a></span>
-<span class="post-wordcount hidden-xs" itemprop=wordCount>字数统计: 4532字</span>
-<span class="post-readcount hidden-xs" itemprop=timeRequired>阅读时长: 10分</span></div></div><div class="article-entry marked-body js-toc-content" itemprop=articleBody><p>在link:../spring-security-acl-conception-and-component/[上一篇文章]中，我们了解了 Spring Security ACL 的基本概念。
-但是几乎没有涉及实现与使用的部分。这篇文章我们就来看一看如何在使用了 Spring 的项目中使用 Spring Security。</p><p>== 导入 Jar 包</p><p>Spring Security ACL 的 GAV 是 <code>org.springframework.security:spring-security-acl:&lt;version></code>，
-被加入到了 link:https://docs.spring.io/platform/docs/1.0.1.RELEASE/reference/htmlsingle/#appendix-dependency-versions[Spring IO Platform bom] 中，所以可以使用 Spring 的依赖管理插件来管理版本号。</p><p>但是 Spring 没有提供相应的 boot starter，使用的时候需要自己进行配置。
-毕竟 ACL 中提供的默认实现很可能达不到需求，还不如自己动手。</p><p>== 存储 ACL</p><p>ACL 需要被持久化起来，否则系统重启后就丢掉了权限信息。</p><p>=== 基于 JDBC 的持久化</p><p>Spring Security ACL 提供了默认的 <code>AclService</code> 和 <code>MutableAclService</code> 实现：<code>JdbcAclService</code> 和 <code>JdbcMutableAclService</code>。</p><p>因为是基于 <code>JDBC</code> 的实现，所以就可能存在性能问题（绝大多数情况下不需要更新 ACL，但使用 JDBC 时总是会访问数据库，得到一模一样的 ACL）。
-于是 ACL 又设计了一个缓存机制来减少对数据库的请求。缓存的接口是 <code>AclCache</code>，Spring 提供了基于 Eh-Cache 和 Spring Cache 的两个实现。</p><blockquote><p><code>AclCache</code> 接口被安排在了 <code>org.springframework.security.acls.model</code> 包中。
-个人觉得这不是一个必须的元素，算不上核心概念，不应该和其他核心概念放到一起。</p></blockquote><p>==== 创建数据库</p><p><code>JdbcAclService</code> 需要创建四张表，创建表的 SQL 已经在 jar 包里了（<em>但是有坑</em>），我们只是来看看这几张表分别保存了什么内容。</p><p>acl_sid::</p><ul><li>id: 主键</li><li>principal: 一个布尔值，表示这个 sid 是不是 <code>PrincipalSid</code>，如果值为 <code>false</code> 则表示 sid 是 <code>GrantedAuthoritySid</code></li></ul><ul><li></li></ul><hr><p>这个设计简直把扩展堵死了 🙄️</p><hr><ul><li>sid: <code>Sid</code> 实例中保存的字符串，也就是 <code>Principal.getName()</code> 或 <code>GrantedAuthority.getAuthority()</code> 或自己写代码生成的字符串</li></ul><p>acl_class::</p><ul><li>id: 主键</li><li>class: Domain Object 类型的全限定名</li></ul><ul><li></li></ul><p><code>ObjectIdentity</code> 的默认实现使用 全限定名+id 的方式确定一个 Domain Object</p><ul><li>class_id_type: 可选字段，保存 <code>ObjectIdentity</code> 中 <code>identifier</code> 的类型，默认是 <code>Long</code></li></ul><ul><li></li></ul><p><em>这就是坑的所在</em>。Jar 包中给出的 SQL 有不同的数据库的版本，只有 <code>PostgreSql</code> 和 <code>HSQL</code> 的版本中有这个字段。
-如果不创建这个字段，那么 <code>ObjectIdentity</code> 就只能支持 <code>Long</code> 类型的 id。
-<code>JdbcService</code> 默认也不会查询这个字段，需要特别配置。</p><p>acl_object_identity::</p><ul><li>id: 主键</li><li>object_id_class: 外键依赖 <code>acl_class.id</code></li><li>object_id_identity: <code>ObjectIdentity.getIdentifer()</code> 的值，与 <code>object_id_class</code> 组成唯一键</li><li>parent_object: 外键依赖 <code>acl_object_identity.id</code>，在 <code>Acl</code> 继承时使用</li><li>owner_sid: 外键依赖 <code>acl_sid.id</code>，是 <code>Acl</code> 实例的 owner，拥有修改 <code>Acl</code> 的权限</li><li>entries_inheriting: 布尔值，表示 child acl 是否要继承 parent acl 的 ACE</li></ul><p>这张表里保存的都是 <code>Acl</code> 持有的信息，也就是说，这张表的一行记录对应了一个 <code>Acl</code> 实例。</p><p>acl_entry::</p><ul><li>id: 主键</li><li>acl_object_identity: 外键依赖 <code>acl_object_identity.id</code>，表示属于哪一个 <code>Acl</code></li><li>ace_order: 表示这一条 ACE 在 <code>Acl</code> 中的顺序，和 <code>acl_object_identity</code> 组成唯一键</li><li>sid: 外键依赖 <code>acl_sid.id</code>，表示这条 ACE 的权限对应哪一个 <code>Sid</code></li><li>mask: 表示权限的 32 位二进制数字</li><li>granting: 布尔值，表示这条 ACE 是否生效</li><li>audit_success</li><li>audit_failure: 这两条是用于审计的信息，对应了 <code>AuditableAccessControlEntry</code> 接口，本文不会涉及</li></ul><p>这张表保存的是 ACE 的信息，一行记录对应了一个 ACE 实例。</p><p>==== 配置 JdbcAclService</p><p>在动手之前，我们先来看看 <code>JdbcAclService</code> 都有什么依赖：</p><p>image::jdbc-acl-service-dependencies.png[]</p><p>因为 ACL 没有 Spring Boot 的 auto configure，所以除了 <code>DataSource</code>，我们需要自己来配置这些依赖。</p><p>除非项目中不需要修改 ACL，否则都会选择创建一个 <code>JdbcMutableAclService</code> 而不是 <code>JdbcAclService</code>。</p><p>===== 注入 JdbcMutableAclService</p><h2 id=sourcejava>[source,java]</h2><h2 id=heading>@Bean
+<span class="post-wordcount hidden-xs" itemprop=wordCount>字数统计: 4406字</span>
+<span class="post-readcount hidden-xs" itemprop=timeRequired>阅读时长: 9分 </span>
+</div>
+</div>
+<div class="article-entry marked-body js-toc-content" itemprop=articleBody>
+<p>在link:../spring-security-acl-conception-and-component/[上一篇文章]中，我们了解了 Spring Security ACL 的基本概念。
+但是几乎没有涉及实现与使用的部分。这篇文章我们就来看一看如何在使用了 Spring 的项目中使用 Spring Security。</p>
+<p>== 导入 Jar 包</p>
+<p>Spring Security ACL 的 GAV 是 <code>org.springframework.security:spring-security-acl:&lt;version></code>，
+被加入到了 link:https://docs.spring.io/platform/docs/1.0.1.RELEASE/reference/htmlsingle/#appendix-dependency-versions[Spring IO Platform bom] 中，所以可以使用 Spring 的依赖管理插件来管理版本号。</p>
+<p>但是 Spring 没有提供相应的 boot starter，使用的时候需要自己进行配置。
+毕竟 ACL 中提供的默认实现很可能达不到需求，还不如自己动手。</p>
+<p>== 存储 ACL</p>
+<p>ACL 需要被持久化起来，否则系统重启后就丢掉了权限信息。</p>
+<p>=== 基于 JDBC 的持久化</p>
+<p>Spring Security ACL 提供了默认的 <code>AclService</code> 和 <code>MutableAclService</code> 实现：<code>JdbcAclService</code> 和 <code>JdbcMutableAclService</code>。</p>
+<p>因为是基于 <code>JDBC</code> 的实现，所以就可能存在性能问题（绝大多数情况下不需要更新 ACL，但使用 JDBC 时总是会访问数据库，得到一模一样的 ACL）。
+于是 ACL 又设计了一个缓存机制来减少对数据库的请求。缓存的接口是 <code>AclCache</code>，Spring 提供了基于 Eh-Cache 和 Spring Cache 的两个实现。</p>
+<blockquote>
+<p><code>AclCache</code> 接口被安排在了 <code>org.springframework.security.acls.model</code> 包中。
+个人觉得这不是一个必须的元素，算不上核心概念，不应该和其他核心概念放到一起。</p>
+</blockquote>
+<p>==== 创建数据库</p>
+<p><code>JdbcAclService</code> 需要创建四张表，创建表的 SQL 已经在 jar 包里了（<em>但是有坑</em>），我们只是来看看这几张表分别保存了什么内容。</p>
+<p>acl_sid::</p>
+<ul>
+<li>id: 主键</li>
+<li>principal: 一个布尔值，表示这个 sid 是不是 <code>PrincipalSid</code>，如果值为 <code>false</code> 则表示 sid 是 <code>GrantedAuthoritySid</code></li>
+</ul>
+<ul>
+<li></li>
+</ul>
+<ul>
+<li>sid: <code>Sid</code> 实例中保存的字符串，也就是 <code>Principal.getName()</code> 或 <code>GrantedAuthority.getAuthority()</code> 或自己写代码生成的字符串</li>
+</ul>
+<p>acl_class::</p>
+<ul>
+<li>id: 主键</li>
+<li>class: Domain Object 类型的全限定名</li>
+</ul>
+<ul>
+<li></li>
+</ul>
+<ul>
+<li>class_id_type: 可选字段，保存 <code>ObjectIdentity</code> 中 <code>identifier</code> 的类型，默认是 <code>Long</code></li>
+</ul>
+<ul>
+<li></li>
+</ul>
+<p>acl_object_identity::</p>
+<ul>
+<li>id: 主键</li>
+<li>object_id_class: 外键依赖 <code>acl_class.id</code></li>
+<li>object_id_identity: <code>ObjectIdentity.getIdentifer()</code> 的值，与 <code>object_id_class</code> 组成唯一键</li>
+<li>parent_object: 外键依赖 <code>acl_object_identity.id</code>，在 <code>Acl</code> 继承时使用</li>
+<li>owner_sid: 外键依赖 <code>acl_sid.id</code>，是 <code>Acl</code> 实例的 owner，拥有修改 <code>Acl</code> 的权限</li>
+<li>entries_inheriting: 布尔值，表示 child acl 是否要继承 parent acl 的 ACE</li>
+</ul>
+<p>这张表里保存的都是 <code>Acl</code> 持有的信息，也就是说，这张表的一行记录对应了一个 <code>Acl</code> 实例。</p>
+<p>acl_entry::</p>
+<ul>
+<li>id: 主键</li>
+<li>acl_object_identity: 外键依赖 <code>acl_object_identity.id</code>，表示属于哪一个 <code>Acl</code></li>
+<li>ace_order: 表示这一条 ACE 在 <code>Acl</code> 中的顺序，和 <code>acl_object_identity</code> 组成唯一键</li>
+<li>sid: 外键依赖 <code>acl_sid.id</code>，表示这条 ACE 的权限对应哪一个 <code>Sid</code></li>
+<li>mask: 表示权限的 32 位二进制数字</li>
+<li>granting: 布尔值，表示这条 ACE 是否生效</li>
+<li>audit_success</li>
+<li>audit_failure: 这两条是用于审计的信息，对应了 <code>AuditableAccessControlEntry</code> 接口，本文不会涉及</li>
+</ul>
+<p>这张表保存的是 ACE 的信息，一行记录对应了一个 ACE 实例。</p>
+<p>==== 配置 JdbcAclService</p>
+<p>在动手之前，我们先来看看 <code>JdbcAclService</code> 都有什么依赖：</p>
+<p>image::jdbc-acl-service-dependencies.png[]</p>
+<p>因为 ACL 没有 Spring Boot 的 auto configure，所以除了 <code>DataSource</code>，我们需要自己来配置这些依赖。</p>
+<p>除非项目中不需要修改 ACL，否则都会选择创建一个 <code>JdbcMutableAclService</code> 而不是 <code>JdbcAclService</code>。</p>
+<p>===== 注入 JdbcMutableAclService</p>
+<h2 id=sourcejava>[source,java]</h2>
+<h2 id=heading>@Bean
 public MutableAclService mutableAclService() {
 JdbcMutableAclService jdbcMutableAclService = new JdbcMutableAclService(datasource, lookupStrategy(), aclCache());
 jdbcMutableAclService.setAclClassIdSupported(true); &lt;1>
 jdbcMutableAclService.setClassIdentityQuery(&ldquo;SELECT @@IDENTITY&rdquo;); &lt;2>
 jdbcMutableAclService.setSidIdentityQuery(&ldquo;SELECT @@IDENTITY&rdquo;); &lt;3>
 return jdbcMutableAclService;
-}</h2><p>&lt;1> 如果要支持 <code>acl_class.class_id_type</code> 字段，则需要将 <code>aclClassIdSupported</code> 设置为 <code>true</code>。这样 <code>JdbcAclService</code> 在查询时和 <code>JdbcMutableAclService</code> 更新时才会考虑这个字段的值。
+}</h2>
+<p>&lt;1> 如果要支持 <code>acl_class.class_id_type</code> 字段，则需要将 <code>aclClassIdSupported</code> 设置为 <code>true</code>。这样 <code>JdbcAclService</code> 在查询时和 <code>JdbcMutableAclService</code> 更新时才会考虑这个字段的值。
 &lt;2> <code>classIdentityQuery</code> 会在创建 <code>Acl</code> 对象时用到，用来获取刚刚插入的 <code>acl_class.id</code>。默认值是 <code>call identity()</code>，这是 <code>H2</code> 数据库的方言，这里的例子是 <code>MySql</code> 的方言。
-&lt;3> 与 2 相同，只是用来获取刚刚插入的 <code>acl_sid.id</code></p><p>接着，我们需要配置 <code>LookupStrategy</code> 和 <code>AclCache</code>。</p><p>===== 注入 LookupStrategy</p><p><code>LookupStratege</code> 只有一个实现：<code>BasicLookupStrategy</code></p><h2 id=sourcejava-1>[source,java]</h2><h2 id=heading-1>@Bean
+&lt;3> 与 2 相同，只是用来获取刚刚插入的 <code>acl_sid.id</code></p>
+<p>接着，我们需要配置 <code>LookupStrategy</code> 和 <code>AclCache</code>。</p>
+<p>===== 注入 LookupStrategy</p>
+<p><code>LookupStratege</code> 只有一个实现：<code>BasicLookupStrategy</code></p>
+<h2 id=sourcejava-1>[source,java]</h2>
+<h2 id=heading-1>@Bean
 public LookupStrategy lookupStrategy() {
 BasicLookupStrategy basicLookupStrategy = new BasicLookupStrategy(datasource, aclCache(), aclAuthorizationStrategy(), permissionGrantingStrategy());
 basicLookupStrategy.setAclClassIdSupported(true); &lt;1>
 return basicLookupStrategy;
-}</h2><p>&lt;1> <code>BasicLookupStrategy</code> 也会自己组装 sql，需要调用这个方法以支持 <code>acl_class.class_id_type</code>。</p><p>接着，我们先来看一下 <code>AclAuthorizationStrategy</code> 和 <code>PermissionGratingStrategy</code> 这两个简单一点的依赖。</p><p>===== 注入 AclAuthorizationStrategy</p><h2 id=sourcejava-2>[source,java]</h2><h2 id=heading-2>@Bean
+}</h2>
+<p>&lt;1> <code>BasicLookupStrategy</code> 也会自己组装 sql，需要调用这个方法以支持 <code>acl_class.class_id_type</code>。</p>
+<p>接着，我们先来看一下 <code>AclAuthorizationStrategy</code> 和 <code>PermissionGratingStrategy</code> 这两个简单一点的依赖。</p>
+<p>===== 注入 AclAuthorizationStrategy</p>
+<h2 id=sourcejava-2>[source,java]</h2>
+<h2 id=heading-2>@Bean
 public AclAuthorizationStrategy aclAuthorizationStrategy() {
 return new AclAuthorizationStrategyImpl(new SimpleGrantedAuthority(&ldquo;owner&rdquo;));
-}</h2><p><code>AclAuthorizationStrategy</code> 是用来判断当前的 <code>Autentication</code> 是否有权限修改 <code>Acl</code> 的接口，它只有 <code>AclAuthorizationStrategyImpl</code> 这一个实现。
-这个接口规定了三种权限：</p><ul><li>change ownership 修改 Acl 的 owner</li><li>change auditing 修改 Acl 的审计信息</li><li>change general 修改 ACE</li></ul><p>实现中有三个 <code>GrantedAuthority</code> 属性，对应了上面的三种权限，表示对 <code>Acl</code> 进行某种操作时，<code>Authentication</code> 需要满足对应的 <code>GrantedAuthority</code>。</p><p>它的构造方法接受一个或三个 <code>GrantedAuthority</code>:</p><ul><li>如果只有一个参数，那么三个权限都是这个 <code>GrantedAuthority</code></li><li>如果有三个参数，那么就会按上面的顺序赋值给这三个权限</li></ul><p>在判断权限时，如果是 <code>Acl</code> 的 owner，且不是在修改审计信息时，就可以直接获得权限；否则就需要 <code>Authentication</code> 具备对应的 <code>GrantedAuthority</code>。</p><p>===== 注入 PermissionGrantingStrategy</p><h2 id=sourcejava-3>[source,java]</h2><h2 id=heading-3>@Bean
+}</h2>
+<p><code>AclAuthorizationStrategy</code> 是用来判断当前的 <code>Autentication</code> 是否有权限修改 <code>Acl</code> 的接口，它只有 <code>AclAuthorizationStrategyImpl</code> 这一个实现。
+这个接口规定了三种权限：</p>
+<ul>
+<li>change ownership 修改 Acl 的 owner</li>
+<li>change auditing 修改 Acl 的审计信息</li>
+<li>change general 修改 ACE</li>
+</ul>
+<p>实现中有三个 <code>GrantedAuthority</code> 属性，对应了上面的三种权限，表示对 <code>Acl</code> 进行某种操作时，<code>Authentication</code> 需要满足对应的 <code>GrantedAuthority</code>。</p>
+<p>它的构造方法接受一个或三个 <code>GrantedAuthority</code>:</p>
+<ul>
+<li>如果只有一个参数，那么三个权限都是这个 <code>GrantedAuthority</code></li>
+<li>如果有三个参数，那么就会按上面的顺序赋值给这三个权限</li>
+</ul>
+<p>在判断权限时，如果是 <code>Acl</code> 的 owner，且不是在修改审计信息时，就可以直接获得权限；否则就需要 <code>Authentication</code> 具备对应的 <code>GrantedAuthority</code>。</p>
+<p>===== 注入 PermissionGrantingStrategy</p>
+<h2 id=sourcejava-3>[source,java]</h2>
+<h2 id=heading-3>@Bean
 public PermissionGrantingStrategy permissionGrantingStrategy() {
 return new DefaultPermissionGrantingStrategy(new ConsoleAuditLogger());
-}</h2><p><code>PermissionGrantingStrategy</code> 抽象了 <code>isGranted</code> 方法，被 <code>AclImpl</code> 调用，是真正执行权限判断的地方。
-这个接口只有这一个实现。</p><p>===== 注入 AclCache</p><p><code>AclCache</code> 有两种实现，这里为了简单，我们就使用 Spring 提供的这种实现</p><h2 id=sourcejava-4>[source,java]</h2><p>@Bean
+}</h2>
+<p><code>PermissionGrantingStrategy</code> 抽象了 <code>isGranted</code> 方法，被 <code>AclImpl</code> 调用，是真正执行权限判断的地方。
+这个接口只有这一个实现。</p>
+<p>===== 注入 AclCache</p>
+<p><code>AclCache</code> 有两种实现，这里为了简单，我们就使用 Spring 提供的这种实现</p>
+<h2 id=sourcejava-4>[source,java]</h2>
+<p>@Bean
 public AclCache aclCache() {
 return new SpringCacheBasedAclCache(cache(), permissionGrantingStrategy(), aclAuthorizationStrategy());
-}</p><h2 id=heading-4>@Bean
+}</p>
+<h2 id=heading-4>@Bean
 public Cache cache() {
 return new NoOpCache(&ldquo;any&rdquo;);
-}</h2><p><code>Cache</code> 是 Spring 提供的接口，有多个实现，这里为了简单，就选择了 <code>NoOpCache</code>。</p><p>到这里，<code>JdbcAclService</code> 的配置就暂时告一段落了，这些配置已经足够我们在创建、更新、删除 Domain Object 之后修改 <code>Acl</code> 对象了。接下来我们就来看看如何更新 <code>Acl</code>。</p><p>=== 创建 ACL</p><p>创建 ACL 发生在创建 Domain Object 的时候。我们可以编写代码创建 <code>Acl</code> 对象：</p><h2 id=sourcejava-5>[source,java]</h2><p>public void onCreate(Class&lt;?> domainClass, String id, Authentication authentication) {
+}</h2>
+<p><code>Cache</code> 是 Spring 提供的接口，有多个实现，这里为了简单，就选择了 <code>NoOpCache</code>。</p>
+<p>到这里，<code>JdbcAclService</code> 的配置就暂时告一段落了，这些配置已经足够我们在创建、更新、删除 Domain Object 之后修改 <code>Acl</code> 对象了。接下来我们就来看看如何更新 <code>Acl</code>。</p>
+<p>=== 创建 ACL</p>
+<p>创建 ACL 发生在创建 Domain Object 的时候。我们可以编写代码创建 <code>Acl</code> 对象：</p>
+<h2 id=sourcejava-5>[source,java]</h2>
+<p>public void onCreate(Class&lt;?> domainClass, String id, Authentication authentication) {
 ObjectIdentity objectIdentity = new ObjectIdentityImpl(domainClass, id);
 PrincipalSid sid = new PrincipalSid(authentication);
 MutableAcl acl = findOrCreate(objectIdentity);
 acl.insertAce(acl.getEntries().size(), BasePermission.ADMINISTRATION, sid, true);
 // &mldr; &lt;1>
 mutableAclService.updateAcl(acl);
-}</p><h2 id=heading-5>private MutableAcl findOrCreate(ObjectIdentity objectIdentity) {
+}</p>
+<h2 id=heading-5>private MutableAcl findOrCreate(ObjectIdentity objectIdentity) {
 try {
 return (MutableAcl) mutableAclService.readAclById(objectIdentity); &lt;2>
 } catch (NotFoundException e) {
 return mutableAclService.createAcl(objectIdentity);
 }
-}</h2><p>&lt;1> 这里可以向 <code>Acl</code> 中插入任意需要的 ACE
-&lt;2> 这里的强制转换不会出错是因为 <code>AclImpl</code> 是 <code>Acl</code> 和 <code>MutableAcl</code> 的共有且唯一的实现</p><p>我们来梳理一下这段代码的逻辑：</p><p>. 根据 domainClass 和 id 创建 <code>ObjectIdentity</code>，它可以用来标识一个 domain object
+}</h2>
+<p>&lt;1> 这里可以向 <code>Acl</code> 中插入任意需要的 ACE
+&lt;2> 这里的强制转换不会出错是因为 <code>AclImpl</code> 是 <code>Acl</code> 和 <code>MutableAcl</code> 的共有且唯一的实现</p>
+<p>我们来梳理一下这段代码的逻辑：</p>
+<p>. 根据 domainClass 和 id 创建 <code>ObjectIdentity</code>，它可以用来标识一个 domain object
 . 根据当前的 <code>Authentication</code> 创建一个 <code>PrincipalSid</code>，它后续会被用作 ACE 的 sid
 . 根据 <code>ObjectIdentity</code> 对象查找或创建 <code>Acl</code> 对象
 +
@@ -136,58 +448,270 @@ return mutableAclService.createAcl(objectIdentity);
 . 向 <code>Acl</code> 中插入 ACE
 +
 这里可添加当前用户的 ACE，也可以添加某种 <code>GrantedAuthority</code> 的权限
-. 保存 <code>Acl</code></p><p>接着我们来看一下添加 ACE 的细节，也就是 <code>Acl.insertAce()</code> 方法。</p><p>==== insertAce</p><p>这个方法的作用是向 <code>Acl</code> 实例的 <code>List&lt;AccessControlEntry></code> 中插入 ACE 实例。</p><p>第一个参数指定了这个 ACE 在列表中的索引值。</p><p>第二个参数指定这个 ACE 的权限是什么。这里我们使用了 <code>BasePermission</code> 这个实现提供的值。
-但无论如何，<code>Permission</code> 接口的 <code>getMask()</code> 方法一定返回的是一个 32 位的二进制数字。（类型是 int，但取值范围是 0~2^32^-1，这也就是所能设计的权限的个数。）</p><p>第三个参数是一个 <code>Sid</code>，表示这个 <code>Sid</code> 拥有对应的权限。</p><p>第四个参数是 granting，代表这条 ACE 是否生效，作用类似于 enable。</p><p>调用了这个方法之后，一个新的 ACE 就被加入到 <code>Acl</code> 中了。接下来的权限判断就可以使用到这个新的 ACE。</p><p>=== 更新 ACL</p><p>更新 ACL 可能更多的出现在协作软件中，比如邀请他人一起编写文档等操作。</p><p>==== 添加新的 ACE</p><p>我们就以邀请协作作为例子，看看如何添加 ACE：</p><h2 id=sourcejava-6>[source,java]</h2><p>public void onInvite(Class&lt;?> domainClass, String id, String invitedUserPrincipalName) {
+. 保存 <code>Acl</code></p>
+<p>接着我们来看一下添加 ACE 的细节，也就是 <code>Acl.insertAce()</code> 方法。</p>
+<p>==== insertAce</p>
+<p>这个方法的作用是向 <code>Acl</code> 实例的 <code>List&lt;AccessControlEntry></code> 中插入 ACE 实例。</p>
+<p>第一个参数指定了这个 ACE 在列表中的索引值。</p>
+<p>第二个参数指定这个 ACE 的权限是什么。这里我们使用了 <code>BasePermission</code> 这个实现提供的值。
+但无论如何，<code>Permission</code> 接口的 <code>getMask()</code> 方法一定返回的是一个 32 位的二进制数字。（类型是 int，但取值范围是 0~2^32^-1，这也就是所能设计的权限的个数。）</p>
+<p>第三个参数是一个 <code>Sid</code>，表示这个 <code>Sid</code> 拥有对应的权限。</p>
+<p>第四个参数是 granting，代表这条 ACE 是否生效，作用类似于 enable。</p>
+<p>调用了这个方法之后，一个新的 ACE 就被加入到 <code>Acl</code> 中了。接下来的权限判断就可以使用到这个新的 ACE。</p>
+<p>=== 更新 ACL</p>
+<p>更新 ACL 可能更多的出现在协作软件中，比如邀请他人一起编写文档等操作。</p>
+<p>==== 添加新的 ACE</p>
+<p>我们就以邀请协作作为例子，看看如何添加 ACE：</p>
+<h2 id=sourcejava-6>[source,java]</h2>
+<p>public void onInvite(Class&lt;?> domainClass, String id, String invitedUserPrincipalName) {
 ObjectIdentity objectIdentity = new ObjectIdentityImpl(domainClass, id);
 PrincipalSid sid = new PrincipalSid(invitedUserPrincipalName); &lt;1>
 MutableAcl acl = findAcl(objectIdentity);
 acl.insertAce(acl.getEntries().size(), BasePermission.WRITE, sid, true);
 mutableAclService.updateAcl(acl);
-}</p><h2 id=heading-6>private MutableAcl findAcl(ObjectIdentity objectIdentity) {
+}</p>
+<h2 id=heading-6>private MutableAcl findAcl(ObjectIdentity objectIdentity) {
 return (MutableAcl) mutableAclService.readAclById(objectIdentity);
-}</h2><p>&lt;1> <code>PrincipalSid</code> 其实保存的是 <code>Authentication.getName()</code> 的返回值，本质上就是 principal name，所以可以直接使用一个字符串作为 principal name。</p><p>这里，我们给了一个具体的被邀请者一个 WRITE 权限。我们甚至可以给一组用户权限，只需要提供不同的 <code>Sid</code>。</p><h2 id=sourcejava-7>[source,java]</h2><h2 id=grantedauthoritysid-sid--new-grantedauthoritysidteama>GrantedAuthoritySid sid = new GrantedAuthoritySid(&ldquo;teamA&rdquo;);</h2><p>==== 更新已有的 ACE</p><p>还是前面的例子，假设某个协作者完成了自己的工作，不想误操作导致修改，希望将权限修改为只读。
-那么这个时候就会使用到 <code>MutableAcl.updateAce()</code> 方法。</p><p>这个方法只有两个参数，第一个是要修改的 ACE 的索引，第二个是需要修改成的权限，那么我们的代码可能写出来是这个样子：</p><h2 id=sourcejava-8>[source,java]</h2><h2 id=foreachidx---aclupdateaceidx-permission>List aces = acl.getEntries();
+}</h2>
+<p>&lt;1> <code>PrincipalSid</code> 其实保存的是 <code>Authentication.getName()</code> 的返回值，本质上就是 principal name，所以可以直接使用一个字符串作为 principal name。</p>
+<p>这里，我们给了一个具体的被邀请者一个 WRITE 权限。我们甚至可以给一组用户权限，只需要提供不同的 <code>Sid</code>。</p>
+<h2 id=sourcejava-7>[source,java]</h2>
+<h2 id=grantedauthoritysid-sid--new-grantedauthoritysidteama>GrantedAuthoritySid sid = new GrantedAuthoritySid(&ldquo;teamA&rdquo;);</h2>
+<p>==== 更新已有的 ACE</p>
+<p>还是前面的例子，假设某个协作者完成了自己的工作，不想误操作导致修改，希望将权限修改为只读。
+那么这个时候就会使用到 <code>MutableAcl.updateAce()</code> 方法。</p>
+<p>这个方法只有两个参数，第一个是要修改的 ACE 的索引，第二个是需要修改成的权限，那么我们的代码可能写出来是这个样子：</p>
+<h2 id=sourcejava-8>[source,java]</h2>
+<h2 id=foreachidx---aclupdateaceidx-permission>List aces = acl.getEntries();
 aces.stream()
 .filter(ace -> ace.getSid().equals(sid))
 .mapToInt(aces::indexOf)
-.forEach(idx -> acl.updateAce(idx, permission));</h2><p>这样我们就能将任何匹配到 <code>Sid</code> 的 ACE 的权限修改为指定的 <code>Permission</code>。</p><p>==== 删除已有的 ACE</p><p>还是前面的例子，假设我们协作完成了，需要关闭其他人的权限，那么我们就需要删除对应的 ACE。</p><blockquote><p>个人更倾向于软删除，也就是将 ACE 的 <code>granting</code> 字段设置为 <code>false</code>。但是 Spring ACL 在模型设计上没有提供修改的方法，具体实现上，这个字段也被标记为 <code>final</code>。</p></blockquote><p>删除 ACE 同样需要它的索引：</p><h2 id=sourcejava-9>[source,java]</h2><h2 id=foreachacldeleteace>List aces = acl.getEntries();
+.forEach(idx -> acl.updateAce(idx, permission));</h2>
+<p>这样我们就能将任何匹配到 <code>Sid</code> 的 ACE 的权限修改为指定的 <code>Permission</code>。</p>
+<p>==== 删除已有的 ACE</p>
+<p>还是前面的例子，假设我们协作完成了，需要关闭其他人的权限，那么我们就需要删除对应的 ACE。</p>
+<blockquote>
+<p>个人更倾向于软删除，也就是将 ACE 的 <code>granting</code> 字段设置为 <code>false</code>。但是 Spring ACL 在模型设计上没有提供修改的方法，具体实现上，这个字段也被标记为 <code>final</code>。</p>
+</blockquote>
+<p>删除 ACE 同样需要它的索引：</p>
+<h2 id=sourcejava-9>[source,java]</h2>
+<h2 id=foreachacldeleteace>List aces = acl.getEntries();
 aces.stream()
 .filter(ace -> ace.getSid().equals(sid))
 .mapToInt(aces::indexOf)
-.forEach(acl::deleteAce);</h2><p>=== 删除 ACL</p><p>一个 ACL 关联到一个 domain object，当一个 domain object 被删除时，ACL 也应该被删除。</p><p><code>MutaleAclService</code> 也定义了 <code>deleteAcl</code> 方法用来删除 ACL，它被 <code>JdbcMutableAclService</code> 实现。</p><h2 id=sourcejava-10>[source,java]</h2><h2 id=mutableaclservicedeleteaclacl-true>mutableAclService.deleteAcl(acl, true);</h2><p>其中的第二个参数表示是否要删除子 Acl。（因为 ACL 可以继承）</p><blockquote><p>在具体的实现中，默认的 sql 会删除整个 ACL。所以如果想要实现软删除，那么不仅需要调用对应的 setter 方法来修改对应的 sql，还需要修改表结构来支持软删除。</p></blockquote><p>== 使用 ACL 保护业务调用</p><p>现在我们知道了如何操作 ACL，那么接下来看看如果使用 ACL 来判断请求是否有权限调用业务方法。</p><p>在link:../spring-security-acl-conception-and-component/#_acl_验证逻辑的入口[上一篇文章]中，我们介绍过 Spring ACL 提供的三种使用 ACL 的机制，接下来我们以 expression based access control 作为例子，看看如何使用 ACL 保护业务方法。</p><p>在这个例子中，我们使用 <code>PostAuthorize</code> 来保护业务方法：</p><h2 id=sourcejava-11>[source,java]</h2><h2 id=heading-7>@PostAuthorize(&ldquo;hasPermission(returnObject, &lsquo;READ&rsquo;)")
+.forEach(acl::deleteAce);</h2>
+<p>=== 删除 ACL</p>
+<p>一个 ACL 关联到一个 domain object，当一个 domain object 被删除时，ACL 也应该被删除。</p>
+<p><code>MutaleAclService</code> 也定义了 <code>deleteAcl</code> 方法用来删除 ACL，它被 <code>JdbcMutableAclService</code> 实现。</p>
+<h2 id=sourcejava-10>[source,java]</h2>
+<h2 id=mutableaclservicedeleteaclacl-true>mutableAclService.deleteAcl(acl, true);</h2>
+<p>其中的第二个参数表示是否要删除子 Acl。（因为 ACL 可以继承）</p>
+<blockquote>
+<p>在具体的实现中，默认的 sql 会删除整个 ACL。所以如果想要实现软删除，那么不仅需要调用对应的 setter 方法来修改对应的 sql，还需要修改表结构来支持软删除。</p>
+</blockquote>
+<p>== 使用 ACL 保护业务调用</p>
+<p>现在我们知道了如何操作 ACL，那么接下来看看如果使用 ACL 来判断请求是否有权限调用业务方法。</p>
+<p>在link:../spring-security-acl-conception-and-component/#_acl_验证逻辑的入口[上一篇文章]中，我们介绍过 Spring ACL 提供的三种使用 ACL 的机制，接下来我们以 expression based access control 作为例子，看看如何使用 ACL 保护业务方法。</p>
+<p>在这个例子中，我们使用 <code>PostAuthorize</code> 来保护业务方法：</p>
+<h2 id=sourcejava-11>[source,java]</h2>
+<h2 id=heading-7>@PostAuthorize(&ldquo;hasPermission(returnObject, &lsquo;READ&rsquo;)")
 public DomainObject find(String id) {
 //&mldr;
 return domainObject;
-}</h2><p>这个例子中，业务方法返回的 domainObject 会被作为表达式中的 returnObject 传递给 <code>hasPermission</code> 方法，验证当前用户是否有指定的 READ 权限。</p><p>这里的 <code>hasPermission</code> 方法会调用到 <code>SecurityExpressionRoot</code>，最终到达 <code>AclPermissionEvaluator.hasPermission()</code> 方法。</p><p>在这个方法中，returnObject 会被交给 <code>ObjectIdnetityRetrievalStrategy</code> 接口，得到 <code>ObjectIdentity</code>，用来查找对应的 <code>Acl</code> 实例。</p><blockquote><p>具体实现上，其实是通过反射得到 className 和 <code>getId()</code> 方法，然后调用这个方法得到 identity。所以这里的 returnObject 一定要有 <code>getId()</code> 方法。</p></blockquote><p>我们传递的 <code>'READ'</code> 参数，就是 permission，但这里被当作了 <code>Object</code>。<code>AclPermissionEvaluator</code> 通过自己实现的 <code>resolvePermission()</code> 方法来处理不同类型的参数。
+}</h2>
+<p>这个例子中，业务方法返回的 domainObject 会被作为表达式中的 returnObject 传递给 <code>hasPermission</code> 方法，验证当前用户是否有指定的 READ 权限。</p>
+<p>这里的 <code>hasPermission</code> 方法会调用到 <code>SecurityExpressionRoot</code>，最终到达 <code>AclPermissionEvaluator.hasPermission()</code> 方法。</p>
+<p>在这个方法中，returnObject 会被交给 <code>ObjectIdnetityRetrievalStrategy</code> 接口，得到 <code>ObjectIdentity</code>，用来查找对应的 <code>Acl</code> 实例。</p>
+<blockquote>
+<p>具体实现上，其实是通过反射得到 className 和 <code>getId()</code> 方法，然后调用这个方法得到 identity。所以这里的 returnObject 一定要有 <code>getId()</code> 方法。</p>
+</blockquote>
+<p>我们传递的 <code>'READ'</code> 参数，就是 permission，但这里被当作了 <code>Object</code>。<code>AclPermissionEvaluator</code> 通过自己实现的 <code>resolvePermission()</code> 方法来处理不同类型的参数。
 我们的 <code>'READ'</code> 会被当做字符串处理，交给 <code>PermissionFactory</code> 的默认实现处理。
 默认实现中提供了两个 <code>Map</code>，分别保存了 <code>permission name -> BasePermission</code> 和 <code>mask int -> BasePermission</code> 的映射关系。
-我们的 <code>'READ'</code> 也就这样被映射到了 <code>BasePermission.READ</code>。</p><p>=== 启用 Method Security</p><p>解释完了上面的方法，接下来就是要让这个表达式生效了。</p><p>Spring Security 默认没用启用 Method Security，而 <code>PostAuthorize</code> 则需要这个支持。</p><p>要启用这个功能很简单，我们只需要：</p><p>. enable pre/post security
+我们的 <code>'READ'</code> 也就这样被映射到了 <code>BasePermission.READ</code>。</p>
+<p>=== 启用 Method Security</p>
+<p>解释完了上面的方法，接下来就是要让这个表达式生效了。</p>
+<p>Spring Security 默认没用启用 Method Security，而 <code>PostAuthorize</code> 则需要这个支持。</p>
+<p>要启用这个功能很简单，我们只需要：</p>
+<p>. enable pre/post security
 . 创建 <code>AclPermissionEvaluator</code>
-. 创建 <code>MethodSecurityExpressionHanler</code>，并将 <code>AclPermissionEvaluator</code> 设置为它的 <code>PermissionEvaluator</code></p><h2 id=sourcejava-12>[source,java]</h2><p>@Configuration
+. 创建 <code>MethodSecurityExpressionHanler</code>，并将 <code>AclPermissionEvaluator</code> 设置为它的 <code>PermissionEvaluator</code></p>
+<h2 id=sourcejava-12>[source,java]</h2>
+<p>@Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class MethodSecurityConfig {
-@Autowired private AclService aclService;</p><h2 id=heading-8>@Bean
+@Autowired private AclService aclService;</p>
+<h2 id=heading-8>@Bean
 public MethodSecurityExpressionHandler methodSecurityExpressionHandler() {
 MethodSecurityExpressionHandler handler = new DefaultMethodSecurityExpressionHandler();
 handler.setPermissionEvaluator(new AclPermissionEvaluator(aclService)); &lt;1>
 return handler;
 }
-}</h2><p>&lt;1> 我们可以给它提供一个 <code>AclSerivce</code> 而不是 <code>MutableAclService</code>，因为它不会修改 ACL</p><p>这样我们的表达式就能生效了，当一个没有 READ 权限的用户尝试访问 domain object 的时候，就会得到一个 403 响应。</p><hr><p>这里就不再讲使用 <code>AclEntryVoter</code> 和 after invocation 的例子了，无论使用哪种方式，都需要自己进行相应的配置。读者如果感兴趣可以自己研究研究。</p><hr><p>== 总结</p><p>这篇文章从代码的角度简单研究了如何使用 ACL。</p><p>相信你也看出来了，没有 Spring Boot auto configure 的支持，使用 ACL 需要些大量的配置代码。
+}</h2>
+<p>&lt;1> 我们可以给它提供一个 <code>AclSerivce</code> 而不是 <code>MutableAclService</code>，因为它不会修改 ACL</p>
+<p>这样我们的表达式就能生效了，当一个没有 READ 权限的用户尝试访问 domain object 的时候，就会得到一个 403 响应。</p>
+<hr>
+<p>这里就不再讲使用 <code>AclEntryVoter</code> 和 after invocation 的例子了，无论使用哪种方式，都需要自己进行相应的配置。读者如果感兴趣可以自己研究研究。</p>
+<hr>
+<p>== 总结</p>
+<p>这篇文章从代码的角度简单研究了如何使用 ACL。</p>
+<p>相信你也看出来了，没有 Spring Boot auto configure 的支持，使用 ACL 需要些大量的配置代码。
 这还不止。在研究源码时，发现 ACL 的实现其实比较简单，覆盖的场景看起来特别单一。
-如果实际项目想要使用，应该需要花一些工作来提供项目和适配的实现。</p><blockquote><p>举个例子，<code>AclEntryVoter</code> 的实现中，要求 <code>MethodInvocation</code> 的餐宿中一定要有 domain object，这一点可能就和一些项目的实践相违背。</p></blockquote><p>尽管如此，我仍然认为 ACL 是一种不错的设计，很好的分离了业务和访问控制的关注点，抽象的接口也可以方便的进行扩展，值得去试一试。</p><blockquote><p>查看系列文章： link:../../series/spring-security-servlet/[点这里]</p></blockquote></div><div class=article-footer><blockquote class=mt-2x><ul class="post-copyright list-unstyled"><li class="post-copyright-link hidden-xs"><strong>本文链接:</strong>
-<a href=https://blog.gaoyuexiang.cn/posts/how-to-use-spring-security-acl/ title="如何使用 Spring Security ACL" target=_blank rel=external>https://blog.gaoyuexiang.cn/posts/how-to-use-spring-security-acl/</a></li><li class=post-copyright-license><strong>License:</strong>
-<a href=https://creativecommons.org/licenses/by-nc/4.0/deed.zh target=_blank rel=external>CC BY-NC 4.0 CN</a></li></ul></blockquote><div class="panel panel-default panel-badger"><div class=panel-body><figure class=media><div class=media-left><a href=https://github.com/kbyyd24 target=_blank class="img-burn thumb-sm visible-lg"><img src="https://avatars3.githubusercontent.com/u/9191275?s=460&u=a7ea5a50516804b275b4f7a36b36efc36c75e095&v=4" class="img-rounded w-full" alt></a></div><div class=media-body><h3 class=media-heading><a href=https://github.com/kbyyd24 target=_blank><span class=text-dark>无糖拿铁</span><small class=ml-1x>无糖拿铁，谢谢</small></a></h3><div>Good Good Study, Day Day Up~</div></div></figure></div></div></div></article><section id=comments><div id=vcomments></div></section></div><nav class="bar bar-footer clearfix" data-stick-bottom><div class=bar-inner><ul class="pager pull-left"><li class=prev><a href=https://blog.gaoyuexiang.cn/posts/spring-security-acl-conception-and-component/ title="Spring Security ACL 核心概念和组件"><i class="icon icon-angle-left" aria-hidden=true></i><span>&nbsp;&nbsp;下一篇</span></a></li><li class=next><a href=https://blog.gaoyuexiang.cn/posts/eureka-self-preservation-mode/ title="Eureka 中的幽灵 —— Self Preservation 导致的幽灵服务"><span>上一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden=true></i></a></li><li class=toggle-toc><a class="toggle-btn collapsed" data-toggle=collapse href=#collapseToc aria-expanded=false title=文章目录 role=button><span>[&nbsp;</span><span>文章目录</span>
-<i class="text-collapsed icon icon-anchor"></i><i class="text-in icon icon-close"></i><span>]</span></a></li></ul><button type=button class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle=modal data-target=#donateModal><span>赏</span></button><div class=bar-right><div class=share-component data-sites="weibo,qq,qzone,wechat,facebook,twitter, linkedin" data-mobile-sites="weibo,qq,qzone,wechat,facebook,twitter, linkedin"></div></div></div></nav><div class="modal modal-center modal-small modal-xs-full fade" id=donateModal tabindex=-1 role=dialog><div class=modal-dialog role=document><div class="modal-content donate"><button type=button class=close data-dismiss=modal aria-label=Close><span aria-hidden=true>&#215;</span></button><div class=modal-body><div class=donate-box><div class=donate-head><p>赏杯咖啡吧</p></div><div class=tab-content><div role=tabpanel class="tab-pane fade active in" id=alipay><div class=donate-payimg><img src=https://blog.gaoyuexiang.cn/images/alipay.jpeg alt=扫码支持 title=扫一扫></div><p class="text-muted mv">扫码打赏, 多少你说了算~</p><p class=text-grey>打开支付宝扫一扫，即可进行扫码打赏哦~</p></div><div role=tabpanel class="tab-pane fade" id=wechatpay><div class=donate-payimg><img src=https://blog.gaoyuexiang.cn/images/wechatpay.png alt=扫码支持 title=扫一扫></div><p class="text-muted mv">扫码打赏, 多少你说了算~</p><p class=text-grey>打开微信扫一扫，即可进行扫码打赏哦</p></div></div><div class=donate-footer><ul class="nav nav-tabs nav-justified" role=tablist><li role=presentation class=active><a href=#alipay id=alipay-tab role=tab data-toggle=tab aria-controls=alipay aria-expanded=true><i class="icon icon-alipay"></i>支付宝</a></li><li role=presentation><a href=#wechatpay role=tab id=wechatpay-tab data-toggle=tab aria-controls=wechatpay aria-expanded=false><i class="icon icon-wepay"></i>微信支付</a></li></ul></div></div></div></div></div></div></main><footer class=footer itemscope itemtype=http://schema.org/WPFooter><ul class=social-links><li><a href=https://github.com/kbyyd24 target=_blank title=github data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li><li><a href=https://blog.gaoyuexiang.cn/index.xml target=_blank title=rss data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li><li><a href=https://blog.gaoyuexiang.cn/images/wechat_channel_with_name.png target=_blank title=wechat data-toggle=tooltip data-placement=top><i class="icon icon-wechat"></i></a></li></ul><div class=copyright>&copy;2016 -
-2022<div class=publishby>Theme by <a href=https://github.com/xiaoheiAh target=_blank>xiaoheiAh </a>base on<a href=https://github.com/xiaoheiAh/hugo-theme-pure target=_blank> pure</a>.</div><div><a href=https://beian.miit.gov.cn/ target=_blank>蜀ICP备15031888号-2</a></div></div></footer><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script><script type=text/x-mathjax-config>
+如果实际项目想要使用，应该需要花一些工作来提供项目和适配的实现。</p>
+<blockquote>
+<p>举个例子，<code>AclEntryVoter</code> 的实现中，要求 <code>MethodInvocation</code> 的餐宿中一定要有 domain object，这一点可能就和一些项目的实践相违背。</p>
+</blockquote>
+<p>尽管如此，我仍然认为 ACL 是一种不错的设计，很好的分离了业务和访问控制的关注点，抽象的接口也可以方便的进行扩展，值得去试一试。</p>
+<blockquote>
+<p>查看系列文章： link:../../series/spring-security-servlet/[点这里]</p>
+</blockquote>
+</div>
+<div class=article-footer>
+<blockquote class=mt-2x>
+<ul class="post-copyright list-unstyled">
+<li class="post-copyright-link hidden-xs">
+<strong>本文链接: </strong>
+<a href=https://blog.gaoyuexiang.cn/posts/how-to-use-spring-security-acl/ title="如何使用 Spring Security ACL" target=_blank rel=external>https://blog.gaoyuexiang.cn/posts/how-to-use-spring-security-acl/</a>
+</li>
+<li class=post-copyright-license>
+<strong>License: </strong>
+<a href=https://creativecommons.org/licenses/by-nc/4.0/deed.zh target=_blank rel=external>CC BY-NC 4.0 CN</a>
+</li>
+</ul>
+</blockquote>
+<div class="panel panel-default panel-badger">
+<div class=panel-body>
+<figure class=media>
+<div class=media-left>
+<a href=https://github.com/kbyyd24 target=_blank class="img-burn thumb-sm visible-lg">
+<img src="https://avatars3.githubusercontent.com/u/9191275?s=460&u=a7ea5a50516804b275b4f7a36b36efc36c75e095&v=4" class="img-rounded w-full" alt>
+</a>
+</div>
+<div class=media-body>
+<h3 class=media-heading><a href=https://github.com/kbyyd24 target=_blank><span class=text-dark>无糖拿铁</span><small class=ml-1x>无糖拿铁，谢谢</small></a></h3>
+<div>Good Good Study, Day Day Up~</div>
+</div>
+</figure>
+</div>
+</div>
+</div>
+</article>
+<section id=comments>
+<div id=vcomments></div>
+</section>
+</div><nav class="bar bar-footer clearfix" data-stick-bottom>
+<div class=bar-inner>
+<ul class="pager pull-left">
+<li class=prev>
+<a href=https://blog.gaoyuexiang.cn/posts/spring-security-acl-conception-and-component/ title="Spring Security ACL 核心概念和组件"><i class="icon icon-angle-left" aria-hidden=true></i><span>&nbsp;&nbsp;下一篇</span></a>
+</li>
+<li class=next>
+<a href=https://blog.gaoyuexiang.cn/posts/eureka-self-preservation-mode/ title="Eureka 中的幽灵 —— Self Preservation 导致的幽灵服务"><span>上一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden=true></i></a>
+</li>
+<li class=toggle-toc>
+<a class="toggle-btn collapsed" data-toggle=collapse href=#collapseToc aria-expanded=false title=文章目录 role=button>
+<span>[&nbsp;</span><span>文章目录</span>
+<i class="text-collapsed icon icon-anchor"></i>
+<i class="text-in icon icon-close"></i>
+<span>]</span>
+</a>
+</li>
+</ul>
+<button type=button class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle=modal data-target=#donateModal><span>赏</span></button>
+<div class=bar-right>
+<div class=share-component data-sites="weibo,qq,qzone,wechat,facebook,twitter, linkedin" data-mobile-sites="weibo,qq,qzone,wechat,facebook,twitter, linkedin"></div>
+</div>
+</div>
+</nav>
+<div class="modal modal-center modal-small modal-xs-full fade" id=donateModal tabindex=-1 role=dialog>
+<div class=modal-dialog role=document>
+<div class="modal-content donate">
+<button type=button class=close data-dismiss=modal aria-label=Close><span aria-hidden=true>&#215;</span></button>
+<div class=modal-body>
+<div class=donate-box>
+<div class=donate-head>
+<p>赏杯咖啡吧</p>
+</div>
+<div class=tab-content>
+<div role=tabpanel class="tab-pane fade active in" id=alipay>
+<div class=donate-payimg>
+<img src=https://blog.gaoyuexiang.cn/images/alipay.jpeg alt=扫码支持 title=扫一扫>
+</div>
+<p class="text-muted mv">扫码打赏, 多少你说了算~</p>
+<p class=text-grey>打开支付宝扫一扫，即可进行扫码打赏哦~</p>
+</div>
+<div role=tabpanel class="tab-pane fade" id=wechatpay>
+<div class=donate-payimg>
+<img src=https://blog.gaoyuexiang.cn/images/wechatpay.png alt=扫码支持 title=扫一扫>
+</div>
+<p class="text-muted mv">扫码打赏, 多少你说了算~</p>
+<p class=text-grey>打开微信扫一扫，即可进行扫码打赏哦</p>
+</div>
+</div>
+<div class=donate-footer>
+<ul class="nav nav-tabs nav-justified" role=tablist>
+<li role=presentation class=active>
+<a href=#alipay id=alipay-tab role=tab data-toggle=tab aria-controls=alipay aria-expanded=true><i class="icon icon-alipay"></i> 支付宝</a>
+</li>
+<li role=presentation>
+<a href=#wechatpay role=tab id=wechatpay-tab data-toggle=tab aria-controls=wechatpay aria-expanded=false><i class="icon icon-wepay"></i>
+微信支付</a>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main><footer class=footer itemscope itemtype=http://schema.org/WPFooter>
+<ul class=social-links>
+<li><a href=https://github.com/kbyyd24 target=_blank title=github data-toggle=tooltip data-placement=top>
+<i class="icon icon-github"></i></a></li>
+<li><a href=https://blog.gaoyuexiang.cn/index.xml target=_blank title=rss data-toggle=tooltip data-placement=top>
+<i class="icon icon-rss"></i></a></li>
+<li><a href=https://blog.gaoyuexiang.cn/images/wechat_channel_with_name.png target=_blank title=wechat data-toggle=tooltip data-placement=top>
+<i class="icon icon-wechat"></i></a></li>
+</ul>
+<div class=copyright>
+&copy;2016 -
+2022
+<div class=publishby>
+Theme by <a href=https://github.com/xiaoheiAh target=_blank> xiaoheiAh </a>base on<a href=https://github.com/xiaoheiAh/hugo-theme-pure target=_blank> pure</a>.
+</div>
+<div>
+<a href=https://beian.miit.gov.cn/ target=_blank>蜀ICP备15031888号-2</a>
+</div>
+</div>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
+<script type=text/x-mathjax-config>
     MathJax.Hub.Config({
             showMathMenu: false, //disables context menu
             tex2jax: {
             inlineMath: [ ['$','$'], ['\\(','\\)'] ]
            }
     });
-</script><script src=https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js></script><script>window.jQuery||document.write('<script src="js/jquery.min.js"><\/script>')</script><script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/highlight.min.js></script><script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/python.min.js defer></script><script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/javascript.min.js defer></script><script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/java.min.js defer></script><script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/groovy.min.js defer></script><script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/gradle.min.js defer></script><script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/kotlin.min.js defer></script><script>hljs.configure({tabReplace:'    ',classPrefix:''})
-hljs.initHighlightingOnLoad();</script><script src=https://blog.gaoyuexiang.cn/js/application.min.bdeb64b910570b6c41badc6a05b7afb0c8ad9efd8525de3c7257d59e786326a3.js></script><script src=https://blog.gaoyuexiang.cn/js/plugin.min.51ff8c7317566f82259170fa36e09c4493adc9b9378b427a01ad3f017ebac7dd.js></script><script>(function(window){var INSIGHT_CONFIG={TRANSLATION:{POSTS:'文章',PAGES:'页面',CATEGORIES:'分类',TAGS:'标签',UNTITLED:'(未命名)',},ROOT_URL:'https:\/\/blog.gaoyuexiang.cn\/',CONTENT_URL:'https:\/\/blog.gaoyuexiang.cn\/\/searchindex.json ',};window.INSIGHT_CONFIG=INSIGHT_CONFIG;})(window);</script><script type=text/javascript src=https://blog.gaoyuexiang.cn/js/insight.min.a343cd9a5a7698336b28ef3a7c16a3a1b1d2d5fb17dc8ed04022bbe08cc5459073a15bdafa3a8a58cdd56080784bdd69fa70b1ae8597565c799c57ed00f0e120.js defer></script><script src=https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.min.js></script><script>tocbot.init({tocSelector:'.js-toc',contentSelector:'.js-toc-content',headingSelector:'h1, h2, h3',hasInnerContainers:true,});</script><script defer src=https://cdn1.lncld.net/static/js/av-min-1.2.1.js></script><script defer>AV.init({appId:'',appKey:''});function showTime(Counter){var query=new AV.Query(Counter);var visitors=$('.leancloud_visitors');query.greaterThanOrEqualTo("time",0);query.find({success:function(results){if(results.length==0){return;}
-var data=results;visitors.each(function(){var url=$(this).attr('id').trim();for(var i=0;i<data.length;i++){var object=data[i];var content=object.get('time');var _url=object.get('url')
-if(url==_url){$(this).text(content);}}})},error:function(object,error){console.log("Error: "+error.code+" "+error.message);}});}
-function addCount(Counter){var Counter=AV.Object.extend("Counter");url=$(".leancloud_visitors").attr('id').trim();title=$(".leancloud_visitors").attr('data-flag-title').trim();var query=new AV.Query(Counter);query.equalTo("url",url);query.find({success:function(results){if(results.length>0){var counter=results[0];counter.fetchWhenSave(true);counter.increment("time");counter.save(null,{success:function(counter){var content=counter.get('time');$(document.getElementById(url)).text(content);},error:function(counter,error){console.log('Failed to save Visitor num, with error message: '+error.message);}});}else{var newcounter=new Counter();newcounter.set("title",title);newcounter.set("url",url);newcounter.set("time",1);newcounter.save(null,{success:function(newcounter){console.log("newcounter.get('time')="+newcounter.get('time'));var content=newcounter.get('time');$(document.getElementById(url)).text(content);},error:function(newcounter,error){console.log('Failed to create');}});}},error:function(error){console.log('Error:'+error.code+" "+error.message);}});}
-$(function(){var Counter=AV.Object.extend("Counter");if($('.leancloud_visitors').length==1){addCount(Counter);}else{showTime(Counter);}});</script><script src=https://cdn1.lncld.net/static/js/3.0.4/av-min.js></script><script src=https://cdn.jsdelivr.net/npm/valine></script><script type=text/javascript>var GUEST=['nick','mail','link'];var meta='nick,mail';meta=meta.split(',').filter(function(item){return GUEST.indexOf(item)>-1;});new Valine({el:'#vcomments',verify:null,notify:null,appId:'Voz5TpLaiKvWLiVk63CrRybt-gzGzoHsz',appKey:'xzDAABvBBG6vK7iwgd1VKUnw',placeholder:'enjoy~',avatar:'mm',meta:meta,pageSize:'10'||10,visitor:false});</script></body></html>
+</script>
+<script src=https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js></script>
+<script>window.jQuery||document.write('<script src="js/jquery.min.js"><\/script>')</script>
+<script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/highlight.min.js></script>
+<script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/python.min.js defer></script>
+<script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/javascript.min.js defer></script>
+<script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/java.min.js defer></script>
+<script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/groovy.min.js defer></script>
+<script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/gradle.min.js defer></script>
+<script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/kotlin.min.js defer></script><script>hljs.configure({tabReplace:'    ',classPrefix:''}),hljs.initHighlightingOnLoad()</script>
+<script src=https://blog.gaoyuexiang.cn/js/application.min.a94ab19cb63a95c8d7fbd7b85cab3ddeea8c369bdf75b9cab6708787ead123af.js></script>
+<script src=https://blog.gaoyuexiang.cn/js/plugin.min.19c5bcb2fb0789ab4f2b7834e5ceb5e92635645605bab902c1024b25f1502364.js></script>
+<script>(function(a){var b={TRANSLATION:{POSTS:'文章',PAGES:'页面',CATEGORIES:'分类',TAGS:'标签',UNTITLED:'(未命名)'},ROOT_URL:'https://blog.gaoyuexiang.cn/',CONTENT_URL:'https://blog.gaoyuexiang.cn//searchindex.json '};a.INSIGHT_CONFIG=b})(window)</script>
+<script type=text/javascript src=https://blog.gaoyuexiang.cn/js/insight.min.4a2d52de4bfff73e0c688404fe3d17c9a3ae12d9888e1e1ac9c690e4890de2ded50fe55f2b819c2ba55435a76f396f3ea6805765f0b0af5635cdf74ea459eab0.js defer></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.min.js></script>
+<script>tocbot.init({tocSelector:'.js-toc',contentSelector:'.js-toc-content',headingSelector:'h1, h2, h3',hasInnerContainers:!0})</script>
+<script defer src=https://cdn1.lncld.net/static/js/av-min-1.2.1.js></script>
+<script defer>AV.init({appId:'',appKey:''});function showTime(b){var a=new AV.Query(b),c=$('.leancloud_visitors');a.greaterThanOrEqualTo("time",0),a.find({success:function(a){if(a.length==0)return;var b=a;c.each(function(){for(var d=$(this).attr('id').trim(),a=0,c,e,f;a<b.length;a++)c=b[a],e=c.get('time'),f=c.get('url'),d==f&&$(this).text(e)})},error:function(b,a){console.log("Error: "+a.code+" "+a.message)}})}function addCount(a){var a=AV.Object.extend("Counter"),b;url=$(".leancloud_visitors").attr('id').trim(),title=$(".leancloud_visitors").attr('data-flag-title').trim(),b=new AV.Query(a),b.equalTo("url",url),b.find({success:function(d){var c,b;d.length>0?(c=d[0],c.fetchWhenSave(!0),c.increment("time"),c.save(null,{success:function(a){var b=a.get('time');$(document.getElementById(url)).text(b)},error:function(b,a){console.log('Failed to save Visitor num, with error message: '+a.message)}})):(b=new a,b.set("title",title),b.set("url",url),b.set("time",1),b.save(null,{success:function(a){console.log("newcounter.get('time')="+a.get('time'));var b=a.get('time');$(document.getElementById(url)).text(b)},error:function(a,b){console.log('Failed to create')}}))},error:function(a){console.log('Error:'+a.code+" "+a.message)}})}$(function(){var a=AV.Object.extend("Counter");$('.leancloud_visitors').length==1?addCount(a):showTime(a)})</script>
+<script src=https://cdn1.lncld.net/static/js/3.0.4/av-min.js></script>
+<script src=https://cdn.jsdelivr.net/npm/valine></script>
+<script type=text/javascript>var GUEST=['nick','mail','link'],meta='nick,mail';meta=meta.split(',').filter(function(a){return GUEST.indexOf(a)>-1}),new Valine({el:'#vcomments',verify:null,notify:null,appId:'Voz5TpLaiKvWLiVk63CrRybt-gzGzoHsz',appKey:'xzDAABvBBG6vK7iwgd1VKUnw',placeholder:'enjoy~',avatar:'mm',meta,pageSize:'10'||10,visitor:!1})</script>
+</body>
+</html>

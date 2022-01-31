@@ -1,8 +1,121 @@
-<!doctype html><html lang=zh><head><title>JUnit 不好用？也许你可以试试这些测试工具 - 无糖拿铁，谢谢</title><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,minimal-ui"><meta name=renderer content="webkit"><meta http-equiv=cache-control content="no-transform"><meta http-equiv=cache-control content="no-siteapp"><meta name=apple-mobile-web-app-capable content="yes"><meta name=apple-mobile-web-app-status-bar-style content="black"><meta name=format-detection content="telephone=no,email=no,adress=no"><meta name=theme-color content="#000000"><meta http-equiv=window-target content="_top"><meta name=description content="在我们日常的 TDD 开发中，永远绕不过去的就是要编写测试。而对于一个 Java 程序员，JUnit 似乎是一个不二的选择。它的确是一个十分优秀的工具，在大多数"><meta name=generator content="Hugo 0.79.1 with theme pure"><title>JUnit 不好用？也许你可以试试这些测试工具 - 无糖拿铁，谢谢</title><link rel=stylesheet href=https://blog.gaoyuexiang.cn/css/style.min.544edf4e480fd84dba4b535b9c42ace7af9a975d149b3f584c0e3a6f120cee55.css><link rel=stylesheet href=https://cdn.staticfile.org/highlight.js/9.15.10/styles/github.min.css async><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.css async><meta property="og:title" content="JUnit 不好用？也许你可以试试这些测试工具"><meta property="og:description" content="在我们日常的 TDD 开发中，永远绕不过去的就是要编写测试。而对于一个 Java 程序员，JUnit 似乎是一个不二的选择。它的确是一个十分优秀的工具，在大多数"><meta property="og:type" content="article"><meta property="og:url" content="https://blog.gaoyuexiang.cn/posts/junit_alternative/"><meta property="article:published_time" content="2021-11-26T00:01:57+08:00"><meta property="article:modified_time" content="2021-11-26T00:01:57+08:00"><meta itemprop=name content="JUnit 不好用？也许你可以试试这些测试工具"><meta itemprop=description content="在我们日常的 TDD 开发中，永远绕不过去的就是要编写测试。而对于一个 Java 程序员，JUnit 似乎是一个不二的选择。它的确是一个十分优秀的工具，在大多数"><meta itemprop=datePublished content="2021-11-26T00:01:57+08:00"><meta itemprop=dateModified content="2021-11-26T00:01:57+08:00"><meta itemprop=wordCount content="5781"><meta itemprop=keywords content="JUnit,Spock,Spek,Kotest,测试,"><meta name=twitter:card content="summary"><meta name=twitter:title content="JUnit 不好用？也许你可以试试这些测试工具"><meta name=twitter:description content="在我们日常的 TDD 开发中，永远绕不过去的就是要编写测试。而对于一个 Java 程序员，JUnit 似乎是一个不二的选择。它的确是一个十分优秀的工具，在大多数"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script><script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]--></head><body class="main-center theme-blue" itemscope itemtype=http://schema.org/WebPage><header class=header itemscope itemtype=http://schema.org/WPHeader><div class=slimContent><div class=navbar-header><div class="profile-block text-center"><a id=avatar href=https://github.com/kbyyd24 target=_blank><img class="img-circle img-rotate" src="https://avatars3.githubusercontent.com/u/9191275?s=460&u=a7ea5a50516804b275b4f7a36b36efc36c75e095&v=4" width=200 height=200></a><h2 id=name class="hidden-xs hidden-sm">无糖拿铁</h2><h3 id=title class="hidden-xs hidden-sm hidden-md">无糖拿铁，谢谢</h3><small id=location class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i>Chengdu, China</small></div><div class=search id=search-form-wrap><form class="search-form sidebar-form"><div class=input-group><input type=text class="search-form-input form-control" placeholder=搜索>
-<span class=input-group-btn><button type=submit class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button></span></div><div class=ins-search><div class=ins-search-mask></div><div class=ins-search-container><div class=ins-input-wrapper><input type=text class=ins-search-input placeholder=想要查找什么... x-webkit-speech>
-<button type=button class="close ins-close ins-selectable" data-dismiss=modal aria-label=Close><span aria-hidden=true>×</span></button></div><div class=ins-section-wrapper><div class=ins-section-container></div></div></div></div></form></div><button class="navbar-toggle collapsed" type=button data-toggle=collapse data-target=#main-navbar aria-controls=main-navbar aria-expanded=false>
+<!doctype html><html lang=zh>
+<head>
+<title>
+JUnit 不好用？也许你可以试试这些测试工具 - 无糖拿铁，谢谢
+</title>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
+<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,minimal-ui">
+<meta name=renderer content="webkit">
+<meta http-equiv=cache-control content="no-transform">
+<meta http-equiv=cache-control content="no-siteapp">
+<meta name=apple-mobile-web-app-capable content="yes">
+<meta name=apple-mobile-web-app-status-bar-style content="black">
+<meta name=format-detection content="telephone=no,email=no,adress=no">
+<meta name=theme-color content="#000000">
+<meta http-equiv=window-target content="_top">
+<meta name=description content="在我们日常的 TDD 开发中，永远绕不过去的就是要编写测试。而对于一个 Java 程序员，JUnit 似乎是一个不二的选择。它的确是一个十分优秀的工具，在大多数">
+<meta name=generator content="Hugo 0.92.1 with theme pure">
+<title>JUnit 不好用？也许你可以试试这些测试工具 - 无糖拿铁，谢谢</title>
+<link rel=stylesheet href=https://blog.gaoyuexiang.cn/css/style.min.e64d754037c0ee0ec4e20ab1d6f07740ace61729bc03850559b8caa21ae4a597.css>
+<link rel=stylesheet href=https://cdn.staticfile.org/highlight.js/9.15.10/styles/github.min.css async>
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.css async>
+<meta property="og:title" content="JUnit 不好用？也许你可以试试这些测试工具">
+<meta property="og:description" content="在我们日常的 TDD 开发中，永远绕不过去的就是要编写测试。而对于一个 Java 程序员，JUnit 似乎是一个不二的选择。它的确是一个十分优秀的工具，在大多数">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://blog.gaoyuexiang.cn/posts/junit_alternative/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2021-11-26T00:01:57+08:00">
+<meta property="article:modified_time" content="2021-11-26T00:01:57+08:00">
+<meta itemprop=name content="JUnit 不好用？也许你可以试试这些测试工具">
+<meta itemprop=description content="在我们日常的 TDD 开发中，永远绕不过去的就是要编写测试。而对于一个 Java 程序员，JUnit 似乎是一个不二的选择。它的确是一个十分优秀的工具，在大多数"><meta itemprop=datePublished content="2021-11-26T00:01:57+08:00">
+<meta itemprop=dateModified content="2021-11-26T00:01:57+08:00">
+<meta itemprop=wordCount content="5781">
+<meta itemprop=keywords content="JUnit,Spock,Spek,Kotest,测试,"><meta name=twitter:card content="summary">
+<meta name=twitter:title content="JUnit 不好用？也许你可以试试这些测试工具">
+<meta name=twitter:description content="在我们日常的 TDD 开发中，永远绕不过去的就是要编写测试。而对于一个 Java 程序员，JUnit 似乎是一个不二的选择。它的确是一个十分优秀的工具，在大多数"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
+<script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]-->
+</head>
+<body class="main-center theme-blue" itemscope itemtype=http://schema.org/WebPage><header class=header itemscope itemtype=http://schema.org/WPHeader>
+<div class=slimContent>
+<div class=navbar-header>
+<div class="profile-block text-center">
+<a id=avatar href=https://github.com/kbyyd24 target=_blank>
+<img class="img-circle img-rotate" src="https://avatars3.githubusercontent.com/u/9191275?s=460&u=a7ea5a50516804b275b4f7a36b36efc36c75e095&v=4" width=200 height=200>
+</a>
+<h2 id=name class="hidden-xs hidden-sm">无糖拿铁</h2>
+<h3 id=title class="hidden-xs hidden-sm hidden-md">无糖拿铁，谢谢</h3>
+<small id=location class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i>Chengdu, China</small>
+</div><div class=search id=search-form-wrap>
+<form class="search-form sidebar-form">
+<div class=input-group>
+<input type=text class="search-form-input form-control" placeholder=搜索>
+<span class=input-group-btn>
+<button type=submit class="search-form-submit btn btn-flat" onclick=return!1><i class="icon icon-search"></i></button>
+</span>
+</div>
+<div class=ins-search>
+<div class=ins-search-mask></div>
+<div class=ins-search-container>
+<div class=ins-input-wrapper>
+<input type=text class=ins-search-input placeholder=想要查找什么... x-webkit-speech>
+<button type=button class="close ins-close ins-selectable" data-dismiss=modal aria-label=Close><span aria-hidden=true>×</span></button>
+</div>
+<div class=ins-section-wrapper>
+<div class=ins-section-container></div>
+</div>
+</div>
+</div>
+</form>
+</div>
+<button class="navbar-toggle collapsed" type=button data-toggle=collapse data-target=#main-navbar aria-controls=main-navbar aria-expanded=false>
 <span class=sr-only>Toggle navigation</span>
-<span class=icon-bar></span><span class=icon-bar></span><span class=icon-bar></span></button></div><nav id=main-navbar class="collapse navbar-collapse" itemscope itemtype=http://schema.org/SiteNavigationElement role=navigation><ul class="nav navbar-nav main-nav"><li class="menu-item menu-item-home"><a href=/><i class="icon icon-home-fill"></i><span class=menu-title>Home</span></a></li><li class="menu-item menu-item-archives"><a href=/posts/><i class="icon icon-archives-fill"></i><span class=menu-title>Archives</span></a></li><li class="menu-item menu-item-series"><a href=/series-index/><i class="icon icon-folder-open"></i><span class=menu-title>Series</span></a></li><li class="menu-item menu-item-tags"><a href=/tags/><i class="icon icon-tags"></i><span class=menu-title>Tags</span></a></li><li class="menu-item menu-item-about"><a href=/about/><i class="icon icon-cup-fill"></i><span class=menu-title>About</span></a></li></ul></nav></div></header><aside class=sidebar itemscope itemtype=http://schema.org/WPSideBar><div class=slimContent><div class=widget><h3 class=widget-title>标签</h3><div id=tag-cloud-list class=widget-body><a href=https://blog.gaoyuexiang.cn/tags/12-factor/ class=tag-list-link rel=1>12-factor<span class=tag-list-count>1</span></a>
+<span class=icon-bar></span>
+<span class=icon-bar></span>
+<span class=icon-bar></span>
+</button>
+</div>
+<nav id=main-navbar class="collapse navbar-collapse" itemscope itemtype=http://schema.org/SiteNavigationElement role=navigation>
+<ul class="nav navbar-nav main-nav">
+<li class="menu-item menu-item-home">
+<a href=/>
+<i class="icon icon-home-fill"></i>
+<span class=menu-title>Home</span>
+</a>
+</li>
+<li class="menu-item menu-item-archives">
+<a href=/posts/>
+<i class="icon icon-archives-fill"></i>
+<span class=menu-title>Archives</span>
+</a>
+</li>
+<li class="menu-item menu-item-series">
+<a href=/series-index/>
+<i class="icon icon-folder-open"></i>
+<span class=menu-title>Series</span>
+</a>
+</li>
+<li class="menu-item menu-item-tags">
+<a href=/tags/>
+<i class="icon icon-tags"></i>
+<span class=menu-title>Tags</span>
+</a>
+</li>
+<li class="menu-item menu-item-about">
+<a href=/about/>
+<i class="icon icon-cup-fill"></i>
+<span class=menu-title>About</span>
+</a>
+</li>
+</ul>
+</nav>
+</div>
+</header>
+<aside class=sidebar itemscope itemtype=http://schema.org/WPSideBar>
+<div class=slimContent>
+<div class=widget>
+<h3 class=widget-title> 标签</h3>
+<div id=tag-cloud-list class=widget-body>
+<a href=https://blog.gaoyuexiang.cn/tags/12-factor/ class=tag-list-link rel=1>12-factor<span class=tag-list-count>1</span></a>
 <a href=https://blog.gaoyuexiang.cn/tags/architecture/ class=tag-list-link rel=2>architecture<span class=tag-list-count>2</span></a>
 <a href=https://blog.gaoyuexiang.cn/tags/auto-configure/ class=tag-list-link rel=1>auto-configure<span class=tag-list-count>1</span></a>
 <a href=https://blog.gaoyuexiang.cn/tags/classpathscanningcandidatecomponentprovider/ class=tag-list-link rel=1>classpathscanningcandidatecomponentprovider<span class=tag-list-count>1</span></a>
@@ -69,21 +182,142 @@
 <a href=https://blog.gaoyuexiang.cn/tags/%E7%AB%AF%E5%8F%A3%E4%B8%8E%E9%80%82%E9%85%8D%E5%99%A8%E6%9E%B6%E6%9E%84/ class=tag-list-link rel=2>端口与适配器架构<span class=tag-list-count>2</span></a>
 <a href=https://blog.gaoyuexiang.cn/tags/%E8%87%AA%E6%88%91%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/ class=tag-list-link rel=1>自我保护模式<span class=tag-list-count>1</span></a>
 <a href=https://blog.gaoyuexiang.cn/tags/%E9%87%8D%E6%9E%84/ class=tag-list-link rel=1>重构<span class=tag-list-count>1</span></a>
-<a href=https://blog.gaoyuexiang.cn/tags/%E9%9C%B0%E5%BC%B9%E5%BC%8F%E4%BF%AE%E6%94%B9/ class=tag-list-link rel=1>霰弹式修改<span class=tag-list-count>1</span></a></div><script>document.onreadystatechange=()=>{if(document.readyState==='complete'){tagCloud('#tag-cloud-list a',8,20);}};function tagCloud(where,min,max){let iMax=0;let iMin=0;$(where).each(function(){let weight=Number($(this).attr("rel"));if(iMax<weight)iMax=weight;if(iMin>weight||iMin==0)iMin=weight;});let step=(max-min)/(iMax-iMin);$(where).each(function(){let weight=$(this).attr("rel")-iMin;$(this).css({"font-size":min+(weight*step)+'px'});});};</script></div><div class=widget><h3 class=widget-title>最新文章</h3><div class=widget-body><ul class="recent-post-list list-unstyled no-thumbnail"><li><div class=item-inner><p class=item-title><a href=https://blog.gaoyuexiang.cn/posts/junit_alternative/ class=title>JUnit 不好用？也许你可以试试这些测试工具</a></p><p class=item-date><time datetime="2021-11-26 00:01:57 +0800 +0800" itemprop=datePublished>2021-11-26</time></p></div></li><li><div class=item-inner><p class=item-title><a href=https://blog.gaoyuexiang.cn/posts/domain-centeric-architectures/ class=title>以领域为核心的架构们如何指导我们写代码</a></p><p class=item-date><time datetime="2021-05-25 22:13:57 +0800 +0800" itemprop=datePublished>2021-05-25</time></p></div></li><li><div class=item-inner><p class=item-title><a href=https://blog.gaoyuexiang.cn/posts/divergent-change-and-shotgun-surgery/ class=title>发散式变化与霰弹式修改</a></p><p class=item-date><time datetime="2021-04-25 20:22:33 +0800 +0800" itemprop=datePublished>2021-04-25</time></p></div></li><li><div class=item-inner><p class=item-title><a href=https://blog.gaoyuexiang.cn/posts/how-to-scan-classes-in-java-package-with-annotation/ class=title>要扫描 Java 的 package 中有某个注解的类，应该怎么做？</a></p><p class=item-date><time datetime="2021-03-21 19:52:45 +0800 +0800" itemprop=datePublished>2021-03-21</time></p></div></li><li><div class=item-inner><p class=item-title><a href=https://blog.gaoyuexiang.cn/posts/jackson-inheritance/ class=title>使用 Jackson 处理抽象类的序列化和反序列化</a></p><p class=item-date><time datetime="2020-10-02 21:38:48 +0000 UTC" itemprop=datePublished>2020-10-02</time></p></div></li></ul></div></div></div></aside><aside class="sidebar sidebar-toc collapse" id=collapseToc itemscope itemtype=http://schema.org/WPSideBar><div class=slimContent><h4 class=toc-title>文章目录</h4><nav id=toc class="js-toc toc"></nav></div></aside><main class=main role=main><div class=content><article id=- class="article article-type-" itemscope itemtype=http://schema.org/BlogPosting><div class=article-header><h1 itemprop=name><a class=article-title href=/posts/junit_alternative/>JUnit 不好用？也许你可以试试这些测试工具</a></h1><div class=article-meta><span class=article-date><i class="icon icon-calendar-check"></i>&nbsp;
-<a href=https://blog.gaoyuexiang.cn/posts/junit_alternative/ class=article-date><time datetime="2021-11-26 00:01:57 +0800 +0800" itemprop=datePublished>2021-11-26</time></a></span>
-<span class=article-tag><i class="icon icon-tags"></i>&nbsp;
-<a class=article-tag-link href=/tags/junit/>JUnit</a>
-<a class=article-tag-link href=/tags/spock/>Spock</a>
-<a class=article-tag-link href=/tags/spek/>Spek</a>
-<a class=article-tag-link href=/tags/kotest/>Kotest</a>
-<a class=article-tag-link href=/tags/%E6%B5%8B%E8%AF%95/>测试</a></span>
-<span class="article-read hidden-xs"><i class="icon icon-eye-fill" aria-hidden=true></i><span id=https://blog.gaoyuexiang.cn/posts/junit_alternative/ class=leancloud_visitors data-flag-title="JUnit 不好用？也许你可以试试这些测试工具">0</span></span>
+<a href=https://blog.gaoyuexiang.cn/tags/%E9%9C%B0%E5%BC%B9%E5%BC%8F%E4%BF%AE%E6%94%B9/ class=tag-list-link rel=1>霰弹式修改<span class=tag-list-count>1</span></a>
+</div>
+<script>document.onreadystatechange=()=>{document.readyState==='complete'&&tagCloud('#tag-cloud-list a',8,20)};function tagCloud(c,d,e){let b=0,a=0;$(c).each(function(){let c=Number($(this).attr("rel"));b<c&&(b=c),(a>c||a==0)&&(a=c)});let f=(e-d)/(b-a);$(c).each(function(){let b=$(this).attr("rel")-a;$(this).css({"font-size":d+b*f+'px'})})}</script>
+</div>
+<div class=widget>
+<h3 class=widget-title>最新文章</h3>
+<div class=widget-body>
+<ul class="recent-post-list list-unstyled no-thumbnail">
+<li>
+<div class=item-inner>
+<p class=item-title>
+<a href=https://blog.gaoyuexiang.cn/posts/junit_alternative/ class=title>JUnit 不好用？也许你可以试试这些测试工具</a>
+</p>
+<p class=item-date>
+<time datetime="2021-11-26 00:01:57 +0800 +0800" itemprop=datePublished>2021-11-26</time>
+</p>
+</div>
+</li>
+<li>
+<div class=item-inner>
+<p class=item-title>
+<a href=https://blog.gaoyuexiang.cn/posts/domain-centeric-architectures/ class=title>以领域为核心的架构们如何指导我们写代码</a>
+</p>
+<p class=item-date>
+<time datetime="2021-05-25 22:13:57 +0800 +0800" itemprop=datePublished>2021-05-25</time>
+</p>
+</div>
+</li>
+<li>
+<div class=item-inner>
+<p class=item-title>
+<a href=https://blog.gaoyuexiang.cn/posts/divergent-change-and-shotgun-surgery/ class=title>发散式变化与霰弹式修改</a>
+</p>
+<p class=item-date>
+<time datetime="2021-04-25 20:22:33 +0800 +0800" itemprop=datePublished>2021-04-25</time>
+</p>
+</div>
+</li>
+<li>
+<div class=item-inner>
+<p class=item-title>
+<a href=https://blog.gaoyuexiang.cn/posts/how-to-scan-classes-in-java-package-with-annotation/ class=title>要扫描 Java 的 package 中有某个注解的类，应该怎么做？</a>
+</p>
+<p class=item-date>
+<time datetime="2021-03-21 19:52:45 +0800 +0800" itemprop=datePublished>2021-03-21</time>
+</p>
+</div>
+</li>
+<li>
+<div class=item-inner>
+<p class=item-title>
+<a href=https://blog.gaoyuexiang.cn/posts/jackson-inheritance/ class=title>使用 Jackson 处理抽象类的序列化和反序列化</a>
+</p>
+<p class=item-date>
+<time datetime="2020-10-02 21:38:48 +0000 UTC" itemprop=datePublished>2020-10-02</time>
+</p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</aside>
+<aside class="sidebar sidebar-toc collapse" id=collapseToc itemscope itemtype=http://schema.org/WPSideBar>
+<div class=slimContent>
+<h4 class=toc-title>文章目录</h4>
+<nav id=toc class="js-toc toc">
+</nav>
+</div>
+</aside>
+<main class=main role=main><div class=content>
+<article id=- class="article article-type-" itemscope itemtype=http://schema.org/BlogPosting>
+<div class=article-header>
+<h1 itemprop=name>
+<a class=article-title href=/posts/junit_alternative/>JUnit 不好用？也许你可以试试这些测试工具</a>
+</h1>
+<div class=article-meta>
+<span class=article-date>
+<i class="icon icon-calendar-check"></i>&nbsp;
+<a href=https://blog.gaoyuexiang.cn/posts/junit_alternative/ class=article-date>
+<time datetime="2021-11-26 00:01:57 +0800 +0800" itemprop=datePublished>2021-11-26</time>
+</a>
+</span>
+<span class=article-tag>
+<i class="icon icon-tags"></i>&nbsp;
+<a class=article-tag-link href=/tags/junit/> JUnit </a>
+<a class=article-tag-link href=/tags/spock/> Spock </a>
+<a class=article-tag-link href=/tags/spek/> Spek </a>
+<a class=article-tag-link href=/tags/kotest/> Kotest </a>
+<a class=article-tag-link href=/tags/%E6%B5%8B%E8%AF%95/> 测试 </a>
+</span>
+<span class="article-read hidden-xs">
+<i class="icon icon-eye-fill" aria-hidden=true></i>
+<span id=https://blog.gaoyuexiang.cn/posts/junit_alternative/ class=leancloud_visitors data-flag-title="JUnit 不好用？也许你可以试试这些测试工具">0</span>
+</span>
 <span class=post-comment><i class="icon icon-comment"></i>&nbsp;<a href=/posts/junit_alternative/#comments class=article-comment-link>评论</a></span>
 <span class="post-wordcount hidden-xs" itemprop=wordCount>字数统计: 5781字</span>
-<span class="post-readcount hidden-xs" itemprop=timeRequired>阅读时长: 12分</span></div></div><div class="article-entry marked-body js-toc-content" itemprop=articleBody><p>在我们日常的 TDD 开发中，永远绕不过去的就是要编写测试。而对于一个 Java 程序员，JUnit 似乎是一个不二的选择。它的确是一个十分优秀的工具，在大多数情况下都能够帮助我们完成测试的工作。</p><p>但是在开发过程中，我发现 JUnit 并不总是那么好用。它在一些情况下需要耗费挺多精力才能编写出让人满意的测试。</p><h1 id=junit-不擅长的事情>JUnit 不擅长的事情</h1><p>一个让人满意的测试，应该能够清晰的体现被测试的目标、测试的目的以及测试的输入输出，并且应遵循 <code>DRY</code> 原则，尽可能的减少测试中的重复内容。</p><p>JUnit 可以通过设计测试方法名和组织方法内的代码的方式清晰的表达意图，也可以通过参数化测试来减少相同测试目的的测试代码重复。但是它在这些地方都做的不够好。</p><h2 id=清晰表达测试的目的>清晰表达测试的目的</h2><p>在使用 JUnit 时，清晰的表达测试意图并不是总能做到的事情。这主要体现在两个方面。</p><h3 id=如何命名测试方法>如何命名测试方法</h3><p>第一个体现就是在使用 Java 编写测试时，采用什么样的命名风格来命名测试。是为了代码风格的统一而选择驼峰？还是为了更高的可读性选择下划线？这个问题在不同的项目中有不同的实践，看起来是没有一个统一的认识。</p><p>而这个问题的根源是 JUnit 的测试名称是 Java 的方法名，而 Java 的方法名又不能在其中插入空格。所以除了下面要介绍的两种测试工具外，采用 <a href=https://kotlinlang.org/docs/coding-conventions.html#names-for-test-methods>Kotlin</a> 来编写 JUnit 也是一种方式。</p><h3 id=如何组织方法内的代码>如何组织方法内的代码</h3><p>第二个体现就是 JUnit 对测试方法内部如何编写没有强制的规定。这就意味着我可以在测试里面任意地组织代码，比如在一个测试方法里面对一个方法调用多次并验证每一次的结果，或者把调用测试目录的逻辑和准备数据的逻辑以及验证逻辑混合到一起。
-总之这样的结果就是测试方法内的代码组织方式千奇百怪，每当阅读别人编写的测试的时候，总是要花上好几分钟才能知道这些代码到底在干什么。</p><p>对于这个问题，我个人会选择使用注释来标注一下 <code>given</code> 、 <code>when</code> 、 <code>then</code>，并且给 IDEA 设置了 live template 方便插入它们。</p><h2 id=又不是不能用的参数化测试>又不是不能用的参数化测试</h2><p>如果说不能清晰地表达测试意图这个问题还有一些 workaround 可以绕过去的话，JUnit 那仅仅是能用的参数化测试功能就没有什么好办法可以绕过去了。</p><p>JUnit 提供了各种 <code>Source</code> 注解来为参数化测试提供数据，但是这个功能实在是太弱了，很难让人满意。</p><p>难以让人满意的第一个原因是，各种 <code>Source</code> 注解基本上只能支持 7 种基本类型再加上 <code>String</code>， <code>Enum</code> 和 <code>Class</code> 类型。如果想要使用其他类型的实例作为参数的话，就必须要使用 <code>MethodSource</code> 或者 <code>ArgumentsSource</code> 注解。</p><p>这就导致了第二个原因：这两个注解需要单独写一个<strong>静态</strong>或一个 <code>ArgumentProvider</code> 的实现，这就导致很难把测试参数写到测试代码旁边。并且 <code>Arguments.of()</code> 方法并不利于阅读测试参数。</p><blockquote><p><code>MethodSource</code> 要求使用<strong>静态</strong>方法，这在使用 Kotlin 编写 JUnit 时需要把这些方法写到 <code>companion object</code> 里面，并且加上 <code>@JvmStatic</code> 注解。因为 Kotlin 里面没有 <code>static</code> 关键字。</p></blockquote><p>这两点导致测试的可读性下降。而按照“测试即文档”的原则，我们应该尽力去保证测试的可读性。</p><p>第三个原因则是来自 <code>ParameterizedTest</code> 注解。它的 <code>name</code> 字段可以使用参数的索引值来把参数填入模板中，生成更加可读的测试名称。
+<span class="post-readcount hidden-xs" itemprop=timeRequired>阅读时长: 12分 </span>
+</div>
+</div>
+<div class="article-entry marked-body js-toc-content" itemprop=articleBody>
+<p>在我们日常的 TDD 开发中，永远绕不过去的就是要编写测试。而对于一个 Java 程序员，JUnit 似乎是一个不二的选择。它的确是一个十分优秀的工具，在大多数情况下都能够帮助我们完成测试的工作。</p>
+<p>但是在开发过程中，我发现 JUnit 并不总是那么好用。它在一些情况下需要耗费挺多精力才能编写出让人满意的测试。</p>
+<h1 id=junit-不擅长的事情>JUnit 不擅长的事情</h1>
+<p>一个让人满意的测试，应该能够清晰的体现被测试的目标、测试的目的以及测试的输入输出，并且应遵循 <code>DRY</code> 原则，尽可能的减少测试中的重复内容。</p>
+<p>JUnit 可以通过设计测试方法名和组织方法内的代码的方式清晰的表达意图，也可以通过参数化测试来减少相同测试目的的测试代码重复。但是它在这些地方都做的不够好。</p>
+<h2 id=清晰表达测试的目的>清晰表达测试的目的</h2>
+<p>在使用 JUnit 时，清晰的表达测试意图并不是总能做到的事情。这主要体现在两个方面。</p>
+<h3 id=如何命名测试方法>如何命名测试方法</h3>
+<p>第一个体现就是在使用 Java 编写测试时，采用什么样的命名风格来命名测试。是为了代码风格的统一而选择驼峰？还是为了更高的可读性选择下划线？这个问题在不同的项目中有不同的实践，看起来是没有一个统一的认识。</p>
+<p>而这个问题的根源是 JUnit 的测试名称是 Java 的方法名，而 Java 的方法名又不能在其中插入空格。所以除了下面要介绍的两种测试工具外，采用 <a href=https://kotlinlang.org/docs/coding-conventions.html#names-for-test-methods>Kotlin</a> 来编写 JUnit 也是一种方式。</p>
+<h3 id=如何组织方法内的代码>如何组织方法内的代码</h3>
+<p>第二个体现就是 JUnit 对测试方法内部如何编写没有强制的规定。这就意味着我可以在测试里面任意地组织代码，比如在一个测试方法里面对一个方法调用多次并验证每一次的结果，或者把调用测试目录的逻辑和准备数据的逻辑以及验证逻辑混合到一起。
+总之这样的结果就是测试方法内的代码组织方式千奇百怪，每当阅读别人编写的测试的时候，总是要花上好几分钟才能知道这些代码到底在干什么。</p>
+<p>对于这个问题，我个人会选择使用注释来标注一下 <code>given</code> 、 <code>when</code> 、 <code>then</code>，并且给 IDEA 设置了 live template 方便插入它们。</p>
+<h2 id=又不是不能用的参数化测试>又不是不能用的参数化测试</h2>
+<p>如果说不能清晰地表达测试意图这个问题还有一些 workaround 可以绕过去的话，JUnit 那仅仅是能用的参数化测试功能就没有什么好办法可以绕过去了。</p>
+<p>JUnit 提供了各种 <code>Source</code> 注解来为参数化测试提供数据，但是这个功能实在是太弱了，很难让人满意。</p>
+<p>难以让人满意的第一个原因是，各种 <code>Source</code> 注解基本上只能支持 7 种基本类型再加上 <code>String</code>， <code>Enum</code> 和 <code>Class</code> 类型。如果想要使用其他类型的实例作为参数的话，就必须要使用 <code>MethodSource</code> 或者 <code>ArgumentsSource</code> 注解。</p>
+<p>这就导致了第二个原因：这两个注解需要单独写一个<strong>静态</strong>或一个 <code>ArgumentProvider</code> 的实现，这就导致很难把测试参数写到测试代码旁边。并且 <code>Arguments.of()</code> 方法并不利于阅读测试参数。</p>
+<blockquote>
+<p><code>MethodSource</code> 要求使用<strong>静态</strong>方法，这在使用 Kotlin 编写 JUnit 时需要把这些方法写到 <code>companion object</code> 里面，并且加上 <code>@JvmStatic</code> 注解。因为 Kotlin 里面没有 <code>static</code> 关键字。</p>
+</blockquote>
+<p>这两点导致测试的可读性下降。而按照“测试即文档”的原则，我们应该尽力去保证测试的可读性。</p>
+<p>第三个原因则是来自 <code>ParameterizedTest</code> 注解。它的 <code>name</code> 字段可以使用参数的索引值来把参数填入模板中，生成更加可读的测试名称。
 但是它的功能也仅限于此了。因为这个模板只能使用索引值，不能使用索引后再调用里面的方法或者字段。所以如果我们的参数是一个复杂对象，那么一定要重写 <code>toString</code> 方法才能得到满意的输出。但是这又违背了编写测试的原则之一——不能为了测试而添加实现代码。
-如果我们一定要得到一个更加表意的测试名称，那么添加一个专用的测试参数也能做到。但是这又会导致 IDE 或者构建工具的警告，因为它们认为这个参数没有被使用。</p><hr><p>总之，尽管 JUnit 可以解决绝大多数问题，但是在这么几个小地方却做的不是那么完美。</p><p>那么有没有什么工具可以作为 JUnit 的替代呢？当然是有的。下面我将按照我接触的顺序来介绍两种种测试框架。可以在 GitHub 上找到下面例子的<a href=https://github.com/kbyyd24/java-test-framework-demo>完整代码</a>。</p><h1 id=使用-spock-作为测试框架>使用 Spock 作为测试框架</h1><p><a href=https://spockframework.org/>Spock</a>是一个用 <code>Groovy</code> 编写的测试框架，按照 <code>given/when/then</code> 的结构定义 dsl，能够让测试更加的语义化。它的一大特点是 <a href=https://spockframework.org/spock/docs/2.0/all_in_one.html#data-driven-testing>Data Driven Test</a>，可以方便的编写参数化测试。</p><p>我曾在两个项目上尝试过使用 <code>Spock</code> 作为测试框架，几乎没有遇到过无法解决的问题。</p><h2 id=如何使用-spock>如何使用 Spock</h2><p>由于 <code>Spock</code> 是使用 <code>Groovy</code> 来编写测试的，所以我们要使用它时，除了要引用它本身，还需要添加对 <code>Groovy</code> 的支持。以 <code>gradle</code> 为例：</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-groovy data-lang=groovy>plugins <span style=color:#f92672>{</span>
+如果我们一定要得到一个更加表意的测试名称，那么添加一个专用的测试参数也能做到。但是这又会导致 IDE 或者构建工具的警告，因为它们认为这个参数没有被使用。</p>
+<hr>
+<p>总之，尽管 JUnit 可以解决绝大多数问题，但是在这么几个小地方却做的不是那么完美。</p>
+<p>那么有没有什么工具可以作为 JUnit 的替代呢？当然是有的。下面我将按照我接触的顺序来介绍两种种测试框架。可以在 GitHub 上找到下面例子的<a href=https://github.com/kbyyd24/java-test-framework-demo>完整代码</a>。</p>
+<h1 id=使用-spock-作为测试框架>使用 Spock 作为测试框架</h1>
+<p><a href=https://spockframework.org/>Spock</a>是一个用 <code>Groovy</code> 编写的测试框架，按照 <code>given/when/then</code> 的结构定义 dsl，能够让测试更加的语义化。它的一大特点是 <a href=https://spockframework.org/spock/docs/2.0/all_in_one.html#data-driven-testing>Data Driven Test</a>，可以方便的编写参数化测试。</p>
+<p>我曾在两个项目上尝试过使用 <code>Spock</code> 作为测试框架，几乎没有遇到过无法解决的问题。</p>
+<h2 id=如何使用-spock>如何使用 Spock</h2>
+<p>由于 <code>Spock</code> 是使用 <code>Groovy</code> 来编写测试的，所以我们要使用它时，除了要引用它本身，还需要添加对 <code>Groovy</code> 的支持。以 <code>gradle</code> 为例：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-groovy data-lang=groovy>plugins <span style=color:#f92672>{</span>
   id <span style=color:#e6db74>&#39;groovy&#39;</span>
 <span style=color:#f92672>}</span>
 
@@ -91,7 +325,9 @@ dependencies <span style=color:#f92672>{</span>
   testImplementation <span style=color:#e6db74>&#39;org.spockframework:spock-core:2.0-groovy-3.0&#39;</span>
   testImplementation <span style=color:#e6db74>&#39;org.spockframework:spock-spring:2.0-groovy-3.0&#39;</span>
 <span style=color:#f92672>}</span>
-</code></pre></div><p>第二个依赖提供了一些对 Spring 的支持，比如可以使用 <code>@SpringBean</code> 注解来让被 mock 的对象注入到测试的容器中。</p><p>我们先看一个最简单的例子：</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-groovy data-lang=groovy><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>MarsRoverSpockTest</span> <span style=color:#66d9ef>extends</span> Specification <span style=color:#f92672>{</span> <span style=color:#75715e>// 1
+</code></pre></div><p>第二个依赖提供了一些对 Spring 的支持，比如可以使用 <code>@SpringBean</code> 注解来让被 mock 的对象注入到测试的容器中。</p>
+<p>我们先看一个最简单的例子：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-groovy data-lang=groovy><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>MarsRoverSpockTest</span> <span style=color:#66d9ef>extends</span> Specification <span style=color:#f92672>{</span> <span style=color:#75715e>// 1
 </span><span style=color:#75715e></span>  <span style=color:#66d9ef>def</span> <span style=color:#e6db74>&#34;should return mars rover position and direction when mars rover report&#34;</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span> <span style=color:#75715e>//2
 </span><span style=color:#75715e></span>    given:  <span style=color:#75715e>// 3.1
 </span><span style=color:#75715e></span>    <span style=color:#66d9ef>def</span> marsRover <span style=color:#f92672>=</span> MarsRoverFixture<span style=color:#f92672>.</span><span style=color:#a6e22e>buildMarsRover</span><span style=color:#f92672>(</span>  
@@ -107,7 +343,19 @@ dependencies <span style=color:#f92672>{</span>
     marsRoverInfo<span style=color:#f92672>.</span><span style=color:#a6e22e>direction</span> <span style=color:#f92672>==</span> Direction<span style=color:#f92672>.</span><span style=color:#a6e22e>EAST</span>  
  <span style=color:#f92672>}</span>
 <span style=color:#f92672>}</span>
-</code></pre></div><ol><li>每一个测试都需要继承抽象类 <code>Specification</code></li><li>可以使用字符串来命名测试</li><li><code>Spock</code> 定义了一些 block，这里的 <code>given</code> 、 <code>when</code> 、 <code>then</code> 都是 block。<ol><li><code>given</code> block 负责测试的 setup 工作</li><li><code>when</code> block 可以是任意代码，不过最好是对测试目标的调用。它总是和 <code>then</code> 一起出现</li><li><code>then</code> block 用来断言。这里不需要任何的 assertion，只需要编写返回值是 boolean 的表达式即可</li></ol></li></ol><p><code>Spock</code> 有非常友好的测试报告输出。如果我们把上面的断言特意改错，就能得到这样的测试输出：</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-text data-lang=text>Condition not satisfied:
+</code></pre></div><ol>
+<li>每一个测试都需要继承抽象类 <code>Specification</code></li>
+<li>可以使用字符串来命名测试</li>
+<li><code>Spock</code> 定义了一些 block，这里的 <code>given</code> 、 <code>when</code> 、 <code>then</code> 都是 block。
+<ol>
+<li><code>given</code> block 负责测试的 setup 工作</li>
+<li><code>when</code> block 可以是任意代码，不过最好是对测试目标的调用。它总是和 <code>then</code> 一起出现</li>
+<li><code>then</code> block 用来断言。这里不需要任何的 assertion，只需要编写返回值是 boolean 的表达式即可</li>
+</ol>
+</li>
+</ol>
+<p><code>Spock</code> 有非常友好的测试报告输出。如果我们把上面的断言特意改错，就能得到这样的测试输出：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-text data-lang=text>Condition not satisfied:
 
 movedMarsRover.position == movedPosition
 |              |        |  |
@@ -115,7 +363,9 @@ movedMarsRover.position == movedPosition
 |              |        false
 |              Position(x=-1, y=2)
 MarsRover(position=Position(x=-1, y=2), direction=WEST)
-</code></pre></div><p>在这个输出里面，我们可以清晰的看出表达式两端的值是什么，非常便于 debug。</p><p>接下来再看一个和 <code>Spring</code> 集成的简单例子：</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-groovy data-lang=groovy><span style=color:#a6e22e>@SpringBootTest</span>  
+</code></pre></div><p>在这个输出里面，我们可以清晰的看出表达式两端的值是什么，非常便于 debug。</p>
+<p>接下来再看一个和 <code>Spring</code> 集成的简单例子：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-groovy data-lang=groovy><span style=color:#a6e22e>@SpringBootTest</span>  
 <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>MarsRoverServiceSpockTest</span> <span style=color:#66d9ef>extends</span> Specification <span style=color:#f92672>{</span>  
   <span style=color:#a6e22e>@SpringBean</span>  
   MarsRoverRepository repository <span style=color:#f92672>=</span> Mock<span style=color:#f92672>()</span>  <span style=color:#75715e>// 1
@@ -139,9 +389,22 @@ MarsRover(position=Position(x=-1, y=2), direction=WEST)
     <span style=color:#ae81ff>1</span> <span style=color:#f92672>*</span> repository<span style=color:#f92672>.</span><span style=color:#a6e22e>save</span><span style=color:#f92672>({</span> it<span style=color:#f92672>.</span><span style=color:#a6e22e>position</span> <span style=color:#f92672>==</span> <span style=color:#66d9ef>new</span> Position<span style=color:#f92672>(</span><span style=color:#ae81ff>1</span><span style=color:#f92672>,</span> <span style=color:#ae81ff>5</span><span style=color:#f92672>)</span> <span style=color:#f92672>})</span>  <span style=color:#75715e>// 3
 </span><span style=color:#75715e></span>  <span style=color:#f92672>}</span>  
 <span style=color:#f92672>}</span>
-</code></pre></div><ol><li>使用 <code>SpringBean</code> 注解注入到测试的上下文中； <code>Mock</code> 是 <code>Spock</code> 提供的 mock 方法</li><li>为 mock 对象的方法调用设置返回值</li><li>验证 mock 对象的方法被调用的次数和参数</li></ol><h2 id=特点>特点</h2><h4 id=语义化的结构>语义化的结构</h4><p>在前面的例子中，我们看到了 block 的概念。它可以帮助我们更好的组织代码结构，写出更加便于阅读的代码。其实在每一个 block 声明之后，我们还可以在添加一个字符串，达到注释的作用。比如：</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-groovy data-lang=groovy>given: <span style=color:#e6db74>&#34;a mars rover at position 1,2 and direction is north&#34;</span>
-</code></pre></div><p>除了上面的例子里看到的，<code>Spock</code> 还提供了 <code>cleanup</code> 、 <code>expect</code> 、 <code>where</code> 这三个 block。详细信息可以看看它的<a href=https://spockframework.org/spock/docs/2.0/all_in_one.html#_blocks>文档</a></p><h4 id=简洁的断言>简洁的断言</h4><p>在上面的例子中，我们看到 <code>Spock</code> 的断言十分简洁，不需要像使用 <code>assertj</code> 一样写很长的 <code>assertThat(xxx).isEqualTo(yyy)</code>，只需要一个返回 boolean 的表达式就可以了。
-甚至可以把多行断言提取到一个方法中，返回他们与运算的结果。</p><h4 id=使用-data-table-构造参数化测试>使用 data table 构造参数化测试</h4><p>对于参数化测试，我们再来看一个例子。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-groovy data-lang=groovy><span style=color:#66d9ef>def</span> <span style=color:#e6db74>&#34;should move mars rover from position 1,2 forward to #movedPosition.x,#movedPosition.y when direction is #direction and move length is #length&#34;</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span> 
+</code></pre></div><ol>
+<li>使用 <code>SpringBean</code> 注解注入到测试的上下文中； <code>Mock</code> 是 <code>Spock</code> 提供的 mock 方法</li>
+<li>为 mock 对象的方法调用设置返回值</li>
+<li>验证 mock 对象的方法被调用的次数和参数</li>
+</ol>
+<h2 id=特点>特点</h2>
+<h4 id=语义化的结构>语义化的结构</h4>
+<p>在前面的例子中，我们看到了 block 的概念。它可以帮助我们更好的组织代码结构，写出更加便于阅读的代码。其实在每一个 block 声明之后，我们还可以在添加一个字符串，达到注释的作用。比如：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-groovy data-lang=groovy>given: <span style=color:#e6db74>&#34;a mars rover at position 1,2 and direction is north&#34;</span>
+</code></pre></div><p>除了上面的例子里看到的，<code>Spock</code> 还提供了 <code>cleanup</code> 、 <code>expect</code> 、 <code>where</code> 这三个 block。详细信息可以看看它的<a href=https://spockframework.org/spock/docs/2.0/all_in_one.html#_blocks>文档</a></p>
+<h4 id=简洁的断言>简洁的断言</h4>
+<p>在上面的例子中，我们看到 <code>Spock</code> 的断言十分简洁，不需要像使用 <code>assertj</code> 一样写很长的 <code>assertThat(xxx).isEqualTo(yyy)</code>，只需要一个返回 boolean 的表达式就可以了。
+甚至可以把多行断言提取到一个方法中，返回他们与运算的结果。</p>
+<h4 id=使用-data-table-构造参数化测试>使用 data table 构造参数化测试</h4>
+<p>对于参数化测试，我们再来看一个例子。</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-groovy data-lang=groovy><span style=color:#66d9ef>def</span> <span style=color:#e6db74>&#34;should move mars rover from position 1,2 forward to #movedPosition.x,#movedPosition.y when direction is #direction and move length is #length&#34;</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span> 
   given:  
   <span style=color:#66d9ef>def</span> marsRover <span style=color:#f92672>=</span> MarsRoverFixture<span style=color:#f92672>.</span><span style=color:#a6e22e>buildMarsRover</span><span style=color:#f92672>(</span>  
     position: <span style=color:#66d9ef>new</span> Position<span style=color:#f92672>(</span><span style=color:#ae81ff>1</span><span style=color:#f92672>,</span> <span style=color:#ae81ff>2</span><span style=color:#f92672>),</span>  
@@ -162,17 +425,53 @@ MarsRover(position=Position(x=-1, y=2), direction=WEST)
   Direction<span style=color:#f92672>.</span><span style=color:#a6e22e>SOUTH</span> <span style=color:#f92672>|</span> <span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>     <span style=color:#f92672>||</span> <span style=color:#66d9ef>new</span> Position<span style=color:#f92672>(</span><span style=color:#ae81ff>1</span><span style=color:#f92672>,</span> <span style=color:#ae81ff>3</span><span style=color:#f92672>)</span>  
   Direction<span style=color:#f92672>.</span><span style=color:#a6e22e>NORTH</span> <span style=color:#f92672>|</span> <span style=color:#ae81ff>1</span>      <span style=color:#f92672>||</span> <span style=color:#66d9ef>new</span> Position<span style=color:#f92672>(</span><span style=color:#ae81ff>1</span><span style=color:#f92672>,</span> <span style=color:#ae81ff>3</span><span style=color:#f92672>)</span>  
 <span style=color:#f92672>}</span>
-</code></pre></div><p>我们可以看到代码的最后一段是一个 <code>where</code> block，这是 <code>Spock</code> 中用来定义数据测试的数据的地方。例子中的写法被称作 data table。尽管 <code>Spock</code> 还支持一些其他的写法，但是我个人认为 data table 是一个更加可读的写法，所以这也是我最常使用的写法。并且这个写法不需要手动调整格式，IDEA 支持自动 format，堪称完美。</p><p>我们还可以留意一下方法名。方法名中有几个以 <code>#</code> 开头的字符串，它们其实是在引用 data table 中定义的变量。这种通过变量名引用的方式可读性远远大于 JUnit 的索引值的方式。并且我们可以看到 <code>#movedPosition.x</code> 这样的表达式，它们可以直接使用这些对象中的字段值来生成方法名，不需要依赖于对象的 <code>toString</code> 方法。</p><p>它的测试输出也非常便于定位失败的测试数据。</p><p><img src=spock-data-driven-test-output.png alt></p><h4 id=使用-groovy-编写测试>使用 Groovy 编写测试</h4><p>使用 <code>Groovy</code> 来编写测试，可以说既是优点，也是缺点。</p><p>优点是在于 <code>Groovy</code> 是动态语言，我们可以利用这一特性在测试中少写一些啰嗦的代码。并且在前面的例子中，断言里面获取的 <code>marsRover.position</code> 字段本身是 private 字段，测试仍然可以正常执行。这些都是由 <code>Groovy</code> 带来的灵活性。</p><p>缺点在于这是一个相对小众的语言。如果不是因为 Gradle，或许不会有多少人熟悉它的语法。这也会导致人们在选择它时会变得更加谨慎。</p><h4 id=与-ide-的完美集成>与 IDE 的完美集成</h4><p>我一直使用的 IDEA 是能够完美适配它的。除了前面提到的 format data table ，最主要的是 IDEA 能像执行 JUnit 一样执行它，并且不需要任何的配置。</p><h2 id=缺点>缺点</h2><p>我在第一个项目里面使用 <code>Spock</code> 时，几乎没有发现它有什么缺点，以至于在后来的项目中总是在问 TL 能不能把它加到项目里来 🤪</p><p>但是后来在一个 Kotlin 项目中尝试使用它时，却遇到一些问题。</p><h4 id=与-kotlin-的集成问题>与 Kotlin 的集成问题</h4><h5 id=无法识别-kotlin-的语法糖>无法识别 Kotlin 的语法糖</h5><p><code>Groovy</code> 不能直接识别到 <code>Kotlin</code> 代码中的各种语法糖，这就让测试写起来有那么一点点不舒服。</p><p>比如命名参数。其实 <code>Groovy</code> 也支持命名参数，但是语法和 <code>Kotlin</code> 不同。这就显得有一点尴尬。不过这个问题可以通过为测试编写一些 fixutre 之类的代码来帮助处理这里问题。比如下面这个 <code>Kotlin</code> 类型</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-kotlin data-lang=kotlin><span style=color:#66d9ef>data</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>MarsRover</span>(  
+</code></pre></div><p>我们可以看到代码的最后一段是一个 <code>where</code> block，这是 <code>Spock</code> 中用来定义数据测试的数据的地方。例子中的写法被称作 data table。尽管 <code>Spock</code> 还支持一些其他的写法，但是我个人认为 data table 是一个更加可读的写法，所以这也是我最常使用的写法。并且这个写法不需要手动调整格式，IDEA 支持自动 format，堪称完美。</p>
+<p>我们还可以留意一下方法名。方法名中有几个以 <code>#</code> 开头的字符串，它们其实是在引用 data table 中定义的变量。这种通过变量名引用的方式可读性远远大于 JUnit 的索引值的方式。并且我们可以看到 <code>#movedPosition.x</code> 这样的表达式，它们可以直接使用这些对象中的字段值来生成方法名，不需要依赖于对象的 <code>toString</code> 方法。</p>
+<p>它的测试输出也非常便于定位失败的测试数据。</p>
+<p><img src=spock-data-driven-test-output.png alt></p>
+<h4 id=使用-groovy-编写测试>使用 Groovy 编写测试</h4>
+<p>使用 <code>Groovy</code> 来编写测试，可以说既是优点，也是缺点。</p>
+<p>优点是在于 <code>Groovy</code> 是动态语言，我们可以利用这一特性在测试中少写一些啰嗦的代码。并且在前面的例子中，断言里面获取的 <code>marsRover.position</code> 字段本身是 private 字段，测试仍然可以正常执行。这些都是由 <code>Groovy</code> 带来的灵活性。</p>
+<p>缺点在于这是一个相对小众的语言。如果不是因为 Gradle，或许不会有多少人熟悉它的语法。这也会导致人们在选择它时会变得更加谨慎。</p>
+<h4 id=与-ide-的完美集成>与 IDE 的完美集成</h4>
+<p>我一直使用的 IDEA 是能够完美适配它的。除了前面提到的 format data table ，最主要的是 IDEA 能像执行 JUnit 一样执行它，并且不需要任何的配置。</p>
+<h2 id=缺点>缺点</h2>
+<p>我在第一个项目里面使用 <code>Spock</code> 时，几乎没有发现它有什么缺点，以至于在后来的项目中总是在问 TL 能不能把它加到项目里来 🤪</p>
+<p>但是后来在一个 Kotlin 项目中尝试使用它时，却遇到一些问题。</p>
+<h4 id=与-kotlin-的集成问题>与 Kotlin 的集成问题</h4>
+<h5 id=无法识别-kotlin-的语法糖>无法识别 Kotlin 的语法糖</h5>
+<p><code>Groovy</code> 不能直接识别到 <code>Kotlin</code> 代码中的各种语法糖，这就让测试写起来有那么一点点不舒服。</p>
+<p>比如命名参数。其实 <code>Groovy</code> 也支持命名参数，但是语法和 <code>Kotlin</code> 不同。这就显得有一点尴尬。不过这个问题可以通过为测试编写一些 fixutre 之类的代码来帮助处理这里问题。比如下面这个 <code>Kotlin</code> 类型</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-kotlin data-lang=kotlin><span style=color:#66d9ef>data</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>MarsRover</span>(  
   <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>val</span> position: Position,  
   <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>val</span> direction: Direction,  
 )
-</code></pre></div><p>我们可以为它编写一个 fixture，就能在测试里面也使用命名参数了</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-groovy data-lang=groovy><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>MarsRoverFixture</span> <span style=color:#f92672>{</span>  
+</code></pre></div><p>我们可以为它编写一个 fixture，就能在测试里面也使用命名参数了</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-groovy data-lang=groovy><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>MarsRoverFixture</span> <span style=color:#f92672>{</span>  
   <span style=color:#a6e22e>@NamedVariant</span>  
   <span style=color:#66d9ef>static</span> MarsRover <span style=color:#a6e22e>buildMarsRover</span><span style=color:#f92672>(</span>position<span style=color:#f92672>,</span> direction<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>  
     <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>MarsRover</span><span style=color:#f92672>(</span>position<span style=color:#f92672>,</span> direction<span style=color:#f92672>)</span>  
   <span style=color:#f92672>}</span>   
 <span style=color:#f92672>}</span>
-</code></pre></div><p>其他的一些语法问题也基本都能绕过，本质思路就是把要测试的代码想象成编译后的 <code>Java</code>，这样就能找到绕过的办法。</p><h5 id=没有对-final-class-的-mock-支持>没有对 final class 的 mock 支持</h5><p>这是一个基本绕不过去的问题。<code>Kotlin</code> 里面的类型默认都是 <code>final</code>，不能再被继承。但是 <code>Spock</code> 的 mock 却需要为要 mock 的对象的类型创建一个子类。这就导致我们不能去 mock 那些类型。其实这个问题不是 <code>Spock</code> 特有的，<code>Mockito</code> 也有这个问题。只不过在使用 JUnit 时我们会选择用 <code>MockK</code> 作为 <code>Kotlin</code> 项目的 mock 工具，而不是 <code>Mockito</code>。</p><p>解决这个问题的策略有好几个：</p><ol><li>尽可能不去 mock。这要求我们设计出更容易测试的代码，这样就可以避免在测试中使用 mock。</li><li>使用 Spring 的 Kotlin 插件 <code>org.jetbrains.kotlin.plugin.spring[](org.jetbrains.kotlin.plugin.spring)</code> 。它可以把 <code>Spring</code> 的 component 类都修改成 open，这样就能 mock 了</li></ol><p>在写这篇文章的时候，发现一个很久没有更新的仓库 <a href=https://github.com/dpreussler/kotlin-testrunner>kotlin-test-runner</a>，也许可以借鉴一下这里的思路来解决这个问题。</p><h5 id=与-junit-的兼容问题>与 JUnit 的兼容问题</h5><p>对于上一个问题，我们当时还有一个 workaround，那就是使用 <code>JUnit5</code> + <code>MockK</code> 来编写那些需要 mock 的测试。但是那个时候的 <code>Kotlin</code> 版本还比较低，没有遇到和 JUnit 的兼容问题。</p><p>兼容问题是 JUnit 在编写 Spring 集成测试的时候，如果有 mock bean 的需求，需要使用 <a href=https://github.com/Ninja-Squad/springmockk>springmock</a> 里面的 <code>@MockkBean</code> 注解。但是从 kotlin 1.5.30 开始，这个库就不能和 Spock 编写的 Spring 集成测试兼容，会出现 NPE 问题。这个问题在使用 <code>Kotlin</code> 对 <code>Specification</code> 子类进行反射时会出现。如果对这个问题感兴趣，可以看看这个 <a href=https://github.com/Ninja-Squad/springmockk/issues/67>issue</a> 。</p><h4 id=groovy-语言的学习成本>Groovy 语言的学习成本</h4><p>就像前面提到过的，使用 <code>Groovy</code> 还是有一些学习成本的。如果团队里没有熟悉它的人，可能会走一点弯路。</p><h1 id=使用-kotest-作为测试框架>使用 Kotest 作为测试框架</h1><p><code>Kotest</code> 是在无意中发现的测试框架，还没有在实际的项目中实践过。所以这里只能分享一下如何使用，没有什么经验分享。</p><h2 id=如何使用-kotest>如何使用 Kotest</h2><p><code>Kotest</code> 的测试目标是 <code>Kotlin</code> 代码，所以它除了支持 <code>Java</code> 以外，还支持用 <code>Kotlin</code> 编译的 JS。不过这里，我们就只试试 JVM 平台就好。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-groovy data-lang=groovy>dependencies<span style=color:#f92672>{</span>
+</code></pre></div><p>其他的一些语法问题也基本都能绕过，本质思路就是把要测试的代码想象成编译后的 <code>Java</code>，这样就能找到绕过的办法。</p>
+<h5 id=没有对-final-class-的-mock-支持>没有对 final class 的 mock 支持</h5>
+<p>这是一个基本绕不过去的问题。<code>Kotlin</code> 里面的类型默认都是 <code>final</code>，不能再被继承。但是 <code>Spock</code> 的 mock 却需要为要 mock 的对象的类型创建一个子类。这就导致我们不能去 mock 那些类型。其实这个问题不是 <code>Spock</code> 特有的，<code>Mockito</code> 也有这个问题。只不过在使用 JUnit 时我们会选择用 <code>MockK</code> 作为 <code>Kotlin</code> 项目的 mock 工具，而不是 <code>Mockito</code>。</p>
+<p>解决这个问题的策略有好几个：</p>
+<ol>
+<li>尽可能不去 mock。这要求我们设计出更容易测试的代码，这样就可以避免在测试中使用 mock。</li>
+<li>使用 Spring 的 Kotlin 插件 <code>org.jetbrains.kotlin.plugin.spring[](org.jetbrains.kotlin.plugin.spring)</code> 。它可以把 <code>Spring</code> 的 component 类都修改成 open，这样就能 mock 了</li>
+</ol>
+<p>在写这篇文章的时候，发现一个很久没有更新的仓库 <a href=https://github.com/dpreussler/kotlin-testrunner>kotlin-test-runner</a>，也许可以借鉴一下这里的思路来解决这个问题。</p>
+<h5 id=与-junit-的兼容问题>与 JUnit 的兼容问题</h5>
+<p>对于上一个问题，我们当时还有一个 workaround，那就是使用 <code>JUnit5</code> + <code>MockK</code> 来编写那些需要 mock 的测试。但是那个时候的 <code>Kotlin</code> 版本还比较低，没有遇到和 JUnit 的兼容问题。</p>
+<p>兼容问题是 JUnit 在编写 Spring 集成测试的时候，如果有 mock bean 的需求，需要使用 <a href=https://github.com/Ninja-Squad/springmockk>springmock</a> 里面的 <code>@MockkBean</code> 注解。但是从 kotlin 1.5.30 开始，这个库就不能和 Spock 编写的 Spring 集成测试兼容，会出现 NPE 问题。这个问题在使用 <code>Kotlin</code> 对 <code>Specification</code> 子类进行反射时会出现。如果对这个问题感兴趣，可以看看这个 <a href=https://github.com/Ninja-Squad/springmockk/issues/67>issue</a> 。</p>
+<h4 id=groovy-语言的学习成本>Groovy 语言的学习成本</h4>
+<p>就像前面提到过的，使用 <code>Groovy</code> 还是有一些学习成本的。如果团队里没有熟悉它的人，可能会走一点弯路。</p>
+<h1 id=使用-kotest-作为测试框架>使用 Kotest 作为测试框架</h1>
+<p><code>Kotest</code> 是在无意中发现的测试框架，还没有在实际的项目中实践过。所以这里只能分享一下如何使用，没有什么经验分享。</p>
+<h2 id=如何使用-kotest>如何使用 Kotest</h2>
+<p><code>Kotest</code> 的测试目标是 <code>Kotlin</code> 代码，所以它除了支持 <code>Java</code> 以外，还支持用 <code>Kotlin</code> 编译的 JS。不过这里，我们就只试试 JVM 平台就好。</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-groovy data-lang=groovy>dependencies<span style=color:#f92672>{</span>
   testImplementation <span style=color:#e6db74>&#39;io.kotest:kotest-runner-junit5:5.0.1&#39;</span>
   testImplementation <span style=color:#e6db74>&#39;io.kotest:kotest-assertions-core:5.0.1&#39;</span>
 <span style=color:#f92672>}</span>
@@ -180,13 +479,14 @@ MarsRover(position=Position(x=-1, y=2), direction=WEST)
 test <span style=color:#f92672>{</span>
   useJUnitPlatform<span style=color:#f92672>()</span>
 <span style=color:#f92672>}</span>
-</code></pre></div><p>这样我们就能使用 <code>Kotest</code> 最基础的功能了。接着我们来看一个例子。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-kotlin data-lang=kotlin><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>MarsRoverKotestTest</span> : BehaviorSpec({  
+</code></pre></div><p>这样我们就能使用 <code>Kotest</code> 最基础的功能了。接着我们来看一个例子。</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-kotlin data-lang=kotlin><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>MarsRoverKotestTest</span> : BehaviorSpec({  
   given(<span style=color:#e6db74>&#34;a mars rover&#34;</span>) {  
     <span style=color:#66d9ef>val</span> marsRover = MarsRover(  
       position = Position(<span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>2</span>),  
       direction = Direction.EAST,  
     )  
-    <span style=color:#a6e22e>`when</span><span style=color:#960050;background-color:#1e0010>`</span>(<span style=color:#e6db74>&#34;it report information&#34;</span>) {  
+    `when<span style=color:#960050;background-color:#1e0010>`</span>(<span style=color:#e6db74>&#34;it report information&#34;</span>) {  
       <span style=color:#66d9ef>val</span> <span style=color:#960050;background-color:#1e0010>(</span>position, direction) = marsRover.report()  
       then(<span style=color:#e6db74>&#34;get it&#39;s position and direction&#34;</span>) {  
         position shouldBe Position(<span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>2</span>)  
@@ -195,7 +495,10 @@ test <span style=color:#f92672>{</span>
     }  
   }  
 })
-</code></pre></div><p>这是一种 BDD 风格的测试。<code>Kotest</code> 使用 <code>BehaviorSpec</code> 类封装起来。</p><p>在 <code>then</code> 中，我们没有看到常见的 <code>assertThat()</code> 语句，取而代之的是 <code>Kotest</code> 的 assertion 库提供的方法。</p><p>接着我们再看一个 Spring 集成测试的例子，这需要多引入一个依赖 <code>io.kotest.extensions:kotest-extensions-spring</code></p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-kotlin data-lang=kotlin><span style=color:#a6e22e>@SpringBootTest</span>  
+</code></pre></div><p>这是一种 BDD 风格的测试。<code>Kotest</code> 使用 <code>BehaviorSpec</code> 类封装起来。</p>
+<p>在 <code>then</code> 中，我们没有看到常见的 <code>assertThat()</code> 语句，取而代之的是 <code>Kotest</code> 的 assertion 库提供的方法。</p>
+<p>接着我们再看一个 Spring 集成测试的例子，这需要多引入一个依赖 <code>io.kotest.extensions:kotest-extensions-spring</code></p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-kotlin data-lang=kotlin><span style=color:#a6e22e>@SpringBootTest</span>  
 <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>MarsRoverServiceKotestTest</span>(  
   service: MarsRoverService,  
 ) : FunSpec() {  
@@ -224,7 +527,21 @@ test <span style=color:#f92672>{</span>
  }  
   }  
 }
-</code></pre></div><p>在这个例子中，除了 <code>override fun extensions()</code> 那一行以外，其他部分的代码和 JUnit 的集成测试几乎没有区别。而这一行就好像 JUnit 中的 <code>@ExtendWith(SpringExtension)</code> 一样。我们甚至可以抽出所有的集成测试代码到单独的 <code>sourceSet</code> 中对 extensions 进行全局配置。<a href=https://kotest.io/docs/extensions/spring.html>Spring | Kotest</a></p><h2 id=特点-1>特点</h2><h4 id=丰富的测试风格支持>丰富的测试风格支持</h4><p>除了上面的例子，我们还有很多的测试风格可以选择，这在它的文档中有介绍：<a href=https://kotest.io/docs/framework/testing-styles.html>Testing Styles | Kotest</a></p><h4 id=简洁的断言-1>简洁的断言</h4><p>在上面的例子里面我们看到，<code>Kotest</code> 提供了自己的断言库，不需要再写冗长的 <code>assertThat()</code> 之类的语句</p><h4 id=使用-kotlin-编写能与-kotlin-项目完美结合>使用 Kotlin 编写，能与 Kotlin 项目完美结合</h4><p>使用 <code>Kotlin</code> 来编写测试，可以使用到 <code>Kotlin</code> 里面的各种语法糖。这样就不用像 <code>Spock</code> 一样在语法切换中挣扎。</p><h4 id=支持-mockk>支持 MockK</h4><p>同样的，因为 <code>Kotest</code> 的测试使用 <code>Kotlin</code> 编写，自然是支持 <code>MockK</code> 的。这样就能利用 <code>MockK</code> 的特性，支持对 final class 的 mock。</p><h4 id=与-junit-兼容>与 JUnit 兼容</h4><p>因为 <code>Kotest</code> 是基于 JUnit 平台的，所以是能和 JUnit 兼容的，不会出现上面的 <code>Spock</code> 那样的问题。</p><h4 id=对-data-driven-test-的支持>对 data driven test 的支持</h4><p><code>Kotest</code> 提供了扩展来支持 data driven test。当然，不使用这个扩展也可以进行，比如用 list 构造好数据之后 foreach 创建测试。不过这里的例子我们还是使用这个扩展来演示。（需要添加依赖 <code>io.kotest:kotest-framework-datatest</code> ）</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-kotlin data-lang=kotlin><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>MarsRoverKotestTest</span> : FunSpec({  
+</code></pre></div><p>在这个例子中，除了 <code>override fun extensions()</code> 那一行以外，其他部分的代码和 JUnit 的集成测试几乎没有区别。而这一行就好像 JUnit 中的 <code>@ExtendWith(SpringExtension)</code> 一样。我们甚至可以抽出所有的集成测试代码到单独的 <code>sourceSet</code> 中对 extensions 进行全局配置。<a href=https://kotest.io/docs/extensions/spring.html>Spring | Kotest</a></p>
+<h2 id=特点-1>特点</h2>
+<h4 id=丰富的测试风格支持>丰富的测试风格支持</h4>
+<p>除了上面的例子，我们还有很多的测试风格可以选择，这在它的文档中有介绍：<a href=https://kotest.io/docs/framework/testing-styles.html>Testing Styles | Kotest</a></p>
+<h4 id=简洁的断言-1>简洁的断言</h4>
+<p>在上面的例子里面我们看到，<code>Kotest</code> 提供了自己的断言库，不需要再写冗长的 <code>assertThat()</code> 之类的语句</p>
+<h4 id=使用-kotlin-编写能与-kotlin-项目完美结合>使用 Kotlin 编写，能与 Kotlin 项目完美结合</h4>
+<p>使用 <code>Kotlin</code> 来编写测试，可以使用到 <code>Kotlin</code> 里面的各种语法糖。这样就不用像 <code>Spock</code> 一样在语法切换中挣扎。</p>
+<h4 id=支持-mockk>支持 MockK</h4>
+<p>同样的，因为 <code>Kotest</code> 的测试使用 <code>Kotlin</code> 编写，自然是支持 <code>MockK</code> 的。这样就能利用 <code>MockK</code> 的特性，支持对 final class 的 mock。</p>
+<h4 id=与-junit-兼容>与 JUnit 兼容</h4>
+<p>因为 <code>Kotest</code> 是基于 JUnit 平台的，所以是能和 JUnit 兼容的，不会出现上面的 <code>Spock</code> 那样的问题。</p>
+<h4 id=对-data-driven-test-的支持>对 data driven test 的支持</h4>
+<p><code>Kotest</code> 提供了扩展来支持 data driven test。当然，不使用这个扩展也可以进行，比如用 list 构造好数据之后 foreach 创建测试。不过这里的例子我们还是使用这个扩展来演示。（需要添加依赖 <code>io.kotest:kotest-framework-datatest</code> ）</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-kotlin data-lang=kotlin><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>MarsRoverKotestTest</span> : FunSpec({  
   context(<span style=color:#e6db74>&#34;data test&#34;</span>) {  
     withData(  
       nameFn = { (direction, length, position) <span style=color:#f92672>-&gt;</span>  
@@ -245,21 +562,201 @@ test <span style=color:#f92672>{</span>
     }  
   }  
 })
-</code></pre></div><p>虽然这个 data driven test 相对于 <code>Spock</code> 的 data table 来讲没有那么直观，但是对比 JUnit 的话，能够方便的自定义测试方法名，并且测试数据与测试代码放在一起，已经算是一个巨大的进步了。</p><h2 id=缺点-1>缺点</h2><p>因为没有在实际的项目中实践过，所以目前没有发现很多的缺点。</p><h4 id=与-idea-和-gradle-的集成不够完美>与 IDEA 和 Gradle 的集成不够完美</h4><p>这个问题的表现是在 IDEA 里面无法执行单个测试方法。但是细究后发现，实际上是和 gradle 的集成不够好。</p><p>默认情况下，IDEA 会使用 gradle 来执行测试。执行单个测试的命令是 <code>gradle test --tests "xxx.Class.yyyMethod"</code>。对于 JUnit，这里的 class 和 method 是很直观的类名和方法名。但是 <code>Kotest</code> 的写法却不是编写类里面的方法，而是调用方法生成测试。所以 gradle 的这个命令就没有办法生效，也就没有办法只执行一个测试方法了。</p><p>在把 IDEA 的配置更新成使用 IDEA 来运行测试后，在 mac 上能够正常执行一个测试方法。但是在 Windows + WSL 的环境上却会出错。（看起来像是 IDEA 的问题，因为它尝试把 WSL 里面的 java 当作 Windows 的程序执行）</p><h1 id=不要使用-spek>不要使用 Spek</h1><p>前面介绍了两种值得一试的测试框架，这里再介绍一种不建议使用的框架。</p><p>当初想要尝试这个框架，是因为看到有网友说这是 <code>Kotlin</code> 版本的 <code>Spock</code> 🙃。但是实践下来并没有发现它有和 <code>Spock</code> 类似的功能，并且还出现了这些痛点：</p><ol><li>与其他测试框架混合使用的问题
-当与其他测试框架混合使用时，<code>Spek</code> 测试总是会先执行。哪怕我们在 IDEA 里面只想执行一个 JUnit 的单元测试，<code>Spek</code> 也会先把自己的所有测试跑完，然后才会执行到我们想要执行的测试。这就意味着在 <code>Speck</code> 测试编写了很多之后，执行其他测试就会等待很久。</li><li>不能编写 Spring 集成测试</li><li>我在写 demo 的时候发现，它的 IDEA 插件在 Windows 上面无法工作</li></ol><p>如果这些痛点你都能忍，那我也不建议使用这个框架，毕竟上面已经有更好的选择了。</p><hr><h1 id=总结>总结</h1><p>现在我们有了两个 JUnit 以外的测试框架选择。当然它们也不是完美的，JUnit 仍然是那个最稳定、风险最低的那一个。但如果你想尝试一下这两个框架的话，可以考虑一下这些方面：</p><ol><li>生产代码的编程语言<ol><li>如果是 Kotlin，那么可以考虑 <code>Kotest</code>，不要考虑 <code>Spock</code></li><li>如果是 Java，那么这两个都值得考虑</li></ol></li><li>语言熟悉程度<ol><li>Kotlin 明显是比 Groovy 更加流行，这个角度考虑的话 <code>Kotest</code> 是更优的选择</li></ol></li><li>测试框架的流行程度（这方面我不知道有什么评价标准，只是作为参考）<ol><li>两个框架在 GitHub 上的 star 数量半斤八两，一个 3.1k，一个 3.2k（JUnit 也才 4.9k）</li><li>在 MVNRepository 上，<a href="https://mvnrepository.com/search?q=spockframework">Spock</a> 的 usage 明显高于 <a href="https://mvnrepository.com/search?q=kotest">Kotest</a></li></ol></li><li>IDEA 的集成<ol><li><code>Spock</code> 在这方面完全没有问题</li><li><code>Kotest</code> 需要安装插件，并且在 Windows + WSL 的模式下不能运行单个测试</li></ol></li><li>Gradle 集成<ol><li><code>Spock</code> 完美集成</li><li><code>Kotest</code> 不能执行单个测试</li></ol></li></ol></div><div class=article-footer><blockquote class=mt-2x><ul class="post-copyright list-unstyled"><li class="post-copyright-link hidden-xs"><strong>本文链接:</strong>
-<a href=https://blog.gaoyuexiang.cn/posts/junit_alternative/ title="JUnit 不好用？也许你可以试试这些测试工具" target=_blank rel=external>https://blog.gaoyuexiang.cn/posts/junit_alternative/</a></li><li class=post-copyright-license><strong>License:</strong>
-<a href=https://creativecommons.org/licenses/by-nc/4.0/deed.zh target=_blank rel=external>CC BY-NC 4.0 CN</a></li></ul></blockquote><div class="panel panel-default panel-badger"><div class=panel-body><figure class=media><div class=media-left><a href=https://github.com/kbyyd24 target=_blank class="img-burn thumb-sm visible-lg"><img src="https://avatars3.githubusercontent.com/u/9191275?s=460&u=a7ea5a50516804b275b4f7a36b36efc36c75e095&v=4" class="img-rounded w-full" alt></a></div><div class=media-body><h3 class=media-heading><a href=https://github.com/kbyyd24 target=_blank><span class=text-dark>无糖拿铁</span><small class=ml-1x>无糖拿铁，谢谢</small></a></h3><div>Good Good Study, Day Day Up~</div></div></figure></div></div></div></article><section id=comments><div id=vcomments></div></section></div><nav class="bar bar-footer clearfix" data-stick-bottom><div class=bar-inner><ul class="pager pull-left"><li class=prev><a href=https://blog.gaoyuexiang.cn/posts/domain-centeric-architectures/ title=以领域为核心的架构们如何指导我们写代码><i class="icon icon-angle-left" aria-hidden=true></i><span>&nbsp;&nbsp;下一篇</span></a></li><li class=toggle-toc><a class="toggle-btn collapsed" data-toggle=collapse href=#collapseToc aria-expanded=false title=文章目录 role=button><span>[&nbsp;</span><span>文章目录</span>
-<i class="text-collapsed icon icon-anchor"></i><i class="text-in icon icon-close"></i><span>]</span></a></li></ul><button type=button class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle=modal data-target=#donateModal><span>赏</span></button><div class=bar-right><div class=share-component data-sites="weibo,qq,qzone,wechat,facebook,twitter, linkedin" data-mobile-sites="weibo,qq,qzone,wechat,facebook,twitter, linkedin"></div></div></div></nav><div class="modal modal-center modal-small modal-xs-full fade" id=donateModal tabindex=-1 role=dialog><div class=modal-dialog role=document><div class="modal-content donate"><button type=button class=close data-dismiss=modal aria-label=Close><span aria-hidden=true>&#215;</span></button><div class=modal-body><div class=donate-box><div class=donate-head><p>赏杯咖啡吧</p></div><div class=tab-content><div role=tabpanel class="tab-pane fade active in" id=alipay><div class=donate-payimg><img src=https://blog.gaoyuexiang.cn/images/alipay.jpeg alt=扫码支持 title=扫一扫></div><p class="text-muted mv">扫码打赏, 多少你说了算~</p><p class=text-grey>打开支付宝扫一扫，即可进行扫码打赏哦~</p></div><div role=tabpanel class="tab-pane fade" id=wechatpay><div class=donate-payimg><img src=https://blog.gaoyuexiang.cn/images/wechatpay.png alt=扫码支持 title=扫一扫></div><p class="text-muted mv">扫码打赏, 多少你说了算~</p><p class=text-grey>打开微信扫一扫，即可进行扫码打赏哦</p></div></div><div class=donate-footer><ul class="nav nav-tabs nav-justified" role=tablist><li role=presentation class=active><a href=#alipay id=alipay-tab role=tab data-toggle=tab aria-controls=alipay aria-expanded=true><i class="icon icon-alipay"></i>支付宝</a></li><li role=presentation><a href=#wechatpay role=tab id=wechatpay-tab data-toggle=tab aria-controls=wechatpay aria-expanded=false><i class="icon icon-wepay"></i>微信支付</a></li></ul></div></div></div></div></div></div></main><footer class=footer itemscope itemtype=http://schema.org/WPFooter><ul class=social-links><li><a href=https://github.com/kbyyd24 target=_blank title=github data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li><li><a href=https://blog.gaoyuexiang.cn/index.xml target=_blank title=rss data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li><li><a href=https://blog.gaoyuexiang.cn/images/wechat_channel_with_name.png target=_blank title=wechat data-toggle=tooltip data-placement=top><i class="icon icon-wechat"></i></a></li></ul><div class=copyright>&copy;2016 -
-2022<div class=publishby>Theme by <a href=https://github.com/xiaoheiAh target=_blank>xiaoheiAh </a>base on<a href=https://github.com/xiaoheiAh/hugo-theme-pure target=_blank> pure</a>.</div><div><a href=https://beian.miit.gov.cn/ target=_blank>蜀ICP备15031888号-2</a></div></div></footer><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script><script type=text/x-mathjax-config>
+</code></pre></div><p>虽然这个 data driven test 相对于 <code>Spock</code> 的 data table 来讲没有那么直观，但是对比 JUnit 的话，能够方便的自定义测试方法名，并且测试数据与测试代码放在一起，已经算是一个巨大的进步了。</p>
+<h2 id=缺点-1>缺点</h2>
+<p>因为没有在实际的项目中实践过，所以目前没有发现很多的缺点。</p>
+<h4 id=与-idea-和-gradle-的集成不够完美>与 IDEA 和 Gradle 的集成不够完美</h4>
+<p>这个问题的表现是在 IDEA 里面无法执行单个测试方法。但是细究后发现，实际上是和 gradle 的集成不够好。</p>
+<p>默认情况下，IDEA 会使用 gradle 来执行测试。执行单个测试的命令是 <code>gradle test --tests "xxx.Class.yyyMethod"</code>。对于 JUnit，这里的 class 和 method 是很直观的类名和方法名。但是 <code>Kotest</code> 的写法却不是编写类里面的方法，而是调用方法生成测试。所以 gradle 的这个命令就没有办法生效，也就没有办法只执行一个测试方法了。</p>
+<p>在把 IDEA 的配置更新成使用 IDEA 来运行测试后，在 mac 上能够正常执行一个测试方法。但是在 Windows + WSL 的环境上却会出错。（看起来像是 IDEA 的问题，因为它尝试把 WSL 里面的 java 当作 Windows 的程序执行）</p>
+<h1 id=不要使用-spek>不要使用 Spek</h1>
+<p>前面介绍了两种值得一试的测试框架，这里再介绍一种不建议使用的框架。</p>
+<p>当初想要尝试这个框架，是因为看到有网友说这是 <code>Kotlin</code> 版本的 <code>Spock</code> 🙃。但是实践下来并没有发现它有和 <code>Spock</code> 类似的功能，并且还出现了这些痛点：</p>
+<ol>
+<li>与其他测试框架混合使用的问题
+当与其他测试框架混合使用时，<code>Spek</code> 测试总是会先执行。哪怕我们在 IDEA 里面只想执行一个 JUnit 的单元测试，<code>Spek</code> 也会先把自己的所有测试跑完，然后才会执行到我们想要执行的测试。这就意味着在 <code>Speck</code> 测试编写了很多之后，执行其他测试就会等待很久。</li>
+<li>不能编写 Spring 集成测试</li>
+<li>我在写 demo 的时候发现，它的 IDEA 插件在 Windows 上面无法工作</li>
+</ol>
+<p>如果这些痛点你都能忍，那我也不建议使用这个框架，毕竟上面已经有更好的选择了。</p>
+<hr>
+<h1 id=总结>总结</h1>
+<p>现在我们有了两个 JUnit 以外的测试框架选择。当然它们也不是完美的，JUnit 仍然是那个最稳定、风险最低的那一个。但如果你想尝试一下这两个框架的话，可以考虑一下这些方面：</p>
+<ol>
+<li>生产代码的编程语言
+<ol>
+<li>如果是 Kotlin，那么可以考虑 <code>Kotest</code>，不要考虑 <code>Spock</code></li>
+<li>如果是 Java，那么这两个都值得考虑</li>
+</ol>
+</li>
+<li>语言熟悉程度
+<ol>
+<li>Kotlin 明显是比 Groovy 更加流行，这个角度考虑的话 <code>Kotest</code> 是更优的选择</li>
+</ol>
+</li>
+<li>测试框架的流行程度（这方面我不知道有什么评价标准，只是作为参考）
+<ol>
+<li>两个框架在 GitHub 上的 star 数量半斤八两，一个 3.1k，一个 3.2k（JUnit 也才 4.9k）</li>
+<li>在 MVNRepository 上，<a href="https://mvnrepository.com/search?q=spockframework">Spock</a> 的 usage 明显高于 <a href="https://mvnrepository.com/search?q=kotest">Kotest</a></li>
+</ol>
+</li>
+<li>IDEA 的集成
+<ol>
+<li><code>Spock</code> 在这方面完全没有问题</li>
+<li><code>Kotest</code> 需要安装插件，并且在 Windows + WSL 的模式下不能运行单个测试</li>
+</ol>
+</li>
+<li>Gradle 集成
+<ol>
+<li><code>Spock</code> 完美集成</li>
+<li><code>Kotest</code> 不能执行单个测试</li>
+</ol>
+</li>
+</ol>
+</div>
+<div class=article-footer>
+<blockquote class=mt-2x>
+<ul class="post-copyright list-unstyled">
+<li class="post-copyright-link hidden-xs">
+<strong>本文链接: </strong>
+<a href=https://blog.gaoyuexiang.cn/posts/junit_alternative/ title="JUnit 不好用？也许你可以试试这些测试工具" target=_blank rel=external>https://blog.gaoyuexiang.cn/posts/junit_alternative/</a>
+</li>
+<li class=post-copyright-license>
+<strong>License: </strong>
+<a href=https://creativecommons.org/licenses/by-nc/4.0/deed.zh target=_blank rel=external>CC BY-NC 4.0 CN</a>
+</li>
+</ul>
+</blockquote>
+<div class="panel panel-default panel-badger">
+<div class=panel-body>
+<figure class=media>
+<div class=media-left>
+<a href=https://github.com/kbyyd24 target=_blank class="img-burn thumb-sm visible-lg">
+<img src="https://avatars3.githubusercontent.com/u/9191275?s=460&u=a7ea5a50516804b275b4f7a36b36efc36c75e095&v=4" class="img-rounded w-full" alt>
+</a>
+</div>
+<div class=media-body>
+<h3 class=media-heading><a href=https://github.com/kbyyd24 target=_blank><span class=text-dark>无糖拿铁</span><small class=ml-1x>无糖拿铁，谢谢</small></a></h3>
+<div>Good Good Study, Day Day Up~</div>
+</div>
+</figure>
+</div>
+</div>
+</div>
+</article>
+<section id=comments>
+<div id=vcomments></div>
+</section>
+</div><nav class="bar bar-footer clearfix" data-stick-bottom>
+<div class=bar-inner>
+<ul class="pager pull-left">
+<li class=prev>
+<a href=https://blog.gaoyuexiang.cn/posts/domain-centeric-architectures/ title=以领域为核心的架构们如何指导我们写代码><i class="icon icon-angle-left" aria-hidden=true></i><span>&nbsp;&nbsp;下一篇</span></a>
+</li>
+<li class=toggle-toc>
+<a class="toggle-btn collapsed" data-toggle=collapse href=#collapseToc aria-expanded=false title=文章目录 role=button>
+<span>[&nbsp;</span><span>文章目录</span>
+<i class="text-collapsed icon icon-anchor"></i>
+<i class="text-in icon icon-close"></i>
+<span>]</span>
+</a>
+</li>
+</ul>
+<button type=button class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle=modal data-target=#donateModal><span>赏</span></button>
+<div class=bar-right>
+<div class=share-component data-sites="weibo,qq,qzone,wechat,facebook,twitter, linkedin" data-mobile-sites="weibo,qq,qzone,wechat,facebook,twitter, linkedin"></div>
+</div>
+</div>
+</nav>
+<div class="modal modal-center modal-small modal-xs-full fade" id=donateModal tabindex=-1 role=dialog>
+<div class=modal-dialog role=document>
+<div class="modal-content donate">
+<button type=button class=close data-dismiss=modal aria-label=Close><span aria-hidden=true>&#215;</span></button>
+<div class=modal-body>
+<div class=donate-box>
+<div class=donate-head>
+<p>赏杯咖啡吧</p>
+</div>
+<div class=tab-content>
+<div role=tabpanel class="tab-pane fade active in" id=alipay>
+<div class=donate-payimg>
+<img src=https://blog.gaoyuexiang.cn/images/alipay.jpeg alt=扫码支持 title=扫一扫>
+</div>
+<p class="text-muted mv">扫码打赏, 多少你说了算~</p>
+<p class=text-grey>打开支付宝扫一扫，即可进行扫码打赏哦~</p>
+</div>
+<div role=tabpanel class="tab-pane fade" id=wechatpay>
+<div class=donate-payimg>
+<img src=https://blog.gaoyuexiang.cn/images/wechatpay.png alt=扫码支持 title=扫一扫>
+</div>
+<p class="text-muted mv">扫码打赏, 多少你说了算~</p>
+<p class=text-grey>打开微信扫一扫，即可进行扫码打赏哦</p>
+</div>
+</div>
+<div class=donate-footer>
+<ul class="nav nav-tabs nav-justified" role=tablist>
+<li role=presentation class=active>
+<a href=#alipay id=alipay-tab role=tab data-toggle=tab aria-controls=alipay aria-expanded=true><i class="icon icon-alipay"></i> 支付宝</a>
+</li>
+<li role=presentation>
+<a href=#wechatpay role=tab id=wechatpay-tab data-toggle=tab aria-controls=wechatpay aria-expanded=false><i class="icon icon-wepay"></i>
+微信支付</a>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main><footer class=footer itemscope itemtype=http://schema.org/WPFooter>
+<ul class=social-links>
+<li><a href=https://github.com/kbyyd24 target=_blank title=github data-toggle=tooltip data-placement=top>
+<i class="icon icon-github"></i></a></li>
+<li><a href=https://blog.gaoyuexiang.cn/index.xml target=_blank title=rss data-toggle=tooltip data-placement=top>
+<i class="icon icon-rss"></i></a></li>
+<li><a href=https://blog.gaoyuexiang.cn/images/wechat_channel_with_name.png target=_blank title=wechat data-toggle=tooltip data-placement=top>
+<i class="icon icon-wechat"></i></a></li>
+</ul>
+<div class=copyright>
+&copy;2016 -
+2022
+<div class=publishby>
+Theme by <a href=https://github.com/xiaoheiAh target=_blank> xiaoheiAh </a>base on<a href=https://github.com/xiaoheiAh/hugo-theme-pure target=_blank> pure</a>.
+</div>
+<div>
+<a href=https://beian.miit.gov.cn/ target=_blank>蜀ICP备15031888号-2</a>
+</div>
+</div>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
+<script type=text/x-mathjax-config>
     MathJax.Hub.Config({
             showMathMenu: false, //disables context menu
             tex2jax: {
             inlineMath: [ ['$','$'], ['\\(','\\)'] ]
            }
     });
-</script><script src=https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js></script><script>window.jQuery||document.write('<script src="js/jquery.min.js"><\/script>')</script><script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/highlight.min.js></script><script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/python.min.js defer></script><script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/javascript.min.js defer></script><script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/java.min.js defer></script><script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/groovy.min.js defer></script><script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/gradle.min.js defer></script><script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/kotlin.min.js defer></script><script>hljs.configure({tabReplace:'    ',classPrefix:''})
-hljs.initHighlightingOnLoad();</script><script src=https://blog.gaoyuexiang.cn/js/application.min.bdeb64b910570b6c41badc6a05b7afb0c8ad9efd8525de3c7257d59e786326a3.js></script><script src=https://blog.gaoyuexiang.cn/js/plugin.min.51ff8c7317566f82259170fa36e09c4493adc9b9378b427a01ad3f017ebac7dd.js></script><script>(function(window){var INSIGHT_CONFIG={TRANSLATION:{POSTS:'文章',PAGES:'页面',CATEGORIES:'分类',TAGS:'标签',UNTITLED:'(未命名)',},ROOT_URL:'https:\/\/blog.gaoyuexiang.cn\/',CONTENT_URL:'https:\/\/blog.gaoyuexiang.cn\/\/searchindex.json ',};window.INSIGHT_CONFIG=INSIGHT_CONFIG;})(window);</script><script type=text/javascript src=https://blog.gaoyuexiang.cn/js/insight.min.a343cd9a5a7698336b28ef3a7c16a3a1b1d2d5fb17dc8ed04022bbe08cc5459073a15bdafa3a8a58cdd56080784bdd69fa70b1ae8597565c799c57ed00f0e120.js defer></script><script src=https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.min.js></script><script>tocbot.init({tocSelector:'.js-toc',contentSelector:'.js-toc-content',headingSelector:'h1, h2, h3',hasInnerContainers:true,});</script><script defer src=https://cdn1.lncld.net/static/js/av-min-1.2.1.js></script><script defer>AV.init({appId:'',appKey:''});function showTime(Counter){var query=new AV.Query(Counter);var visitors=$('.leancloud_visitors');query.greaterThanOrEqualTo("time",0);query.find({success:function(results){if(results.length==0){return;}
-var data=results;visitors.each(function(){var url=$(this).attr('id').trim();for(var i=0;i<data.length;i++){var object=data[i];var content=object.get('time');var _url=object.get('url')
-if(url==_url){$(this).text(content);}}})},error:function(object,error){console.log("Error: "+error.code+" "+error.message);}});}
-function addCount(Counter){var Counter=AV.Object.extend("Counter");url=$(".leancloud_visitors").attr('id').trim();title=$(".leancloud_visitors").attr('data-flag-title').trim();var query=new AV.Query(Counter);query.equalTo("url",url);query.find({success:function(results){if(results.length>0){var counter=results[0];counter.fetchWhenSave(true);counter.increment("time");counter.save(null,{success:function(counter){var content=counter.get('time');$(document.getElementById(url)).text(content);},error:function(counter,error){console.log('Failed to save Visitor num, with error message: '+error.message);}});}else{var newcounter=new Counter();newcounter.set("title",title);newcounter.set("url",url);newcounter.set("time",1);newcounter.save(null,{success:function(newcounter){console.log("newcounter.get('time')="+newcounter.get('time'));var content=newcounter.get('time');$(document.getElementById(url)).text(content);},error:function(newcounter,error){console.log('Failed to create');}});}},error:function(error){console.log('Error:'+error.code+" "+error.message);}});}
-$(function(){var Counter=AV.Object.extend("Counter");if($('.leancloud_visitors').length==1){addCount(Counter);}else{showTime(Counter);}});</script><script src=https://cdn1.lncld.net/static/js/3.0.4/av-min.js></script><script src=https://cdn.jsdelivr.net/npm/valine></script><script type=text/javascript>var GUEST=['nick','mail','link'];var meta='nick,mail';meta=meta.split(',').filter(function(item){return GUEST.indexOf(item)>-1;});new Valine({el:'#vcomments',verify:null,notify:null,appId:'Voz5TpLaiKvWLiVk63CrRybt-gzGzoHsz',appKey:'xzDAABvBBG6vK7iwgd1VKUnw',placeholder:'enjoy~',avatar:'mm',meta:meta,pageSize:'10'||10,visitor:false});</script></body></html>
+</script>
+<script src=https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js></script>
+<script>window.jQuery||document.write('<script src="js/jquery.min.js"><\/script>')</script>
+<script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/highlight.min.js></script>
+<script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/python.min.js defer></script>
+<script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/javascript.min.js defer></script>
+<script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/java.min.js defer></script>
+<script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/groovy.min.js defer></script>
+<script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/gradle.min.js defer></script>
+<script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/kotlin.min.js defer></script><script>hljs.configure({tabReplace:'    ',classPrefix:''}),hljs.initHighlightingOnLoad()</script>
+<script src=https://blog.gaoyuexiang.cn/js/application.min.a94ab19cb63a95c8d7fbd7b85cab3ddeea8c369bdf75b9cab6708787ead123af.js></script>
+<script src=https://blog.gaoyuexiang.cn/js/plugin.min.19c5bcb2fb0789ab4f2b7834e5ceb5e92635645605bab902c1024b25f1502364.js></script>
+<script>(function(a){var b={TRANSLATION:{POSTS:'文章',PAGES:'页面',CATEGORIES:'分类',TAGS:'标签',UNTITLED:'(未命名)'},ROOT_URL:'https://blog.gaoyuexiang.cn/',CONTENT_URL:'https://blog.gaoyuexiang.cn//searchindex.json '};a.INSIGHT_CONFIG=b})(window)</script>
+<script type=text/javascript src=https://blog.gaoyuexiang.cn/js/insight.min.4a2d52de4bfff73e0c688404fe3d17c9a3ae12d9888e1e1ac9c690e4890de2ded50fe55f2b819c2ba55435a76f396f3ea6805765f0b0af5635cdf74ea459eab0.js defer></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.min.js></script>
+<script>tocbot.init({tocSelector:'.js-toc',contentSelector:'.js-toc-content',headingSelector:'h1, h2, h3',hasInnerContainers:!0})</script>
+<script defer src=https://cdn1.lncld.net/static/js/av-min-1.2.1.js></script>
+<script defer>AV.init({appId:'',appKey:''});function showTime(b){var a=new AV.Query(b),c=$('.leancloud_visitors');a.greaterThanOrEqualTo("time",0),a.find({success:function(a){if(a.length==0)return;var b=a;c.each(function(){for(var d=$(this).attr('id').trim(),a=0,c,e,f;a<b.length;a++)c=b[a],e=c.get('time'),f=c.get('url'),d==f&&$(this).text(e)})},error:function(b,a){console.log("Error: "+a.code+" "+a.message)}})}function addCount(a){var a=AV.Object.extend("Counter"),b;url=$(".leancloud_visitors").attr('id').trim(),title=$(".leancloud_visitors").attr('data-flag-title').trim(),b=new AV.Query(a),b.equalTo("url",url),b.find({success:function(d){var c,b;d.length>0?(c=d[0],c.fetchWhenSave(!0),c.increment("time"),c.save(null,{success:function(a){var b=a.get('time');$(document.getElementById(url)).text(b)},error:function(b,a){console.log('Failed to save Visitor num, with error message: '+a.message)}})):(b=new a,b.set("title",title),b.set("url",url),b.set("time",1),b.save(null,{success:function(a){console.log("newcounter.get('time')="+a.get('time'));var b=a.get('time');$(document.getElementById(url)).text(b)},error:function(a,b){console.log('Failed to create')}}))},error:function(a){console.log('Error:'+a.code+" "+a.message)}})}$(function(){var a=AV.Object.extend("Counter");$('.leancloud_visitors').length==1?addCount(a):showTime(a)})</script>
+<script src=https://cdn1.lncld.net/static/js/3.0.4/av-min.js></script>
+<script src=https://cdn.jsdelivr.net/npm/valine></script>
+<script type=text/javascript>var GUEST=['nick','mail','link'],meta='nick,mail';meta=meta.split(',').filter(function(a){return GUEST.indexOf(a)>-1}),new Valine({el:'#vcomments',verify:null,notify:null,appId:'Voz5TpLaiKvWLiVk63CrRybt-gzGzoHsz',appKey:'xzDAABvBBG6vK7iwgd1VKUnw',placeholder:'enjoy~',avatar:'mm',meta,pageSize:'10'||10,visitor:!1})</script>
+</body>
+</html>

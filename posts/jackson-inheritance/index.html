@@ -1,8 +1,121 @@
-<!doctype html><html lang=zh><head><title>使用 Jackson 处理抽象类的序列化和反序列化 - 无糖拿铁，谢谢</title><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,minimal-ui"><meta name=renderer content="webkit"><meta http-equiv=cache-control content="no-transform"><meta http-equiv=cache-control content="no-siteapp"><meta name=apple-mobile-web-app-capable content="yes"><meta name=apple-mobile-web-app-status-bar-style content="black"><meta name=format-detection content="telephone=no,email=no,adress=no"><meta name=theme-color content="#000000"><meta http-equiv=window-target content="_top"><meta name=description content="Json 的序列化和反序列化是我们常见的操作，很多库都提供了这样的能力帮助我们完成这样的操作。 但业务有时可能变得稍微有些复杂，需要将一个抽象类的子类"><meta name=generator content="Hugo 0.79.1 with theme pure"><title>使用 Jackson 处理抽象类的序列化和反序列化 - 无糖拿铁，谢谢</title><link rel=stylesheet href=https://blog.gaoyuexiang.cn/css/style.min.544edf4e480fd84dba4b535b9c42ace7af9a975d149b3f584c0e3a6f120cee55.css><link rel=stylesheet href=https://cdn.staticfile.org/highlight.js/9.15.10/styles/github.min.css async><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.css async><meta property="og:title" content="使用 Jackson 处理抽象类的序列化和反序列化"><meta property="og:description" content="Json 的序列化和反序列化是我们常见的操作，很多库都提供了这样的能力帮助我们完成这样的操作。 但业务有时可能变得稍微有些复杂，需要将一个抽象类的子类"><meta property="og:type" content="article"><meta property="og:url" content="https://blog.gaoyuexiang.cn/posts/jackson-inheritance/"><meta property="article:published_time" content="2020-10-02T21:38:48+00:00"><meta property="article:modified_time" content="2020-10-02T21:38:48+00:00"><meta itemprop=name content="使用 Jackson 处理抽象类的序列化和反序列化"><meta itemprop=description content="Json 的序列化和反序列化是我们常见的操作，很多库都提供了这样的能力帮助我们完成这样的操作。 但业务有时可能变得稍微有些复杂，需要将一个抽象类的子类"><meta itemprop=datePublished content="2020-10-02T21:38:48+00:00"><meta itemprop=dateModified content="2020-10-02T21:38:48+00:00"><meta itemprop=wordCount content="2029"><meta itemprop=keywords content="Jackson,Json,序列化,反序列化,"><meta name=twitter:card content="summary"><meta name=twitter:title content="使用 Jackson 处理抽象类的序列化和反序列化"><meta name=twitter:description content="Json 的序列化和反序列化是我们常见的操作，很多库都提供了这样的能力帮助我们完成这样的操作。 但业务有时可能变得稍微有些复杂，需要将一个抽象类的子类"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script><script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]--></head><body class="main-center theme-blue" itemscope itemtype=http://schema.org/WebPage><header class=header itemscope itemtype=http://schema.org/WPHeader><div class=slimContent><div class=navbar-header><div class="profile-block text-center"><a id=avatar href=https://github.com/kbyyd24 target=_blank><img class="img-circle img-rotate" src="https://avatars3.githubusercontent.com/u/9191275?s=460&u=a7ea5a50516804b275b4f7a36b36efc36c75e095&v=4" width=200 height=200></a><h2 id=name class="hidden-xs hidden-sm">无糖拿铁</h2><h3 id=title class="hidden-xs hidden-sm hidden-md">无糖拿铁，谢谢</h3><small id=location class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i>Chengdu, China</small></div><div class=search id=search-form-wrap><form class="search-form sidebar-form"><div class=input-group><input type=text class="search-form-input form-control" placeholder=搜索>
-<span class=input-group-btn><button type=submit class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button></span></div><div class=ins-search><div class=ins-search-mask></div><div class=ins-search-container><div class=ins-input-wrapper><input type=text class=ins-search-input placeholder=想要查找什么... x-webkit-speech>
-<button type=button class="close ins-close ins-selectable" data-dismiss=modal aria-label=Close><span aria-hidden=true>×</span></button></div><div class=ins-section-wrapper><div class=ins-section-container></div></div></div></div></form></div><button class="navbar-toggle collapsed" type=button data-toggle=collapse data-target=#main-navbar aria-controls=main-navbar aria-expanded=false>
+<!doctype html><html lang=zh>
+<head>
+<title>
+使用 Jackson 处理抽象类的序列化和反序列化 - 无糖拿铁，谢谢
+</title>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
+<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,minimal-ui">
+<meta name=renderer content="webkit">
+<meta http-equiv=cache-control content="no-transform">
+<meta http-equiv=cache-control content="no-siteapp">
+<meta name=apple-mobile-web-app-capable content="yes">
+<meta name=apple-mobile-web-app-status-bar-style content="black">
+<meta name=format-detection content="telephone=no,email=no,adress=no">
+<meta name=theme-color content="#000000">
+<meta http-equiv=window-target content="_top">
+<meta name=description content="Json 的序列化和反序列化是我们常见的操作，很多库都提供了这样的能力帮助我们完成这样的操作。 但业务有时可能变得稍微有些复杂，需要将一个抽象类的子类">
+<meta name=generator content="Hugo 0.92.1 with theme pure">
+<title>使用 Jackson 处理抽象类的序列化和反序列化 - 无糖拿铁，谢谢</title>
+<link rel=stylesheet href=https://blog.gaoyuexiang.cn/css/style.min.e64d754037c0ee0ec4e20ab1d6f07740ace61729bc03850559b8caa21ae4a597.css>
+<link rel=stylesheet href=https://cdn.staticfile.org/highlight.js/9.15.10/styles/github.min.css async>
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.css async>
+<meta property="og:title" content="使用 Jackson 处理抽象类的序列化和反序列化">
+<meta property="og:description" content="Json 的序列化和反序列化是我们常见的操作，很多库都提供了这样的能力帮助我们完成这样的操作。 但业务有时可能变得稍微有些复杂，需要将一个抽象类的子类">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://blog.gaoyuexiang.cn/posts/jackson-inheritance/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2020-10-02T21:38:48+00:00">
+<meta property="article:modified_time" content="2020-10-02T21:38:48+00:00">
+<meta itemprop=name content="使用 Jackson 处理抽象类的序列化和反序列化">
+<meta itemprop=description content="Json 的序列化和反序列化是我们常见的操作，很多库都提供了这样的能力帮助我们完成这样的操作。 但业务有时可能变得稍微有些复杂，需要将一个抽象类的子类"><meta itemprop=datePublished content="2020-10-02T21:38:48+00:00">
+<meta itemprop=dateModified content="2020-10-02T21:38:48+00:00">
+<meta itemprop=wordCount content="2029">
+<meta itemprop=keywords content="Jackson,Json,序列化,反序列化,"><meta name=twitter:card content="summary">
+<meta name=twitter:title content="使用 Jackson 处理抽象类的序列化和反序列化">
+<meta name=twitter:description content="Json 的序列化和反序列化是我们常见的操作，很多库都提供了这样的能力帮助我们完成这样的操作。 但业务有时可能变得稍微有些复杂，需要将一个抽象类的子类"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
+<script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]-->
+</head>
+<body class="main-center theme-blue" itemscope itemtype=http://schema.org/WebPage><header class=header itemscope itemtype=http://schema.org/WPHeader>
+<div class=slimContent>
+<div class=navbar-header>
+<div class="profile-block text-center">
+<a id=avatar href=https://github.com/kbyyd24 target=_blank>
+<img class="img-circle img-rotate" src="https://avatars3.githubusercontent.com/u/9191275?s=460&u=a7ea5a50516804b275b4f7a36b36efc36c75e095&v=4" width=200 height=200>
+</a>
+<h2 id=name class="hidden-xs hidden-sm">无糖拿铁</h2>
+<h3 id=title class="hidden-xs hidden-sm hidden-md">无糖拿铁，谢谢</h3>
+<small id=location class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i>Chengdu, China</small>
+</div><div class=search id=search-form-wrap>
+<form class="search-form sidebar-form">
+<div class=input-group>
+<input type=text class="search-form-input form-control" placeholder=搜索>
+<span class=input-group-btn>
+<button type=submit class="search-form-submit btn btn-flat" onclick=return!1><i class="icon icon-search"></i></button>
+</span>
+</div>
+<div class=ins-search>
+<div class=ins-search-mask></div>
+<div class=ins-search-container>
+<div class=ins-input-wrapper>
+<input type=text class=ins-search-input placeholder=想要查找什么... x-webkit-speech>
+<button type=button class="close ins-close ins-selectable" data-dismiss=modal aria-label=Close><span aria-hidden=true>×</span></button>
+</div>
+<div class=ins-section-wrapper>
+<div class=ins-section-container></div>
+</div>
+</div>
+</div>
+</form>
+</div>
+<button class="navbar-toggle collapsed" type=button data-toggle=collapse data-target=#main-navbar aria-controls=main-navbar aria-expanded=false>
 <span class=sr-only>Toggle navigation</span>
-<span class=icon-bar></span><span class=icon-bar></span><span class=icon-bar></span></button></div><nav id=main-navbar class="collapse navbar-collapse" itemscope itemtype=http://schema.org/SiteNavigationElement role=navigation><ul class="nav navbar-nav main-nav"><li class="menu-item menu-item-home"><a href=/><i class="icon icon-home-fill"></i><span class=menu-title>Home</span></a></li><li class="menu-item menu-item-archives"><a href=/posts/><i class="icon icon-archives-fill"></i><span class=menu-title>Archives</span></a></li><li class="menu-item menu-item-series"><a href=/series-index/><i class="icon icon-folder-open"></i><span class=menu-title>Series</span></a></li><li class="menu-item menu-item-tags"><a href=/tags/><i class="icon icon-tags"></i><span class=menu-title>Tags</span></a></li><li class="menu-item menu-item-about"><a href=/about/><i class="icon icon-cup-fill"></i><span class=menu-title>About</span></a></li></ul></nav></div></header><aside class=sidebar itemscope itemtype=http://schema.org/WPSideBar><div class=slimContent><div class=widget><h3 class=widget-title>标签</h3><div id=tag-cloud-list class=widget-body><a href=https://blog.gaoyuexiang.cn/tags/12-factor/ class=tag-list-link rel=1>12-factor<span class=tag-list-count>1</span></a>
+<span class=icon-bar></span>
+<span class=icon-bar></span>
+<span class=icon-bar></span>
+</button>
+</div>
+<nav id=main-navbar class="collapse navbar-collapse" itemscope itemtype=http://schema.org/SiteNavigationElement role=navigation>
+<ul class="nav navbar-nav main-nav">
+<li class="menu-item menu-item-home">
+<a href=/>
+<i class="icon icon-home-fill"></i>
+<span class=menu-title>Home</span>
+</a>
+</li>
+<li class="menu-item menu-item-archives">
+<a href=/posts/>
+<i class="icon icon-archives-fill"></i>
+<span class=menu-title>Archives</span>
+</a>
+</li>
+<li class="menu-item menu-item-series">
+<a href=/series-index/>
+<i class="icon icon-folder-open"></i>
+<span class=menu-title>Series</span>
+</a>
+</li>
+<li class="menu-item menu-item-tags">
+<a href=/tags/>
+<i class="icon icon-tags"></i>
+<span class=menu-title>Tags</span>
+</a>
+</li>
+<li class="menu-item menu-item-about">
+<a href=/about/>
+<i class="icon icon-cup-fill"></i>
+<span class=menu-title>About</span>
+</a>
+</li>
+</ul>
+</nav>
+</div>
+</header>
+<aside class=sidebar itemscope itemtype=http://schema.org/WPSideBar>
+<div class=slimContent>
+<div class=widget>
+<h3 class=widget-title> 标签</h3>
+<div id=tag-cloud-list class=widget-body>
+<a href=https://blog.gaoyuexiang.cn/tags/12-factor/ class=tag-list-link rel=1>12-factor<span class=tag-list-count>1</span></a>
 <a href=https://blog.gaoyuexiang.cn/tags/architecture/ class=tag-list-link rel=2>architecture<span class=tag-list-count>2</span></a>
 <a href=https://blog.gaoyuexiang.cn/tags/auto-configure/ class=tag-list-link rel=1>auto-configure<span class=tag-list-count>1</span></a>
 <a href=https://blog.gaoyuexiang.cn/tags/classpathscanningcandidatecomponentprovider/ class=tag-list-link rel=1>classpathscanningcandidatecomponentprovider<span class=tag-list-count>1</span></a>
@@ -69,18 +182,114 @@
 <a href=https://blog.gaoyuexiang.cn/tags/%E7%AB%AF%E5%8F%A3%E4%B8%8E%E9%80%82%E9%85%8D%E5%99%A8%E6%9E%B6%E6%9E%84/ class=tag-list-link rel=2>端口与适配器架构<span class=tag-list-count>2</span></a>
 <a href=https://blog.gaoyuexiang.cn/tags/%E8%87%AA%E6%88%91%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/ class=tag-list-link rel=1>自我保护模式<span class=tag-list-count>1</span></a>
 <a href=https://blog.gaoyuexiang.cn/tags/%E9%87%8D%E6%9E%84/ class=tag-list-link rel=1>重构<span class=tag-list-count>1</span></a>
-<a href=https://blog.gaoyuexiang.cn/tags/%E9%9C%B0%E5%BC%B9%E5%BC%8F%E4%BF%AE%E6%94%B9/ class=tag-list-link rel=1>霰弹式修改<span class=tag-list-count>1</span></a></div><script>document.onreadystatechange=()=>{if(document.readyState==='complete'){tagCloud('#tag-cloud-list a',8,20);}};function tagCloud(where,min,max){let iMax=0;let iMin=0;$(where).each(function(){let weight=Number($(this).attr("rel"));if(iMax<weight)iMax=weight;if(iMin>weight||iMin==0)iMin=weight;});let step=(max-min)/(iMax-iMin);$(where).each(function(){let weight=$(this).attr("rel")-iMin;$(this).css({"font-size":min+(weight*step)+'px'});});};</script></div><div class=widget><h3 class=widget-title>最新文章</h3><div class=widget-body><ul class="recent-post-list list-unstyled no-thumbnail"><li><div class=item-inner><p class=item-title><a href=https://blog.gaoyuexiang.cn/posts/junit_alternative/ class=title>JUnit 不好用？也许你可以试试这些测试工具</a></p><p class=item-date><time datetime="2021-11-26 00:01:57 +0800 +0800" itemprop=datePublished>2021-11-26</time></p></div></li><li><div class=item-inner><p class=item-title><a href=https://blog.gaoyuexiang.cn/posts/domain-centeric-architectures/ class=title>以领域为核心的架构们如何指导我们写代码</a></p><p class=item-date><time datetime="2021-05-25 22:13:57 +0800 +0800" itemprop=datePublished>2021-05-25</time></p></div></li><li><div class=item-inner><p class=item-title><a href=https://blog.gaoyuexiang.cn/posts/divergent-change-and-shotgun-surgery/ class=title>发散式变化与霰弹式修改</a></p><p class=item-date><time datetime="2021-04-25 20:22:33 +0800 +0800" itemprop=datePublished>2021-04-25</time></p></div></li><li><div class=item-inner><p class=item-title><a href=https://blog.gaoyuexiang.cn/posts/how-to-scan-classes-in-java-package-with-annotation/ class=title>要扫描 Java 的 package 中有某个注解的类，应该怎么做？</a></p><p class=item-date><time datetime="2021-03-21 19:52:45 +0800 +0800" itemprop=datePublished>2021-03-21</time></p></div></li><li><div class=item-inner><p class=item-title><a href=https://blog.gaoyuexiang.cn/posts/jackson-inheritance/ class=title>使用 Jackson 处理抽象类的序列化和反序列化</a></p><p class=item-date><time datetime="2020-10-02 21:38:48 +0000 UTC" itemprop=datePublished>2020-10-02</time></p></div></li></ul></div></div></div></aside><aside class="sidebar sidebar-toc collapse" id=collapseToc itemscope itemtype=http://schema.org/WPSideBar><div class=slimContent><h4 class=toc-title>文章目录</h4><nav id=toc class="js-toc toc"></nav></div></aside><main class=main role=main><div class=content><article id=- class="article article-type-" itemscope itemtype=http://schema.org/BlogPosting><div class=article-header><h1 itemprop=name><a class=article-title href=/posts/jackson-inheritance/>使用 Jackson 处理抽象类的序列化和反序列化</a></h1><div class=article-meta><span class=article-date><i class="icon icon-calendar-check"></i>&nbsp;
-<a href=https://blog.gaoyuexiang.cn/posts/jackson-inheritance/ class=article-date><time datetime="2020-10-02 21:38:48 +0000 UTC" itemprop=datePublished>2020-10-02</time></a></span>
-<span class=article-tag><i class="icon icon-tags"></i>&nbsp;
-<a class=article-tag-link href=/tags/jackson/>Jackson</a>
-<a class=article-tag-link href=/tags/json/>Json</a>
-<a class=article-tag-link href=/tags/%E5%BA%8F%E5%88%97%E5%8C%96/>序列化</a>
-<a class=article-tag-link href=/tags/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/>反序列化</a></span>
-<span class="article-read hidden-xs"><i class="icon icon-eye-fill" aria-hidden=true></i><span id=https://blog.gaoyuexiang.cn/posts/jackson-inheritance/ class=leancloud_visitors data-flag-title="使用 Jackson 处理抽象类的序列化和反序列化">0</span></span>
+<a href=https://blog.gaoyuexiang.cn/tags/%E9%9C%B0%E5%BC%B9%E5%BC%8F%E4%BF%AE%E6%94%B9/ class=tag-list-link rel=1>霰弹式修改<span class=tag-list-count>1</span></a>
+</div>
+<script>document.onreadystatechange=()=>{document.readyState==='complete'&&tagCloud('#tag-cloud-list a',8,20)};function tagCloud(c,d,e){let b=0,a=0;$(c).each(function(){let c=Number($(this).attr("rel"));b<c&&(b=c),(a>c||a==0)&&(a=c)});let f=(e-d)/(b-a);$(c).each(function(){let b=$(this).attr("rel")-a;$(this).css({"font-size":d+b*f+'px'})})}</script>
+</div>
+<div class=widget>
+<h3 class=widget-title>最新文章</h3>
+<div class=widget-body>
+<ul class="recent-post-list list-unstyled no-thumbnail">
+<li>
+<div class=item-inner>
+<p class=item-title>
+<a href=https://blog.gaoyuexiang.cn/posts/junit_alternative/ class=title>JUnit 不好用？也许你可以试试这些测试工具</a>
+</p>
+<p class=item-date>
+<time datetime="2021-11-26 00:01:57 +0800 +0800" itemprop=datePublished>2021-11-26</time>
+</p>
+</div>
+</li>
+<li>
+<div class=item-inner>
+<p class=item-title>
+<a href=https://blog.gaoyuexiang.cn/posts/domain-centeric-architectures/ class=title>以领域为核心的架构们如何指导我们写代码</a>
+</p>
+<p class=item-date>
+<time datetime="2021-05-25 22:13:57 +0800 +0800" itemprop=datePublished>2021-05-25</time>
+</p>
+</div>
+</li>
+<li>
+<div class=item-inner>
+<p class=item-title>
+<a href=https://blog.gaoyuexiang.cn/posts/divergent-change-and-shotgun-surgery/ class=title>发散式变化与霰弹式修改</a>
+</p>
+<p class=item-date>
+<time datetime="2021-04-25 20:22:33 +0800 +0800" itemprop=datePublished>2021-04-25</time>
+</p>
+</div>
+</li>
+<li>
+<div class=item-inner>
+<p class=item-title>
+<a href=https://blog.gaoyuexiang.cn/posts/how-to-scan-classes-in-java-package-with-annotation/ class=title>要扫描 Java 的 package 中有某个注解的类，应该怎么做？</a>
+</p>
+<p class=item-date>
+<time datetime="2021-03-21 19:52:45 +0800 +0800" itemprop=datePublished>2021-03-21</time>
+</p>
+</div>
+</li>
+<li>
+<div class=item-inner>
+<p class=item-title>
+<a href=https://blog.gaoyuexiang.cn/posts/jackson-inheritance/ class=title>使用 Jackson 处理抽象类的序列化和反序列化</a>
+</p>
+<p class=item-date>
+<time datetime="2020-10-02 21:38:48 +0000 UTC" itemprop=datePublished>2020-10-02</time>
+</p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</aside>
+<aside class="sidebar sidebar-toc collapse" id=collapseToc itemscope itemtype=http://schema.org/WPSideBar>
+<div class=slimContent>
+<h4 class=toc-title>文章目录</h4>
+<nav id=toc class="js-toc toc">
+</nav>
+</div>
+</aside>
+<main class=main role=main><div class=content>
+<article id=- class="article article-type-" itemscope itemtype=http://schema.org/BlogPosting>
+<div class=article-header>
+<h1 itemprop=name>
+<a class=article-title href=/posts/jackson-inheritance/>使用 Jackson 处理抽象类的序列化和反序列化</a>
+</h1>
+<div class=article-meta>
+<span class=article-date>
+<i class="icon icon-calendar-check"></i>&nbsp;
+<a href=https://blog.gaoyuexiang.cn/posts/jackson-inheritance/ class=article-date>
+<time datetime="2020-10-02 21:38:48 +0000 UTC" itemprop=datePublished>2020-10-02</time>
+</a>
+</span>
+<span class=article-tag>
+<i class="icon icon-tags"></i>&nbsp;
+<a class=article-tag-link href=/tags/jackson/> Jackson </a>
+<a class=article-tag-link href=/tags/json/> Json </a>
+<a class=article-tag-link href=/tags/%E5%BA%8F%E5%88%97%E5%8C%96/> 序列化 </a>
+<a class=article-tag-link href=/tags/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/> 反序列化 </a>
+</span>
+<span class="article-read hidden-xs">
+<i class="icon icon-eye-fill" aria-hidden=true></i>
+<span id=https://blog.gaoyuexiang.cn/posts/jackson-inheritance/ class=leancloud_visitors data-flag-title="使用 Jackson 处理抽象类的序列化和反序列化">0</span>
+</span>
 <span class=post-comment><i class="icon icon-comment"></i>&nbsp;<a href=/posts/jackson-inheritance/#comments class=article-comment-link>评论</a></span>
 <span class="post-wordcount hidden-xs" itemprop=wordCount>字数统计: 2029字</span>
-<span class="post-readcount hidden-xs" itemprop=timeRequired>阅读时长: 5分</span></div></div><div class="article-entry marked-body js-toc-content" itemprop=articleBody><p>Json 的序列化和反序列化是我们常见的操作，很多库都提供了这样的能力帮助我们完成这样的操作。
-但业务有时可能变得稍微有些复杂，需要将一个抽象类的子类实例序列化成一个 Json，也需要将一个 Json 反序列化成一个抽象类。而在反序列化的时候，就需要找到真正的子类。</p><p><code>Jackson</code> 是 Java 中常用的一种进行 Json 序列化和反序列化的库，它能否面对这样的业务呢？</p><h1 id=业务假设>业务假设</h1><p>假设我们有这样的类结构关系：</p><p><img src=ticket.png alt></p><p>代码写出来长这样：</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#f92672>package</span> cn.gaoyuexiang.practice.jackson.inheritance<span style=color:#f92672>;</span>
+<span class="post-readcount hidden-xs" itemprop=timeRequired>阅读时长: 5分 </span>
+</div>
+</div>
+<div class="article-entry marked-body js-toc-content" itemprop=articleBody>
+<p>Json 的序列化和反序列化是我们常见的操作，很多库都提供了这样的能力帮助我们完成这样的操作。
+但业务有时可能变得稍微有些复杂，需要将一个抽象类的子类实例序列化成一个 Json，也需要将一个 Json 反序列化成一个抽象类。而在反序列化的时候，就需要找到真正的子类。</p>
+<p><code>Jackson</code> 是 Java 中常用的一种进行 Json 序列化和反序列化的库，它能否面对这样的业务呢？</p>
+<h1 id=业务假设>业务假设</h1>
+<p>假设我们有这样的类结构关系：</p>
+<p><img src=ticket.png alt></p>
+<p>代码写出来长这样：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#f92672>package</span> cn.gaoyuexiang.practice.jackson.inheritance<span style=color:#f92672>;</span>
 
 <span style=color:#a6e22e>@Data</span>
 <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>abstract</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Ticket</span> <span style=color:#f92672>{</span>
@@ -99,30 +308,55 @@
 <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>QuestionTicket</span> <span style=color:#66d9ef>extends</span> Ticket <span style=color:#f92672>{</span>
   <span style=color:#66d9ef>private</span> String description<span style=color:#f92672>;</span>
 <span style=color:#f92672>}</span>
-</code></pre></div><blockquote><p>可以在 <a href=https://github.com/kbyyd24/jackson-inheritance-practice>https://github.com/kbyyd24/jackson-inheritance-practice</a> 看到完整代码</p></blockquote><p>接下来所有的序列化和反序列化操作，都是针对类型为 <code>Ticket</code> 的变量来执行的，而不考虑真实的类型。</p><h1 id=序列化>序列化</h1><p>序列化不会遇到任何挑战。因为不管变量的真实类型是什么，Jackson 总是会通过所有的 <code>getter</code> 方法来找到所有的属性和值，并序列化到 Json 中。</p><h1 id=反序列化>反序列化</h1><p>反序列化就不同了，因为程序不知道 Json 应该对应到哪一个子类，所以我们会写出这样的代码：</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java>Ticket ticket <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> ObjectMapper<span style=color:#f92672>().</span><span style=color:#a6e22e>readValue</span><span style=color:#f92672>(</span>json<span style=color:#f92672>,</span> Ticket<span style=color:#f92672>.</span><span style=color:#a6e22e>class</span><span style=color:#f92672>);</span>
-</code></pre></div><p>而抽象类又不能创建出实例，所以这一行代码就会因为这个限制而出错。</p><p>为了让这一行代码成功执行，为 <code>ticket</code> 变量找到真正的类型，我们就需要使用 <code>@JsonTypeInfo</code> 注解。</p><p>这个注解可以用到属性上，也可以用到类上，影响的只是作用范围，对效果没什么影响。本文只有使用到类上的例子。</p><h2 id=指定-json-中标识类型的值>指定 Json 中标识类型的值</h2><p>使用这个注解时，需要使用到 use 属性，表示使用哪种信息来作为 Json 对应的实际子类的标识符。我们来看其中的几种。</p><h3 id=class-标识>CLASS 标识</h3><p>使用它时，我们的抽象类得写成这样：</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#a6e22e>@JsonTypeInfo</span><span style=color:#f92672>(</span>
+</code></pre></div><blockquote>
+<p>可以在 <a href=https://github.com/kbyyd24/jackson-inheritance-practice>https://github.com/kbyyd24/jackson-inheritance-practice</a> 看到完整代码</p>
+</blockquote>
+<p>接下来所有的序列化和反序列化操作，都是针对类型为 <code>Ticket</code> 的变量来执行的，而不考虑真实的类型。</p>
+<h1 id=序列化>序列化</h1>
+<p>序列化不会遇到任何挑战。因为不管变量的真实类型是什么，Jackson 总是会通过所有的 <code>getter</code> 方法来找到所有的属性和值，并序列化到 Json 中。</p>
+<h1 id=反序列化>反序列化</h1>
+<p>反序列化就不同了，因为程序不知道 Json 应该对应到哪一个子类，所以我们会写出这样的代码：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java>Ticket ticket <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> ObjectMapper<span style=color:#f92672>().</span><span style=color:#a6e22e>readValue</span><span style=color:#f92672>(</span>json<span style=color:#f92672>,</span> Ticket<span style=color:#f92672>.</span><span style=color:#a6e22e>class</span><span style=color:#f92672>);</span>
+</code></pre></div><p>而抽象类又不能创建出实例，所以这一行代码就会因为这个限制而出错。</p>
+<p>为了让这一行代码成功执行，为 <code>ticket</code> 变量找到真正的类型，我们就需要使用 <code>@JsonTypeInfo</code> 注解。</p>
+<p>这个注解可以用到属性上，也可以用到类上，影响的只是作用范围，对效果没什么影响。本文只有使用到类上的例子。</p>
+<h2 id=指定-json-中标识类型的值>指定 Json 中标识类型的值</h2>
+<p>使用这个注解时，需要使用到 use 属性，表示使用哪种信息来作为 Json 对应的实际子类的标识符。我们来看其中的几种。</p>
+<h3 id=class-标识>CLASS 标识</h3>
+<p>使用它时，我们的抽象类得写成这样：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#a6e22e>@JsonTypeInfo</span><span style=color:#f92672>(</span>
   use <span style=color:#f92672>=</span> JsonTypeInfo<span style=color:#f92672>.</span><span style=color:#a6e22e>Id</span><span style=color:#f92672>.</span><span style=color:#a6e22e>CLASS</span>
 <span style=color:#f92672>)</span>
 <span style=color:#a6e22e>@Data</span>
 <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>abstract</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Ticket</span> <span style=color:#f92672>{</span>
   <span style=color:#66d9ef>private</span> TicketType type<span style=color:#f92672>;</span>
 <span style=color:#f92672>}</span>
-</code></pre></div><p>这里的 <code>CLASS</code> 表示使用全限定类名来表示 Json 对应的类型，并且会在序列化的 Json 中插入一个 key 为 <code>@class</code> 的信息，值为类的全限定名。</p><p>比如下面的代码，就会得到这样的 Json：</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-groovy data-lang=groovy><span style=color:#66d9ef>def</span> ticket <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> QuestionTicket<span style=color:#f92672>()</span>
+</code></pre></div><p>这里的 <code>CLASS</code> 表示使用全限定类名来表示 Json 对应的类型，并且会在序列化的 Json 中插入一个 key 为 <code>@class</code> 的信息，值为类的全限定名。</p>
+<p>比如下面的代码，就会得到这样的 Json：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-groovy data-lang=groovy><span style=color:#66d9ef>def</span> ticket <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> QuestionTicket<span style=color:#f92672>()</span>
 ticket<span style=color:#f92672>.</span><span style=color:#a6e22e>type</span> <span style=color:#f92672>=</span> TicketType<span style=color:#f92672>.</span><span style=color:#a6e22e>QUESTION</span>
 ticket<span style=color:#f92672>.</span><span style=color:#a6e22e>description</span> <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;some description&#34;</span>
 <span style=color:#66d9ef>def</span> json <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> ObjectMapper<span style=color:#f92672>.</span><span style=color:#a6e22e>writeValueAsString</span><span style=color:#f92672>(</span>ticket<span style=color:#f92672>)</span>
-</code></pre></div><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>{<span style=color:#f92672>&#34;@class&#34;</span>:<span style=color:#e6db74>&#34;cn.gaoyuexiang.practice.jackson.inheritance.QuestionTicket&#34;</span>,<span style=color:#f92672>&#34;type&#34;</span>:<span style=color:#e6db74>&#34;QUESTION&#34;</span>,<span style=color:#f92672>&#34;description&#34;</span>:<span style=color:#e6db74>&#34;some description&#34;</span>}
+</code></pre></div><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>{<span style=color:#f92672>&#34;@class&#34;</span>:<span style=color:#e6db74>&#34;cn.gaoyuexiang.practice.jackson.inheritance.QuestionTicket&#34;</span>,<span style=color:#f92672>&#34;type&#34;</span>:<span style=color:#e6db74>&#34;QUESTION&#34;</span>,<span style=color:#f92672>&#34;description&#34;</span>:<span style=color:#e6db74>&#34;some description&#34;</span>}
 </code></pre></div><p>显然，Json 中的 <code>@class</code> 并不是 QuestionTicket 对象的字段，而是我们的注解导致这个字段的出现。
-这时我们使用这个 Json 来做反序列化，就能得到一个 Ticket 对象，并且实际类型是 QuestionTicket。</p><h3 id=minimal_class-标识>MINIMAL_CLASS 标识</h3><p>这个标识同样使用类名来作为 Id，但是与 <code>CLASS</code> 不同，它不使用全限定名，而是根据子类来计算出应该是使用单纯的类名，还是包含一部分的包名。并且，最终的值前面会加上一个 <code>.</code>。</p><p>使用这个标识时，使用 <code>@c</code> 作为 key 插入到 Json 中，上面的代码会得到这样的 Json</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>{<span style=color:#f92672>&#34;@c&#34;</span>:<span style=color:#e6db74>&#34;.QuestionTicket&#34;</span>,<span style=color:#f92672>&#34;type&#34;</span>:<span style=color:#e6db74>&#34;QUESTION&#34;</span>,<span style=color:#f92672>&#34;description&#34;</span>:<span style=color:#e6db74>&#34;some description&#34;</span>}
-</code></pre></div><h3 id=name-标识>NAME 标识</h3><p>NAME 标识表示使用逻辑名称来标识 Json 对应的类型。默认情况下的逻辑名称是类名。</p><p>比如下面的代码会产生的 Json：</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#a6e22e>@JsonTypeInfo</span><span style=color:#f92672>(</span>
+这时我们使用这个 Json 来做反序列化，就能得到一个 Ticket 对象，并且实际类型是 QuestionTicket。</p>
+<h3 id=minimal_class-标识>MINIMAL_CLASS 标识</h3>
+<p>这个标识同样使用类名来作为 Id，但是与 <code>CLASS</code> 不同，它不使用全限定名，而是根据子类来计算出应该是使用单纯的类名，还是包含一部分的包名。并且，最终的值前面会加上一个 <code>.</code>。</p>
+<p>使用这个标识时，使用 <code>@c</code> 作为 key 插入到 Json 中，上面的代码会得到这样的 Json</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>{<span style=color:#f92672>&#34;@c&#34;</span>:<span style=color:#e6db74>&#34;.QuestionTicket&#34;</span>,<span style=color:#f92672>&#34;type&#34;</span>:<span style=color:#e6db74>&#34;QUESTION&#34;</span>,<span style=color:#f92672>&#34;description&#34;</span>:<span style=color:#e6db74>&#34;some description&#34;</span>}
+</code></pre></div><h3 id=name-标识>NAME 标识</h3>
+<p>NAME 标识表示使用逻辑名称来标识 Json 对应的类型。默认情况下的逻辑名称是类名。</p>
+<p>比如下面的代码会产生的 Json：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#a6e22e>@JsonTypeInfo</span><span style=color:#f92672>(</span>
   use <span style=color:#f92672>=</span> JsonTypeInfo<span style=color:#f92672>.</span><span style=color:#a6e22e>Id</span><span style=color:#f92672>.</span><span style=color:#a6e22e>NAME</span>
 <span style=color:#f92672>)</span>
 <span style=color:#a6e22e>@Data</span>
 <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>abstract</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Ticket</span> <span style=color:#f92672>{</span>
   <span style=color:#66d9ef>private</span> TicketType type<span style=color:#f92672>;</span>
 <span style=color:#f92672>}</span>
-</code></pre></div><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>{<span style=color:#f92672>&#34;@type&#34;</span>:<span style=color:#e6db74>&#34;QuestionTicket&#34;</span>,<span style=color:#f92672>&#34;type&#34;</span>:<span style=color:#e6db74>&#34;QUESTION&#34;</span>,<span style=color:#f92672>&#34;description&#34;</span>:<span style=color:#e6db74>&#34;some description&#34;</span>}
-</code></pre></div><p>我们可以使用 <code>@JsonSubTypes</code> 注解来指定逻辑名称和子类的映射关系：</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#a6e22e>@JsonTypeInfo</span><span style=color:#f92672>(</span>
+</code></pre></div><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>{<span style=color:#f92672>&#34;@type&#34;</span>:<span style=color:#e6db74>&#34;QuestionTicket&#34;</span>,<span style=color:#f92672>&#34;type&#34;</span>:<span style=color:#e6db74>&#34;QUESTION&#34;</span>,<span style=color:#f92672>&#34;description&#34;</span>:<span style=color:#e6db74>&#34;some description&#34;</span>}
+</code></pre></div><p>我们可以使用 <code>@JsonSubTypes</code> 注解来指定逻辑名称和子类的映射关系：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#a6e22e>@JsonTypeInfo</span><span style=color:#f92672>(</span>
   use <span style=color:#f92672>=</span> JsonTypeInfo<span style=color:#f92672>.</span><span style=color:#a6e22e>Id</span><span style=color:#f92672>.</span><span style=color:#a6e22e>NAME</span>
 <span style=color:#f92672>)</span>
 <span style=color:#a6e22e>@JsonSubTypes</span><span style=color:#f92672>({</span>
@@ -133,8 +367,20 @@ ticket<span style=color:#f92672>.</span><span style=color:#a6e22e>description</s
 <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>abstract</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Ticket</span> <span style=color:#f92672>{</span>
   <span style=color:#66d9ef>private</span> TicketType type<span style=color:#f92672>;</span>
 <span style=color:#f92672>}</span>
-</code></pre></div><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>{<span style=color:#f92672>&#34;@type&#34;</span>:<span style=color:#e6db74>&#34;QUESTION&#34;</span>,<span style=color:#f92672>&#34;type&#34;</span>:<span style=color:#e6db74>&#34;QUESTION&#34;</span>,<span style=color:#f92672>&#34;description&#34;</span>:<span style=color:#e6db74>&#34;some description&#34;</span>}
-</code></pre></div><blockquote><p><code>@JsonSubTypes.Type</code> 注解的 name 属性没有指定时，Jackson 会查找这个类上的 <code>@JsonTypeName</code> 注解的值用作 name ；如果也不存在，就会使用类名。</p></blockquote><p>我们可以看到 <code>@JsonSubTypes</code> 注解帮助我们维护了一个逻辑上唯一的字符串和子类的映射关系，这样 Jackson 就可以根据这样的映射关系来进行序列化和反序列化了。</p><h2 id=指定标识符在-json-中的表现形式>指定标识符在 Json 中的表现形式</h2><p>上面的三种标识符类型，都是在原本对象序列化的 Json 中插入了一个字段来完成的。这是因为 <code>@JsonTypeInfo</code> 的 include 属性默认值是 <code>PROPERTY</code>，也就是说是在 Json 中插入一条 property。</p><blockquote><p>如果 Json 中恰好有一条 property 的名字和要插入的 property 重复，那么就可能看到 Json 中出现两个相同 key 的字段。这可能导致一些 Json 库识别这个 Json 时出现错误，因为 Json 规范没有规定 Json 中是否可以出现两个相同的 key，具体会表现为什么行为依赖于每个库的实现。</p></blockquote><p>当然，除了 <code>PROPERTY</code> 还有其他的形式可以选择。</p><h3 id=wrapper_array>WRAPPER_ARRAY</h3><p>这种方式会将 Json 序列化成一个数组，第一个值是 Id，第二个值才是真正的对象序列化后的 Json。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#a6e22e>@JsonTypeInfo</span><span style=color:#f92672>(</span>
+</code></pre></div><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>{<span style=color:#f92672>&#34;@type&#34;</span>:<span style=color:#e6db74>&#34;QUESTION&#34;</span>,<span style=color:#f92672>&#34;type&#34;</span>:<span style=color:#e6db74>&#34;QUESTION&#34;</span>,<span style=color:#f92672>&#34;description&#34;</span>:<span style=color:#e6db74>&#34;some description&#34;</span>}
+</code></pre></div><blockquote>
+<p><code>@JsonSubTypes.Type</code> 注解的 name 属性没有指定时，Jackson 会查找这个类上的 <code>@JsonTypeName</code> 注解的值用作 name ；如果也不存在，就会使用类名。</p>
+</blockquote>
+<p>我们可以看到 <code>@JsonSubTypes</code> 注解帮助我们维护了一个逻辑上唯一的字符串和子类的映射关系，这样 Jackson 就可以根据这样的映射关系来进行序列化和反序列化了。</p>
+<h2 id=指定标识符在-json-中的表现形式>指定标识符在 Json 中的表现形式</h2>
+<p>上面的三种标识符类型，都是在原本对象序列化的 Json 中插入了一个字段来完成的。这是因为 <code>@JsonTypeInfo</code> 的 include 属性默认值是 <code>PROPERTY</code>，也就是说是在 Json 中插入一条 property。</p>
+<blockquote>
+<p>如果 Json 中恰好有一条 property 的名字和要插入的 property 重复，那么就可能看到 Json 中出现两个相同 key 的字段。这可能导致一些 Json 库识别这个 Json 时出现错误，因为 Json 规范没有规定 Json 中是否可以出现两个相同的 key，具体会表现为什么行为依赖于每个库的实现。</p>
+</blockquote>
+<p>当然，除了 <code>PROPERTY</code> 还有其他的形式可以选择。</p>
+<h3 id=wrapper_array>WRAPPER_ARRAY</h3>
+<p>这种方式会将 Json 序列化成一个数组，第一个值是 Id，第二个值才是真正的对象序列化后的 Json。</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#a6e22e>@JsonTypeInfo</span><span style=color:#f92672>(</span>
   use <span style=color:#f92672>=</span> JsonTypeInfo<span style=color:#f92672>.</span><span style=color:#a6e22e>Id</span><span style=color:#f92672>.</span><span style=color:#a6e22e>NAME</span><span style=color:#f92672>,</span>
   include <span style=color:#f92672>=</span> JsonTypeInfo<span style=color:#f92672>.</span><span style=color:#a6e22e>As</span><span style=color:#f92672>.</span><span style=color:#a6e22e>WRAPPER_ARRAY</span>
 <span style=color:#f92672>)</span>
@@ -146,8 +392,10 @@ ticket<span style=color:#f92672>.</span><span style=color:#a6e22e>description</s
 <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>abstract</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Ticket</span> <span style=color:#f92672>{</span>
   <span style=color:#66d9ef>private</span> TicketType type<span style=color:#f92672>;</span>
 <span style=color:#f92672>}</span>
-</code></pre></div><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>[<span style=color:#e6db74>&#34;QUESTION&#34;</span>,{<span style=color:#f92672>&#34;type&#34;</span>:<span style=color:#e6db74>&#34;QUESTION&#34;</span>,<span style=color:#f92672>&#34;description&#34;</span>:<span style=color:#e6db74>&#34;some description&#34;</span>}]
-</code></pre></div><h3 id=wrapper_object>WRAPPER_OBJECT</h3><p>与 <code>WRAPPER_ARRAY</code> 类型，不过这种形式不是得到的数组，而是一个对象，其中的 key 就是 Id。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#a6e22e>@JsonTypeInfo</span><span style=color:#f92672>(</span>
+</code></pre></div><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>[<span style=color:#e6db74>&#34;QUESTION&#34;</span>,{<span style=color:#f92672>&#34;type&#34;</span>:<span style=color:#e6db74>&#34;QUESTION&#34;</span>,<span style=color:#f92672>&#34;description&#34;</span>:<span style=color:#e6db74>&#34;some description&#34;</span>}]
+</code></pre></div><h3 id=wrapper_object>WRAPPER_OBJECT</h3>
+<p>与 <code>WRAPPER_ARRAY</code> 类型，不过这种形式不是得到的数组，而是一个对象，其中的 key 就是 Id。</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#a6e22e>@JsonTypeInfo</span><span style=color:#f92672>(</span>
   use <span style=color:#f92672>=</span> JsonTypeInfo<span style=color:#f92672>.</span><span style=color:#a6e22e>Id</span><span style=color:#f92672>.</span><span style=color:#a6e22e>NAME</span><span style=color:#f92672>,</span>
   include <span style=color:#f92672>=</span> JsonTypeInfo<span style=color:#f92672>.</span><span style=color:#a6e22e>As</span><span style=color:#f92672>.</span><span style=color:#a6e22e>WRAPPER_OBJECT</span>
 <span style=color:#f92672>)</span>
@@ -159,8 +407,20 @@ ticket<span style=color:#f92672>.</span><span style=color:#a6e22e>description</s
 <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>abstract</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Ticket</span> <span style=color:#f92672>{</span>
   <span style=color:#66d9ef>private</span> TicketType type<span style=color:#f92672>;</span>
 <span style=color:#f92672>}</span>
-</code></pre></div><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>{<span style=color:#f92672>&#34;QUESTION&#34;</span>:{<span style=color:#f92672>&#34;type&#34;</span>:<span style=color:#e6db74>&#34;QUESTION&#34;</span>,<span style=color:#f92672>&#34;description&#34;</span>:<span style=color:#e6db74>&#34;some description&#34;</span>}}
-</code></pre></div><h3 id=existing_property>EXISTING_PROPERTY</h3><p>顾名思义，这个形式表示将会使用原 Json 本来就有的一个字段。</p><p>使用这种形式时：</p><ol><li>序列化将不会对原本的 Json 做任何修改</li><li>我们需要指定 property 属性，以表明使用原本 Json 中的哪一个字段来表示 Id</li></ol><p>这两点表明，在使用这种形式时，原本的 Json 的这个字段自身就应该表示出对应的类型。</p><p>反序列化时，Jackson 会找到指定的 property，通过它的值和 <code>JsonSubTypes</code> 的配置来确定应该使用哪一个子类。</p><blockquote><p>property 属性在任何时候都可以使用，它可以替换掉默认的 <code>@class</code>、<code>@c</code> 和 <code>@type</code> 字段。</p></blockquote><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#a6e22e>@JsonTypeInfo</span><span style=color:#f92672>(</span>
+</code></pre></div><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>{<span style=color:#f92672>&#34;QUESTION&#34;</span>:{<span style=color:#f92672>&#34;type&#34;</span>:<span style=color:#e6db74>&#34;QUESTION&#34;</span>,<span style=color:#f92672>&#34;description&#34;</span>:<span style=color:#e6db74>&#34;some description&#34;</span>}}
+</code></pre></div><h3 id=existing_property>EXISTING_PROPERTY</h3>
+<p>顾名思义，这个形式表示将会使用原 Json 本来就有的一个字段。</p>
+<p>使用这种形式时：</p>
+<ol>
+<li>序列化将不会对原本的 Json 做任何修改</li>
+<li>我们需要指定 property 属性，以表明使用原本 Json 中的哪一个字段来表示 Id</li>
+</ol>
+<p>这两点表明，在使用这种形式时，原本的 Json 的这个字段自身就应该表示出对应的类型。</p>
+<p>反序列化时，Jackson 会找到指定的 property，通过它的值和 <code>JsonSubTypes</code> 的配置来确定应该使用哪一个子类。</p>
+<blockquote>
+<p>property 属性在任何时候都可以使用，它可以替换掉默认的 <code>@class</code>、<code>@c</code> 和 <code>@type</code> 字段。</p>
+</blockquote>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#a6e22e>@JsonTypeInfo</span><span style=color:#f92672>(</span>
   use <span style=color:#f92672>=</span> JsonTypeInfo<span style=color:#f92672>.</span><span style=color:#a6e22e>Id</span><span style=color:#f92672>.</span><span style=color:#a6e22e>NAME</span><span style=color:#f92672>,</span>
   include <span style=color:#f92672>=</span> JsonTypeInfo<span style=color:#f92672>.</span><span style=color:#a6e22e>As</span><span style=color:#f92672>.</span><span style=color:#a6e22e>EXISTING_PROPERTY</span><span style=color:#f92672>,</span>
   property <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;type&#34;</span>
@@ -173,21 +433,161 @@ ticket<span style=color:#f92672>.</span><span style=color:#a6e22e>description</s
 <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>abstract</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Ticket</span> <span style=color:#f92672>{</span>
   <span style=color:#66d9ef>private</span> TicketType type<span style=color:#f92672>;</span>
 <span style=color:#f92672>}</span>
-</code></pre></div><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>{<span style=color:#f92672>&#34;type&#34;</span>:<span style=color:#e6db74>&#34;QUESTION&#34;</span>,<span style=color:#f92672>&#34;description&#34;</span>:<span style=color:#e6db74>&#34;some description&#34;</span>}
-</code></pre></div><hr><p>另外，还有一种表现形式是 <code>EXTERNAL_PROPERTY</code>，可以参考<a href=https://stackoverflow.com/a/20914599/6487869>这个问题</a></p><h1 id=总结>总结</h1><p>我们了解了 Jackson 可以通过不同的标识符、以不同的形式来识别一个 Json 应该映射到哪一个类型，我们可以对如何使用做一个简单的判断。</p><p>无论是使用 <code>CLASS</code> 还是 <code>MINIMAL_CLASS</code> 类型，都会在 Json 中插入类的信息，这样既增加了 Json 和实现的耦合，也不利于重构，还导致了技术细节的泄露。</p><p>使用 <code>NAME</code> 这样的逻辑名称来标识 Json 类型看起来是比较好的做法，并且使用 Json 中本来就有的信息时，就完全去除了技术实现对 Json 的侵入，降低了耦合。</p><p>至于表现形式，则应该由 Json 本来的设计来决定。Jackson 已经给出了好几种支持，可以选择最接近设计的一种。</p></div><div class=article-footer><blockquote class=mt-2x><ul class="post-copyright list-unstyled"><li class="post-copyright-link hidden-xs"><strong>本文链接:</strong>
-<a href=https://blog.gaoyuexiang.cn/posts/jackson-inheritance/ title="使用 Jackson 处理抽象类的序列化和反序列化" target=_blank rel=external>https://blog.gaoyuexiang.cn/posts/jackson-inheritance/</a></li><li class=post-copyright-license><strong>License:</strong>
-<a href=https://creativecommons.org/licenses/by-nc/4.0/deed.zh target=_blank rel=external>CC BY-NC 4.0 CN</a></li></ul></blockquote><div class="panel panel-default panel-badger"><div class=panel-body><figure class=media><div class=media-left><a href=https://github.com/kbyyd24 target=_blank class="img-burn thumb-sm visible-lg"><img src="https://avatars3.githubusercontent.com/u/9191275?s=460&u=a7ea5a50516804b275b4f7a36b36efc36c75e095&v=4" class="img-rounded w-full" alt></a></div><div class=media-body><h3 class=media-heading><a href=https://github.com/kbyyd24 target=_blank><span class=text-dark>无糖拿铁</span><small class=ml-1x>无糖拿铁，谢谢</small></a></h3><div>Good Good Study, Day Day Up~</div></div></figure></div></div></div></article><section id=comments><div id=vcomments></div></section></div><nav class="bar bar-footer clearfix" data-stick-bottom><div class=bar-inner><ul class="pager pull-left"><li class=prev><a href=https://blog.gaoyuexiang.cn/posts/cyclomatic-complexity/ title=圈复杂度><i class="icon icon-angle-left" aria-hidden=true></i><span>&nbsp;&nbsp;下一篇</span></a></li><li class=next><a href=https://blog.gaoyuexiang.cn/posts/how-to-scan-classes-in-java-package-with-annotation/ title="要扫描 Java 的 package 中有某个注解的类，应该怎么做？"><span>上一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden=true></i></a></li><li class=toggle-toc><a class="toggle-btn collapsed" data-toggle=collapse href=#collapseToc aria-expanded=false title=文章目录 role=button><span>[&nbsp;</span><span>文章目录</span>
-<i class="text-collapsed icon icon-anchor"></i><i class="text-in icon icon-close"></i><span>]</span></a></li></ul><button type=button class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle=modal data-target=#donateModal><span>赏</span></button><div class=bar-right><div class=share-component data-sites="weibo,qq,qzone,wechat,facebook,twitter, linkedin" data-mobile-sites="weibo,qq,qzone,wechat,facebook,twitter, linkedin"></div></div></div></nav><div class="modal modal-center modal-small modal-xs-full fade" id=donateModal tabindex=-1 role=dialog><div class=modal-dialog role=document><div class="modal-content donate"><button type=button class=close data-dismiss=modal aria-label=Close><span aria-hidden=true>&#215;</span></button><div class=modal-body><div class=donate-box><div class=donate-head><p>赏杯咖啡吧</p></div><div class=tab-content><div role=tabpanel class="tab-pane fade active in" id=alipay><div class=donate-payimg><img src=https://blog.gaoyuexiang.cn/images/alipay.jpeg alt=扫码支持 title=扫一扫></div><p class="text-muted mv">扫码打赏, 多少你说了算~</p><p class=text-grey>打开支付宝扫一扫，即可进行扫码打赏哦~</p></div><div role=tabpanel class="tab-pane fade" id=wechatpay><div class=donate-payimg><img src=https://blog.gaoyuexiang.cn/images/wechatpay.png alt=扫码支持 title=扫一扫></div><p class="text-muted mv">扫码打赏, 多少你说了算~</p><p class=text-grey>打开微信扫一扫，即可进行扫码打赏哦</p></div></div><div class=donate-footer><ul class="nav nav-tabs nav-justified" role=tablist><li role=presentation class=active><a href=#alipay id=alipay-tab role=tab data-toggle=tab aria-controls=alipay aria-expanded=true><i class="icon icon-alipay"></i>支付宝</a></li><li role=presentation><a href=#wechatpay role=tab id=wechatpay-tab data-toggle=tab aria-controls=wechatpay aria-expanded=false><i class="icon icon-wepay"></i>微信支付</a></li></ul></div></div></div></div></div></div></main><footer class=footer itemscope itemtype=http://schema.org/WPFooter><ul class=social-links><li><a href=https://github.com/kbyyd24 target=_blank title=github data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li><li><a href=https://blog.gaoyuexiang.cn/index.xml target=_blank title=rss data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li><li><a href=https://blog.gaoyuexiang.cn/images/wechat_channel_with_name.png target=_blank title=wechat data-toggle=tooltip data-placement=top><i class="icon icon-wechat"></i></a></li></ul><div class=copyright>&copy;2016 -
-2022<div class=publishby>Theme by <a href=https://github.com/xiaoheiAh target=_blank>xiaoheiAh </a>base on<a href=https://github.com/xiaoheiAh/hugo-theme-pure target=_blank> pure</a>.</div><div><a href=https://beian.miit.gov.cn/ target=_blank>蜀ICP备15031888号-2</a></div></div></footer><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script><script type=text/x-mathjax-config>
+</code></pre></div><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>{<span style=color:#f92672>&#34;type&#34;</span>:<span style=color:#e6db74>&#34;QUESTION&#34;</span>,<span style=color:#f92672>&#34;description&#34;</span>:<span style=color:#e6db74>&#34;some description&#34;</span>}
+</code></pre></div><hr>
+<p>另外，还有一种表现形式是 <code>EXTERNAL_PROPERTY</code>，可以参考<a href=https://stackoverflow.com/a/20914599/6487869>这个问题</a></p>
+<h1 id=总结>总结</h1>
+<p>我们了解了 Jackson 可以通过不同的标识符、以不同的形式来识别一个 Json 应该映射到哪一个类型，我们可以对如何使用做一个简单的判断。</p>
+<p>无论是使用 <code>CLASS</code> 还是 <code>MINIMAL_CLASS</code> 类型，都会在 Json 中插入类的信息，这样既增加了 Json 和实现的耦合，也不利于重构，还导致了技术细节的泄露。</p>
+<p>使用 <code>NAME</code> 这样的逻辑名称来标识 Json 类型看起来是比较好的做法，并且使用 Json 中本来就有的信息时，就完全去除了技术实现对 Json 的侵入，降低了耦合。</p>
+<p>至于表现形式，则应该由 Json 本来的设计来决定。Jackson 已经给出了好几种支持，可以选择最接近设计的一种。</p>
+</div>
+<div class=article-footer>
+<blockquote class=mt-2x>
+<ul class="post-copyright list-unstyled">
+<li class="post-copyright-link hidden-xs">
+<strong>本文链接: </strong>
+<a href=https://blog.gaoyuexiang.cn/posts/jackson-inheritance/ title="使用 Jackson 处理抽象类的序列化和反序列化" target=_blank rel=external>https://blog.gaoyuexiang.cn/posts/jackson-inheritance/</a>
+</li>
+<li class=post-copyright-license>
+<strong>License: </strong>
+<a href=https://creativecommons.org/licenses/by-nc/4.0/deed.zh target=_blank rel=external>CC BY-NC 4.0 CN</a>
+</li>
+</ul>
+</blockquote>
+<div class="panel panel-default panel-badger">
+<div class=panel-body>
+<figure class=media>
+<div class=media-left>
+<a href=https://github.com/kbyyd24 target=_blank class="img-burn thumb-sm visible-lg">
+<img src="https://avatars3.githubusercontent.com/u/9191275?s=460&u=a7ea5a50516804b275b4f7a36b36efc36c75e095&v=4" class="img-rounded w-full" alt>
+</a>
+</div>
+<div class=media-body>
+<h3 class=media-heading><a href=https://github.com/kbyyd24 target=_blank><span class=text-dark>无糖拿铁</span><small class=ml-1x>无糖拿铁，谢谢</small></a></h3>
+<div>Good Good Study, Day Day Up~</div>
+</div>
+</figure>
+</div>
+</div>
+</div>
+</article>
+<section id=comments>
+<div id=vcomments></div>
+</section>
+</div><nav class="bar bar-footer clearfix" data-stick-bottom>
+<div class=bar-inner>
+<ul class="pager pull-left">
+<li class=prev>
+<a href=https://blog.gaoyuexiang.cn/posts/cyclomatic-complexity/ title=圈复杂度><i class="icon icon-angle-left" aria-hidden=true></i><span>&nbsp;&nbsp;下一篇</span></a>
+</li>
+<li class=next>
+<a href=https://blog.gaoyuexiang.cn/posts/how-to-scan-classes-in-java-package-with-annotation/ title="要扫描 Java 的 package 中有某个注解的类，应该怎么做？"><span>上一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden=true></i></a>
+</li>
+<li class=toggle-toc>
+<a class="toggle-btn collapsed" data-toggle=collapse href=#collapseToc aria-expanded=false title=文章目录 role=button>
+<span>[&nbsp;</span><span>文章目录</span>
+<i class="text-collapsed icon icon-anchor"></i>
+<i class="text-in icon icon-close"></i>
+<span>]</span>
+</a>
+</li>
+</ul>
+<button type=button class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle=modal data-target=#donateModal><span>赏</span></button>
+<div class=bar-right>
+<div class=share-component data-sites="weibo,qq,qzone,wechat,facebook,twitter, linkedin" data-mobile-sites="weibo,qq,qzone,wechat,facebook,twitter, linkedin"></div>
+</div>
+</div>
+</nav>
+<div class="modal modal-center modal-small modal-xs-full fade" id=donateModal tabindex=-1 role=dialog>
+<div class=modal-dialog role=document>
+<div class="modal-content donate">
+<button type=button class=close data-dismiss=modal aria-label=Close><span aria-hidden=true>&#215;</span></button>
+<div class=modal-body>
+<div class=donate-box>
+<div class=donate-head>
+<p>赏杯咖啡吧</p>
+</div>
+<div class=tab-content>
+<div role=tabpanel class="tab-pane fade active in" id=alipay>
+<div class=donate-payimg>
+<img src=https://blog.gaoyuexiang.cn/images/alipay.jpeg alt=扫码支持 title=扫一扫>
+</div>
+<p class="text-muted mv">扫码打赏, 多少你说了算~</p>
+<p class=text-grey>打开支付宝扫一扫，即可进行扫码打赏哦~</p>
+</div>
+<div role=tabpanel class="tab-pane fade" id=wechatpay>
+<div class=donate-payimg>
+<img src=https://blog.gaoyuexiang.cn/images/wechatpay.png alt=扫码支持 title=扫一扫>
+</div>
+<p class="text-muted mv">扫码打赏, 多少你说了算~</p>
+<p class=text-grey>打开微信扫一扫，即可进行扫码打赏哦</p>
+</div>
+</div>
+<div class=donate-footer>
+<ul class="nav nav-tabs nav-justified" role=tablist>
+<li role=presentation class=active>
+<a href=#alipay id=alipay-tab role=tab data-toggle=tab aria-controls=alipay aria-expanded=true><i class="icon icon-alipay"></i> 支付宝</a>
+</li>
+<li role=presentation>
+<a href=#wechatpay role=tab id=wechatpay-tab data-toggle=tab aria-controls=wechatpay aria-expanded=false><i class="icon icon-wepay"></i>
+微信支付</a>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main><footer class=footer itemscope itemtype=http://schema.org/WPFooter>
+<ul class=social-links>
+<li><a href=https://github.com/kbyyd24 target=_blank title=github data-toggle=tooltip data-placement=top>
+<i class="icon icon-github"></i></a></li>
+<li><a href=https://blog.gaoyuexiang.cn/index.xml target=_blank title=rss data-toggle=tooltip data-placement=top>
+<i class="icon icon-rss"></i></a></li>
+<li><a href=https://blog.gaoyuexiang.cn/images/wechat_channel_with_name.png target=_blank title=wechat data-toggle=tooltip data-placement=top>
+<i class="icon icon-wechat"></i></a></li>
+</ul>
+<div class=copyright>
+&copy;2016 -
+2022
+<div class=publishby>
+Theme by <a href=https://github.com/xiaoheiAh target=_blank> xiaoheiAh </a>base on<a href=https://github.com/xiaoheiAh/hugo-theme-pure target=_blank> pure</a>.
+</div>
+<div>
+<a href=https://beian.miit.gov.cn/ target=_blank>蜀ICP备15031888号-2</a>
+</div>
+</div>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
+<script type=text/x-mathjax-config>
     MathJax.Hub.Config({
             showMathMenu: false, //disables context menu
             tex2jax: {
             inlineMath: [ ['$','$'], ['\\(','\\)'] ]
            }
     });
-</script><script src=https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js></script><script>window.jQuery||document.write('<script src="js/jquery.min.js"><\/script>')</script><script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/highlight.min.js></script><script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/python.min.js defer></script><script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/javascript.min.js defer></script><script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/java.min.js defer></script><script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/groovy.min.js defer></script><script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/gradle.min.js defer></script><script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/kotlin.min.js defer></script><script>hljs.configure({tabReplace:'    ',classPrefix:''})
-hljs.initHighlightingOnLoad();</script><script src=https://blog.gaoyuexiang.cn/js/application.min.bdeb64b910570b6c41badc6a05b7afb0c8ad9efd8525de3c7257d59e786326a3.js></script><script src=https://blog.gaoyuexiang.cn/js/plugin.min.51ff8c7317566f82259170fa36e09c4493adc9b9378b427a01ad3f017ebac7dd.js></script><script>(function(window){var INSIGHT_CONFIG={TRANSLATION:{POSTS:'文章',PAGES:'页面',CATEGORIES:'分类',TAGS:'标签',UNTITLED:'(未命名)',},ROOT_URL:'https:\/\/blog.gaoyuexiang.cn\/',CONTENT_URL:'https:\/\/blog.gaoyuexiang.cn\/\/searchindex.json ',};window.INSIGHT_CONFIG=INSIGHT_CONFIG;})(window);</script><script type=text/javascript src=https://blog.gaoyuexiang.cn/js/insight.min.a343cd9a5a7698336b28ef3a7c16a3a1b1d2d5fb17dc8ed04022bbe08cc5459073a15bdafa3a8a58cdd56080784bdd69fa70b1ae8597565c799c57ed00f0e120.js defer></script><script src=https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.min.js></script><script>tocbot.init({tocSelector:'.js-toc',contentSelector:'.js-toc-content',headingSelector:'h1, h2, h3',hasInnerContainers:true,});</script><script defer src=https://cdn1.lncld.net/static/js/av-min-1.2.1.js></script><script defer>AV.init({appId:'',appKey:''});function showTime(Counter){var query=new AV.Query(Counter);var visitors=$('.leancloud_visitors');query.greaterThanOrEqualTo("time",0);query.find({success:function(results){if(results.length==0){return;}
-var data=results;visitors.each(function(){var url=$(this).attr('id').trim();for(var i=0;i<data.length;i++){var object=data[i];var content=object.get('time');var _url=object.get('url')
-if(url==_url){$(this).text(content);}}})},error:function(object,error){console.log("Error: "+error.code+" "+error.message);}});}
-function addCount(Counter){var Counter=AV.Object.extend("Counter");url=$(".leancloud_visitors").attr('id').trim();title=$(".leancloud_visitors").attr('data-flag-title').trim();var query=new AV.Query(Counter);query.equalTo("url",url);query.find({success:function(results){if(results.length>0){var counter=results[0];counter.fetchWhenSave(true);counter.increment("time");counter.save(null,{success:function(counter){var content=counter.get('time');$(document.getElementById(url)).text(content);},error:function(counter,error){console.log('Failed to save Visitor num, with error message: '+error.message);}});}else{var newcounter=new Counter();newcounter.set("title",title);newcounter.set("url",url);newcounter.set("time",1);newcounter.save(null,{success:function(newcounter){console.log("newcounter.get('time')="+newcounter.get('time'));var content=newcounter.get('time');$(document.getElementById(url)).text(content);},error:function(newcounter,error){console.log('Failed to create');}});}},error:function(error){console.log('Error:'+error.code+" "+error.message);}});}
-$(function(){var Counter=AV.Object.extend("Counter");if($('.leancloud_visitors').length==1){addCount(Counter);}else{showTime(Counter);}});</script><script src=https://cdn1.lncld.net/static/js/3.0.4/av-min.js></script><script src=https://cdn.jsdelivr.net/npm/valine></script><script type=text/javascript>var GUEST=['nick','mail','link'];var meta='nick,mail';meta=meta.split(',').filter(function(item){return GUEST.indexOf(item)>-1;});new Valine({el:'#vcomments',verify:null,notify:null,appId:'Voz5TpLaiKvWLiVk63CrRybt-gzGzoHsz',appKey:'xzDAABvBBG6vK7iwgd1VKUnw',placeholder:'enjoy~',avatar:'mm',meta:meta,pageSize:'10'||10,visitor:false});</script></body></html>
+</script>
+<script src=https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js></script>
+<script>window.jQuery||document.write('<script src="js/jquery.min.js"><\/script>')</script>
+<script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/highlight.min.js></script>
+<script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/python.min.js defer></script>
+<script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/javascript.min.js defer></script>
+<script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/java.min.js defer></script>
+<script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/groovy.min.js defer></script>
+<script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/gradle.min.js defer></script>
+<script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/kotlin.min.js defer></script><script>hljs.configure({tabReplace:'    ',classPrefix:''}),hljs.initHighlightingOnLoad()</script>
+<script src=https://blog.gaoyuexiang.cn/js/application.min.a94ab19cb63a95c8d7fbd7b85cab3ddeea8c369bdf75b9cab6708787ead123af.js></script>
+<script src=https://blog.gaoyuexiang.cn/js/plugin.min.19c5bcb2fb0789ab4f2b7834e5ceb5e92635645605bab902c1024b25f1502364.js></script>
+<script>(function(a){var b={TRANSLATION:{POSTS:'文章',PAGES:'页面',CATEGORIES:'分类',TAGS:'标签',UNTITLED:'(未命名)'},ROOT_URL:'https://blog.gaoyuexiang.cn/',CONTENT_URL:'https://blog.gaoyuexiang.cn//searchindex.json '};a.INSIGHT_CONFIG=b})(window)</script>
+<script type=text/javascript src=https://blog.gaoyuexiang.cn/js/insight.min.4a2d52de4bfff73e0c688404fe3d17c9a3ae12d9888e1e1ac9c690e4890de2ded50fe55f2b819c2ba55435a76f396f3ea6805765f0b0af5635cdf74ea459eab0.js defer></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.min.js></script>
+<script>tocbot.init({tocSelector:'.js-toc',contentSelector:'.js-toc-content',headingSelector:'h1, h2, h3',hasInnerContainers:!0})</script>
+<script defer src=https://cdn1.lncld.net/static/js/av-min-1.2.1.js></script>
+<script defer>AV.init({appId:'',appKey:''});function showTime(b){var a=new AV.Query(b),c=$('.leancloud_visitors');a.greaterThanOrEqualTo("time",0),a.find({success:function(a){if(a.length==0)return;var b=a;c.each(function(){for(var d=$(this).attr('id').trim(),a=0,c,e,f;a<b.length;a++)c=b[a],e=c.get('time'),f=c.get('url'),d==f&&$(this).text(e)})},error:function(b,a){console.log("Error: "+a.code+" "+a.message)}})}function addCount(a){var a=AV.Object.extend("Counter"),b;url=$(".leancloud_visitors").attr('id').trim(),title=$(".leancloud_visitors").attr('data-flag-title').trim(),b=new AV.Query(a),b.equalTo("url",url),b.find({success:function(d){var c,b;d.length>0?(c=d[0],c.fetchWhenSave(!0),c.increment("time"),c.save(null,{success:function(a){var b=a.get('time');$(document.getElementById(url)).text(b)},error:function(b,a){console.log('Failed to save Visitor num, with error message: '+a.message)}})):(b=new a,b.set("title",title),b.set("url",url),b.set("time",1),b.save(null,{success:function(a){console.log("newcounter.get('time')="+a.get('time'));var b=a.get('time');$(document.getElementById(url)).text(b)},error:function(a,b){console.log('Failed to create')}}))},error:function(a){console.log('Error:'+a.code+" "+a.message)}})}$(function(){var a=AV.Object.extend("Counter");$('.leancloud_visitors').length==1?addCount(a):showTime(a)})</script>
+<script src=https://cdn1.lncld.net/static/js/3.0.4/av-min.js></script>
+<script src=https://cdn.jsdelivr.net/npm/valine></script>
+<script type=text/javascript>var GUEST=['nick','mail','link'],meta='nick,mail';meta=meta.split(',').filter(function(a){return GUEST.indexOf(a)>-1}),new Valine({el:'#vcomments',verify:null,notify:null,appId:'Voz5TpLaiKvWLiVk63CrRybt-gzGzoHsz',appKey:'xzDAABvBBG6vK7iwgd1VKUnw',placeholder:'enjoy~',avatar:'mm',meta,pageSize:'10'||10,visitor:!1})</script>
+</body>
+</html>

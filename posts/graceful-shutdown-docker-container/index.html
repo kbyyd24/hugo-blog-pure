@@ -1,8 +1,121 @@
-<!doctype html><html lang=zh><head><title>你的 docker stop，它优雅吗？ - 无糖拿铁，谢谢</title><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,minimal-ui"><meta name=renderer content="webkit"><meta http-equiv=cache-control content="no-transform"><meta http-equiv=cache-control content="no-siteapp"><meta name=apple-mobile-web-app-capable content="yes"><meta name=apple-mobile-web-app-status-bar-style content="black"><meta name=format-detection content="telephone=no,email=no,adress=no"><meta name=theme-color content="#000000"><meta http-equiv=window-target content="_top"><meta name=description content="如何优雅的关闭 Docker container"><meta name=generator content="Hugo 0.79.1 with theme pure"><title>你的 docker stop，它优雅吗？ - 无糖拿铁，谢谢</title><link rel=stylesheet href=https://blog.gaoyuexiang.cn/css/style.min.544edf4e480fd84dba4b535b9c42ace7af9a975d149b3f584c0e3a6f120cee55.css><link rel=stylesheet href=https://cdn.staticfile.org/highlight.js/9.15.10/styles/github.min.css async><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.css async><meta property="og:title" content="你的 docker stop，它优雅吗？"><meta property="og:description" content="如何优雅的关闭 Docker container"><meta property="og:type" content="article"><meta property="og:url" content="https://blog.gaoyuexiang.cn/posts/graceful-shutdown-docker-container/"><meta property="article:published_time" content="2020-06-18T22:46:13+00:00"><meta property="article:modified_time" content="2020-06-18T22:46:13+00:00"><meta itemprop=name content="你的 docker stop，它优雅吗？"><meta itemprop=description content="如何优雅的关闭 Docker container"><meta itemprop=datePublished content="2020-06-18T22:46:13+00:00"><meta itemprop=dateModified content="2020-06-18T22:46:13+00:00"><meta itemprop=wordCount content="3309"><meta itemprop=keywords content="docker,linux,exec,trap,wait,"><meta name=twitter:card content="summary"><meta name=twitter:title content="你的 docker stop，它优雅吗？"><meta name=twitter:description content="如何优雅的关闭 Docker container"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script><script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]--></head><body class="main-center theme-blue" itemscope itemtype=http://schema.org/WebPage><header class=header itemscope itemtype=http://schema.org/WPHeader><div class=slimContent><div class=navbar-header><div class="profile-block text-center"><a id=avatar href=https://github.com/kbyyd24 target=_blank><img class="img-circle img-rotate" src="https://avatars3.githubusercontent.com/u/9191275?s=460&u=a7ea5a50516804b275b4f7a36b36efc36c75e095&v=4" width=200 height=200></a><h2 id=name class="hidden-xs hidden-sm">无糖拿铁</h2><h3 id=title class="hidden-xs hidden-sm hidden-md">无糖拿铁，谢谢</h3><small id=location class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i>Chengdu, China</small></div><div class=search id=search-form-wrap><form class="search-form sidebar-form"><div class=input-group><input type=text class="search-form-input form-control" placeholder=搜索>
-<span class=input-group-btn><button type=submit class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button></span></div><div class=ins-search><div class=ins-search-mask></div><div class=ins-search-container><div class=ins-input-wrapper><input type=text class=ins-search-input placeholder=想要查找什么... x-webkit-speech>
-<button type=button class="close ins-close ins-selectable" data-dismiss=modal aria-label=Close><span aria-hidden=true>×</span></button></div><div class=ins-section-wrapper><div class=ins-section-container></div></div></div></div></form></div><button class="navbar-toggle collapsed" type=button data-toggle=collapse data-target=#main-navbar aria-controls=main-navbar aria-expanded=false>
+<!doctype html><html lang=zh>
+<head>
+<title>
+你的 docker stop，它优雅吗？ - 无糖拿铁，谢谢
+</title>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
+<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,minimal-ui">
+<meta name=renderer content="webkit">
+<meta http-equiv=cache-control content="no-transform">
+<meta http-equiv=cache-control content="no-siteapp">
+<meta name=apple-mobile-web-app-capable content="yes">
+<meta name=apple-mobile-web-app-status-bar-style content="black">
+<meta name=format-detection content="telephone=no,email=no,adress=no">
+<meta name=theme-color content="#000000">
+<meta http-equiv=window-target content="_top">
+<meta name=description content="如何优雅的关闭 Docker container">
+<meta name=generator content="Hugo 0.92.1 with theme pure">
+<title>你的 docker stop，它优雅吗？ - 无糖拿铁，谢谢</title>
+<link rel=stylesheet href=https://blog.gaoyuexiang.cn/css/style.min.e64d754037c0ee0ec4e20ab1d6f07740ace61729bc03850559b8caa21ae4a597.css>
+<link rel=stylesheet href=https://cdn.staticfile.org/highlight.js/9.15.10/styles/github.min.css async>
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.css async>
+<meta property="og:title" content="你的 docker stop，它优雅吗？">
+<meta property="og:description" content="如何优雅的关闭 Docker container">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://blog.gaoyuexiang.cn/posts/graceful-shutdown-docker-container/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2020-06-18T22:46:13+00:00">
+<meta property="article:modified_time" content="2020-06-18T22:46:13+00:00">
+<meta itemprop=name content="你的 docker stop，它优雅吗？">
+<meta itemprop=description content="如何优雅的关闭 Docker container"><meta itemprop=datePublished content="2020-06-18T22:46:13+00:00">
+<meta itemprop=dateModified content="2020-06-18T22:46:13+00:00">
+<meta itemprop=wordCount content="3309">
+<meta itemprop=keywords content="docker,linux,exec,trap,wait,"><meta name=twitter:card content="summary">
+<meta name=twitter:title content="你的 docker stop，它优雅吗？">
+<meta name=twitter:description content="如何优雅的关闭 Docker container"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
+<script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]-->
+</head>
+<body class="main-center theme-blue" itemscope itemtype=http://schema.org/WebPage><header class=header itemscope itemtype=http://schema.org/WPHeader>
+<div class=slimContent>
+<div class=navbar-header>
+<div class="profile-block text-center">
+<a id=avatar href=https://github.com/kbyyd24 target=_blank>
+<img class="img-circle img-rotate" src="https://avatars3.githubusercontent.com/u/9191275?s=460&u=a7ea5a50516804b275b4f7a36b36efc36c75e095&v=4" width=200 height=200>
+</a>
+<h2 id=name class="hidden-xs hidden-sm">无糖拿铁</h2>
+<h3 id=title class="hidden-xs hidden-sm hidden-md">无糖拿铁，谢谢</h3>
+<small id=location class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i>Chengdu, China</small>
+</div><div class=search id=search-form-wrap>
+<form class="search-form sidebar-form">
+<div class=input-group>
+<input type=text class="search-form-input form-control" placeholder=搜索>
+<span class=input-group-btn>
+<button type=submit class="search-form-submit btn btn-flat" onclick=return!1><i class="icon icon-search"></i></button>
+</span>
+</div>
+<div class=ins-search>
+<div class=ins-search-mask></div>
+<div class=ins-search-container>
+<div class=ins-input-wrapper>
+<input type=text class=ins-search-input placeholder=想要查找什么... x-webkit-speech>
+<button type=button class="close ins-close ins-selectable" data-dismiss=modal aria-label=Close><span aria-hidden=true>×</span></button>
+</div>
+<div class=ins-section-wrapper>
+<div class=ins-section-container></div>
+</div>
+</div>
+</div>
+</form>
+</div>
+<button class="navbar-toggle collapsed" type=button data-toggle=collapse data-target=#main-navbar aria-controls=main-navbar aria-expanded=false>
 <span class=sr-only>Toggle navigation</span>
-<span class=icon-bar></span><span class=icon-bar></span><span class=icon-bar></span></button></div><nav id=main-navbar class="collapse navbar-collapse" itemscope itemtype=http://schema.org/SiteNavigationElement role=navigation><ul class="nav navbar-nav main-nav"><li class="menu-item menu-item-home"><a href=/><i class="icon icon-home-fill"></i><span class=menu-title>Home</span></a></li><li class="menu-item menu-item-archives"><a href=/posts/><i class="icon icon-archives-fill"></i><span class=menu-title>Archives</span></a></li><li class="menu-item menu-item-series"><a href=/series-index/><i class="icon icon-folder-open"></i><span class=menu-title>Series</span></a></li><li class="menu-item menu-item-tags"><a href=/tags/><i class="icon icon-tags"></i><span class=menu-title>Tags</span></a></li><li class="menu-item menu-item-about"><a href=/about/><i class="icon icon-cup-fill"></i><span class=menu-title>About</span></a></li></ul></nav></div></header><aside class=sidebar itemscope itemtype=http://schema.org/WPSideBar><div class=slimContent><div class=widget><h3 class=widget-title>标签</h3><div id=tag-cloud-list class=widget-body><a href=https://blog.gaoyuexiang.cn/tags/12-factor/ class=tag-list-link rel=1>12-factor<span class=tag-list-count>1</span></a>
+<span class=icon-bar></span>
+<span class=icon-bar></span>
+<span class=icon-bar></span>
+</button>
+</div>
+<nav id=main-navbar class="collapse navbar-collapse" itemscope itemtype=http://schema.org/SiteNavigationElement role=navigation>
+<ul class="nav navbar-nav main-nav">
+<li class="menu-item menu-item-home">
+<a href=/>
+<i class="icon icon-home-fill"></i>
+<span class=menu-title>Home</span>
+</a>
+</li>
+<li class="menu-item menu-item-archives">
+<a href=/posts/>
+<i class="icon icon-archives-fill"></i>
+<span class=menu-title>Archives</span>
+</a>
+</li>
+<li class="menu-item menu-item-series">
+<a href=/series-index/>
+<i class="icon icon-folder-open"></i>
+<span class=menu-title>Series</span>
+</a>
+</li>
+<li class="menu-item menu-item-tags">
+<a href=/tags/>
+<i class="icon icon-tags"></i>
+<span class=menu-title>Tags</span>
+</a>
+</li>
+<li class="menu-item menu-item-about">
+<a href=/about/>
+<i class="icon icon-cup-fill"></i>
+<span class=menu-title>About</span>
+</a>
+</li>
+</ul>
+</nav>
+</div>
+</header>
+<aside class=sidebar itemscope itemtype=http://schema.org/WPSideBar>
+<div class=slimContent>
+<div class=widget>
+<h3 class=widget-title> 标签</h3>
+<div id=tag-cloud-list class=widget-body>
+<a href=https://blog.gaoyuexiang.cn/tags/12-factor/ class=tag-list-link rel=1>12-factor<span class=tag-list-count>1</span></a>
 <a href=https://blog.gaoyuexiang.cn/tags/architecture/ class=tag-list-link rel=2>architecture<span class=tag-list-count>2</span></a>
 <a href=https://blog.gaoyuexiang.cn/tags/auto-configure/ class=tag-list-link rel=1>auto-configure<span class=tag-list-count>1</span></a>
 <a href=https://blog.gaoyuexiang.cn/tags/classpathscanningcandidatecomponentprovider/ class=tag-list-link rel=1>classpathscanningcandidatecomponentprovider<span class=tag-list-count>1</span></a>
@@ -69,97 +182,465 @@
 <a href=https://blog.gaoyuexiang.cn/tags/%E7%AB%AF%E5%8F%A3%E4%B8%8E%E9%80%82%E9%85%8D%E5%99%A8%E6%9E%B6%E6%9E%84/ class=tag-list-link rel=2>端口与适配器架构<span class=tag-list-count>2</span></a>
 <a href=https://blog.gaoyuexiang.cn/tags/%E8%87%AA%E6%88%91%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/ class=tag-list-link rel=1>自我保护模式<span class=tag-list-count>1</span></a>
 <a href=https://blog.gaoyuexiang.cn/tags/%E9%87%8D%E6%9E%84/ class=tag-list-link rel=1>重构<span class=tag-list-count>1</span></a>
-<a href=https://blog.gaoyuexiang.cn/tags/%E9%9C%B0%E5%BC%B9%E5%BC%8F%E4%BF%AE%E6%94%B9/ class=tag-list-link rel=1>霰弹式修改<span class=tag-list-count>1</span></a></div><script>document.onreadystatechange=()=>{if(document.readyState==='complete'){tagCloud('#tag-cloud-list a',8,20);}};function tagCloud(where,min,max){let iMax=0;let iMin=0;$(where).each(function(){let weight=Number($(this).attr("rel"));if(iMax<weight)iMax=weight;if(iMin>weight||iMin==0)iMin=weight;});let step=(max-min)/(iMax-iMin);$(where).each(function(){let weight=$(this).attr("rel")-iMin;$(this).css({"font-size":min+(weight*step)+'px'});});};</script></div><div class=widget><h3 class=widget-title>最新文章</h3><div class=widget-body><ul class="recent-post-list list-unstyled no-thumbnail"><li><div class=item-inner><p class=item-title><a href=https://blog.gaoyuexiang.cn/posts/junit_alternative/ class=title>JUnit 不好用？也许你可以试试这些测试工具</a></p><p class=item-date><time datetime="2021-11-26 00:01:57 +0800 +0800" itemprop=datePublished>2021-11-26</time></p></div></li><li><div class=item-inner><p class=item-title><a href=https://blog.gaoyuexiang.cn/posts/domain-centeric-architectures/ class=title>以领域为核心的架构们如何指导我们写代码</a></p><p class=item-date><time datetime="2021-05-25 22:13:57 +0800 +0800" itemprop=datePublished>2021-05-25</time></p></div></li><li><div class=item-inner><p class=item-title><a href=https://blog.gaoyuexiang.cn/posts/divergent-change-and-shotgun-surgery/ class=title>发散式变化与霰弹式修改</a></p><p class=item-date><time datetime="2021-04-25 20:22:33 +0800 +0800" itemprop=datePublished>2021-04-25</time></p></div></li><li><div class=item-inner><p class=item-title><a href=https://blog.gaoyuexiang.cn/posts/how-to-scan-classes-in-java-package-with-annotation/ class=title>要扫描 Java 的 package 中有某个注解的类，应该怎么做？</a></p><p class=item-date><time datetime="2021-03-21 19:52:45 +0800 +0800" itemprop=datePublished>2021-03-21</time></p></div></li><li><div class=item-inner><p class=item-title><a href=https://blog.gaoyuexiang.cn/posts/jackson-inheritance/ class=title>使用 Jackson 处理抽象类的序列化和反序列化</a></p><p class=item-date><time datetime="2020-10-02 21:38:48 +0000 UTC" itemprop=datePublished>2020-10-02</time></p></div></li></ul></div></div></div></aside><aside class="sidebar sidebar-toc collapse" id=collapseToc itemscope itemtype=http://schema.org/WPSideBar><div class=slimContent><h4 class=toc-title>文章目录</h4><nav id=toc class="js-toc toc"></nav></div></aside><main class=main role=main><div class=content><article id=- class="article article-type-" itemscope itemtype=http://schema.org/BlogPosting><div class=article-header><h1 itemprop=name><a class=article-title href=/posts/graceful-shutdown-docker-container/>你的 docker stop，它优雅吗？</a></h1><div class=article-meta><span class=article-date><i class="icon icon-calendar-check"></i>&nbsp;
-<a href=https://blog.gaoyuexiang.cn/posts/graceful-shutdown-docker-container/ class=article-date><time datetime="2020-06-18 22:46:13 +0000 UTC" itemprop=datePublished>2020-06-18</time></a></span>
-<span class=article-tag><i class="icon icon-tags"></i>&nbsp;
-<a class=article-tag-link href=/tags/docker/>docker</a>
-<a class=article-tag-link href=/tags/linux/>linux</a>
-<a class=article-tag-link href=/tags/exec/>exec</a>
-<a class=article-tag-link href=/tags/trap/>trap</a>
-<a class=article-tag-link href=/tags/wait/>wait</a></span>
-<span class="article-read hidden-xs"><i class="icon icon-eye-fill" aria-hidden=true></i><span id=https://blog.gaoyuexiang.cn/posts/graceful-shutdown-docker-container/ class=leancloud_visitors data-flag-title="你的 docker stop，它优雅吗？">0</span></span>
+<a href=https://blog.gaoyuexiang.cn/tags/%E9%9C%B0%E5%BC%B9%E5%BC%8F%E4%BF%AE%E6%94%B9/ class=tag-list-link rel=1>霰弹式修改<span class=tag-list-count>1</span></a>
+</div>
+<script>document.onreadystatechange=()=>{document.readyState==='complete'&&tagCloud('#tag-cloud-list a',8,20)};function tagCloud(c,d,e){let b=0,a=0;$(c).each(function(){let c=Number($(this).attr("rel"));b<c&&(b=c),(a>c||a==0)&&(a=c)});let f=(e-d)/(b-a);$(c).each(function(){let b=$(this).attr("rel")-a;$(this).css({"font-size":d+b*f+'px'})})}</script>
+</div>
+<div class=widget>
+<h3 class=widget-title>最新文章</h3>
+<div class=widget-body>
+<ul class="recent-post-list list-unstyled no-thumbnail">
+<li>
+<div class=item-inner>
+<p class=item-title>
+<a href=https://blog.gaoyuexiang.cn/posts/junit_alternative/ class=title>JUnit 不好用？也许你可以试试这些测试工具</a>
+</p>
+<p class=item-date>
+<time datetime="2021-11-26 00:01:57 +0800 +0800" itemprop=datePublished>2021-11-26</time>
+</p>
+</div>
+</li>
+<li>
+<div class=item-inner>
+<p class=item-title>
+<a href=https://blog.gaoyuexiang.cn/posts/domain-centeric-architectures/ class=title>以领域为核心的架构们如何指导我们写代码</a>
+</p>
+<p class=item-date>
+<time datetime="2021-05-25 22:13:57 +0800 +0800" itemprop=datePublished>2021-05-25</time>
+</p>
+</div>
+</li>
+<li>
+<div class=item-inner>
+<p class=item-title>
+<a href=https://blog.gaoyuexiang.cn/posts/divergent-change-and-shotgun-surgery/ class=title>发散式变化与霰弹式修改</a>
+</p>
+<p class=item-date>
+<time datetime="2021-04-25 20:22:33 +0800 +0800" itemprop=datePublished>2021-04-25</time>
+</p>
+</div>
+</li>
+<li>
+<div class=item-inner>
+<p class=item-title>
+<a href=https://blog.gaoyuexiang.cn/posts/how-to-scan-classes-in-java-package-with-annotation/ class=title>要扫描 Java 的 package 中有某个注解的类，应该怎么做？</a>
+</p>
+<p class=item-date>
+<time datetime="2021-03-21 19:52:45 +0800 +0800" itemprop=datePublished>2021-03-21</time>
+</p>
+</div>
+</li>
+<li>
+<div class=item-inner>
+<p class=item-title>
+<a href=https://blog.gaoyuexiang.cn/posts/jackson-inheritance/ class=title>使用 Jackson 处理抽象类的序列化和反序列化</a>
+</p>
+<p class=item-date>
+<time datetime="2020-10-02 21:38:48 +0000 UTC" itemprop=datePublished>2020-10-02</time>
+</p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</aside>
+<aside class="sidebar sidebar-toc collapse" id=collapseToc itemscope itemtype=http://schema.org/WPSideBar>
+<div class=slimContent>
+<h4 class=toc-title>文章目录</h4>
+<nav id=toc class="js-toc toc">
+</nav>
+</div>
+</aside>
+<main class=main role=main><div class=content>
+<article id=- class="article article-type-" itemscope itemtype=http://schema.org/BlogPosting>
+<div class=article-header>
+<h1 itemprop=name>
+<a class=article-title href=/posts/graceful-shutdown-docker-container/>你的 docker stop，它优雅吗？</a>
+</h1>
+<div class=article-meta>
+<span class=article-date>
+<i class="icon icon-calendar-check"></i>&nbsp;
+<a href=https://blog.gaoyuexiang.cn/posts/graceful-shutdown-docker-container/ class=article-date>
+<time datetime="2020-06-18 22:46:13 +0000 UTC" itemprop=datePublished>2020-06-18</time>
+</a>
+</span>
+<span class=article-tag>
+<i class="icon icon-tags"></i>&nbsp;
+<a class=article-tag-link href=/tags/docker/> docker </a>
+<a class=article-tag-link href=/tags/linux/> linux </a>
+<a class=article-tag-link href=/tags/exec/> exec </a>
+<a class=article-tag-link href=/tags/trap/> trap </a>
+<a class=article-tag-link href=/tags/wait/> wait </a>
+</span>
+<span class="article-read hidden-xs">
+<i class="icon icon-eye-fill" aria-hidden=true></i>
+<span id=https://blog.gaoyuexiang.cn/posts/graceful-shutdown-docker-container/ class=leancloud_visitors data-flag-title="你的 docker stop，它优雅吗？">0</span>
+</span>
 <span class=post-comment><i class="icon icon-comment"></i>&nbsp;<a href=/posts/graceful-shutdown-docker-container/#comments class=article-comment-link>评论</a></span>
 <span class="post-wordcount hidden-xs" itemprop=wordCount>字数统计: 3309字</span>
-<span class="post-readcount hidden-xs" itemprop=timeRequired>阅读时长: 7分</span></div></div><div class="article-entry marked-body js-toc-content" itemprop=articleBody><p>我们平时在使用 <code>Docker</code> 的时候，一般会使用 <code>ctrl+c</code> 或者 <code>docker stop</code> 的方式关闭容器。
-但有时候我们可能会遇到 <code>ctrl+c</code> 不生效，或者 <code>docker stop</code> 之后要等待 10s 的情况，就像这样：</p><p>image::docker-stop-10s.png[]</p><p>也许你会觉得 10s 是一个可以忍受的时间，
+<span class="post-readcount hidden-xs" itemprop=timeRequired>阅读时长: 7分 </span>
+</div>
+</div>
+<div class="article-entry marked-body js-toc-content" itemprop=articleBody>
+<p>我们平时在使用 <code>Docker</code> 的时候，一般会使用 <code>ctrl+c</code> 或者 <code>docker stop</code> 的方式关闭容器。
+但有时候我们可能会遇到 <code>ctrl+c</code> 不生效，或者 <code>docker stop</code> 之后要等待 10s 的情况，就像这样：</p>
+<p>image::docker-stop-10s.png[]</p>
+<p>也许你会觉得 10s 是一个可以忍受的时间，
 但这样的问题真的只有 10s 这么简单吗？
-为什么有的时候不能立即关闭容器呢？</p><p>== docker stop 怎么关闭容器</p><p>首先我们来看一下这两个命令做了什么。</p><p>=== <code>ctrl+c</code> 到底做了什么</p><p>我们能够使用 <code>ctrl+c</code> 的场景，是我们在使用 <code>foreground</code> 模式运行容器的时候。
-这时我们按下 <code>ctrl+c</code> 就像在普通的 <code>shell</code> 中按下这个组合键一样，发送一个 <code>SIGINT</code> 信号给当前的进程，通知它终止运行。</p><p>=== docker stop 做了什么</p><p><code>docker stop</code> 命令是在对 <code>detached</code> 模式运行的容器发出停止命令时使用的，从发送信号上来讲，它将发送 <code>SIGTERM</code> 信号给容器，通知其结束运行。</p><blockquote><p><code>SIGINT</code> 一般用于关闭前台进程，<code>SIGTERM</code> 会要求进程自己正常退出。</p></blockquote><p>当我们在 <code>shell</code> 中给进程发送 <code>SIGTERM</code> 和 <code>SIGINT</code> 信号的时候，这些进程往往都能正确的处理。
+为什么有的时候不能立即关闭容器呢？</p>
+<p>== docker stop 怎么关闭容器</p>
+<p>首先我们来看一下这两个命令做了什么。</p>
+<p>=== <code>ctrl+c</code> 到底做了什么</p>
+<p>我们能够使用 <code>ctrl+c</code> 的场景，是我们在使用 <code>foreground</code> 模式运行容器的时候。
+这时我们按下 <code>ctrl+c</code> 就像在普通的 <code>shell</code> 中按下这个组合键一样，发送一个 <code>SIGINT</code> 信号给当前的进程，通知它终止运行。</p>
+<p>=== docker stop 做了什么</p>
+<p><code>docker stop</code> 命令是在对 <code>detached</code> 模式运行的容器发出停止命令时使用的，从发送信号上来讲，它将发送 <code>SIGTERM</code> 信号给容器，通知其结束运行。</p>
+<blockquote>
+<p><code>SIGINT</code> 一般用于关闭前台进程，<code>SIGTERM</code> 会要求进程自己正常退出。</p>
+</blockquote>
+<p>当我们在 <code>shell</code> 中给进程发送 <code>SIGTERM</code> 和 <code>SIGINT</code> 信号的时候，这些进程往往都能正确的处理。
 但是在 <code>docker</code> 中却不灵了。
-这是因为在 <code>docker</code> 中，只会将 <code>SIGTERM</code> 等所有的 <code>signal</code> 信号发送给 PID 为 1 的进程，当我们 <code>docker</code> 中运行的进程的进程号不是 1 时，就不会收到这样的信号。</p><blockquote><p>根据link:https://mp.weixin.qq.com/s/vaIBGHmdUT0bHP2O722AQQ[这篇文章]的说法，只有 <code>alpine</code> 会出现这个问题，但从我搜到的资料和实验来看，并不是这样，而是所有的镜像都会有这个问题。</p></blockquote><p>=== 为什么是 10s</p><p>其实这只是 <code>docker</code> 的默认设置，如果你愿意，等十年都可以。
-文档链接：link:https://docs.docker.com/engine/reference/commandline/stop/[]</p><p>如果达到上面的时间限制，<code>docker</code> 将会通过给内核发送 <code>SIGKILL</code> 从而强制结束容器。</p><p>=== 验证上面的回答</p><p>为了验证上面查到的这些结果，我写了一点 demo。
-在 demo 的场景里，我们会在 <code>ENTRYPOINT</code> 配置运行一个 <code>shell</code> 脚本，在脚本中做一些准备工作后启动进程。</p><h2 id=sourcedockerfile>[source,Dockerfile]</h2><h2 id=entrypoint-entrypointsh>FROM openjdk:8-jre-alpine
+这是因为在 <code>docker</code> 中，只会将 <code>SIGTERM</code> 等所有的 <code>signal</code> 信号发送给 PID 为 1 的进程，当我们 <code>docker</code> 中运行的进程的进程号不是 1 时，就不会收到这样的信号。</p>
+<blockquote>
+<p>根据link:https://mp.weixin.qq.com/s/vaIBGHmdUT0bHP2O722AQQ[这篇文章]的说法，只有 <code>alpine</code> 会出现这个问题，但从我搜到的资料和实验来看，并不是这样，而是所有的镜像都会有这个问题。</p>
+</blockquote>
+<p>=== 为什么是 10s</p>
+<p>其实这只是 <code>docker</code> 的默认设置，如果你愿意，等十年都可以。
+文档链接：link:https://docs.docker.com/engine/reference/commandline/stop/[]</p>
+<p>如果达到上面的时间限制，<code>docker</code> 将会通过给内核发送 <code>SIGKILL</code> 从而强制结束容器。</p>
+<p>=== 验证上面的回答</p>
+<p>为了验证上面查到的这些结果，我写了一点 demo。
+在 demo 的场景里，我们会在 <code>ENTRYPOINT</code> 配置运行一个 <code>shell</code> 脚本，在脚本中做一些准备工作后启动进程。</p>
+<h2 id=sourcedockerfile>[source,Dockerfile]</h2>
+<h2 id=entrypoint-entrypointsh>FROM openjdk:8-jre-alpine
 COPY ./build/libs/app.jar /app/app.jar
 COPY ./docker/entrypoint.sh /app/entrypoint.sh
 WORKDIR /app
 EXPOSE 8080
-ENTRYPOINT ["./entrypoint.sh"]</h2><h2 id=entrypointsh>[source,bash]
-.entrypoint.sh</h2><h2 id=java--jar-appjar>#!/bin/sh
+ENTRYPOINT ["./entrypoint.sh"]</h2>
+<h2 id=entrypointsh>[source,bash]
+.entrypoint.sh</h2>
+<h2 id=java--jar-appjar>#!/bin/sh
 echo &lsquo;Do something&rsquo;
-java -jar app.jar</h2><blockquote><p>后面还会用到这个例子</p></blockquote><p>我们可以观察一下 <code>docker stop</code> 之后，<code>shell</code> 给我们的返回值</p><p>image::docker-stop-10s-kill.png[title=注意红色方框]</p><p>根据这张图，我们可以看到:</p><p>. <code>docker stop</code> 命令等待了 10s 才结束
-. 结束的 docker container 返回了 <code>137</code>，表示进程是因为内核接收到了 <code>SIGKILL</code> 而结束的（<code>zsh</code> 给美化成了 KILL）</p><p>=== Kill 导致的问题</p><p>现在我们已经了解了 <code>ctrl+c</code> 为什么不生效和 <code>docker stop</code> 等待 10s 的原因了。
+java -jar app.jar</h2>
+<blockquote>
+<p>后面还会用到这个例子</p>
+</blockquote>
+<p>我们可以观察一下 <code>docker stop</code> 之后，<code>shell</code> 给我们的返回值</p>
+<p>image::docker-stop-10s-kill.png[title=注意红色方框]</p>
+<p>根据这张图，我们可以看到:</p>
+<p>. <code>docker stop</code> 命令等待了 10s 才结束
+. 结束的 docker container 返回了 <code>137</code>，表示进程是因为内核接收到了 <code>SIGKILL</code> 而结束的（<code>zsh</code> 给美化成了 KILL）</p>
+<p>=== Kill 导致的问题</p>
+<p>现在我们已经了解了 <code>ctrl+c</code> 为什么不生效和 <code>docker stop</code> 等待 10s 的原因了。
 我们再来看看另一个问题：
-<strong>强制关闭容器，真的就没问题吗？</strong></p><p>或许你能想到，很多进程在结束阶段会做一些清理工作：比如删除临时目录、执行 shutdown hook 等。
-但是当进程被强制关闭时，这些任务就不会被执行，那么我们就可能得到一些并不期望的结果。</p><p>以 <code>Eureka</code> 为例。
+<strong>强制关闭容器，真的就没问题吗？</strong></p>
+<p>或许你能想到，很多进程在结束阶段会做一些清理工作：比如删除临时目录、执行 shutdown hook 等。
+但是当进程被强制关闭时，这些任务就不会被执行，那么我们就可能得到一些并不期望的结果。</p>
+<p>以 <code>Eureka</code> 为例。
 <code>Eureka client</code> 在结束进程时，需要向 <code>Eureka server</code> 发送 shutdown 信号，以注销 <code>client</code>。
 这本来没什么问题，因为 <code>Eureka server</code> 即使没有收到这样的信息，也会定期清理 <code>client</code> 信息。
 但是 <code>Eureka server</code> 还有一个 <code>self preservation</code> 模式，以防止意外的网络事件导致大量的 <code>client</code> 下线。
-这就有可能导致 <code>Eureka</code> 集群的注册表中出现大量的 <code>client</code> 信息，但它们其实已经关闭了。</p><p>== 如何优雅的关闭容器</p><p>通过前面的内容，我们已经了解了容器没有被优雅关闭的原因和可能导致的问题，接下来，我们来看看如何解决。</p><blockquote><p>前面提到的那篇文章中提到可以使用 <code>tini</code> 来解决，但我没有成功过。<code>tini</code> 的确做到了立即关闭进程，但是进程并没有执行 shutdown hook。</p></blockquote><p>=== 使目标进程成为 PID 1</p><p>既然 <code>docker</code> 只会将 <code>sigal</code> 发送给 PID 1 的进程，那就让我们的进程成为 PID 1 的进程就好了。</p><p>==== docker 的 exec 与 shell 模式</p><p><code>Dockerfile</code> 的 <code>ENTRYPOINT</code> 有两种写法，即 <code>exec</code> 和 <code>shell</code>：</p><h2 id=sourcedockerfile-1>[source,Dockerfile]</h2><h1 id=exec-form>exec form</h1><p>ENTRYPOINT [&ldquo;command&rdquo;, &ldquo;param&rdquo;]</p><h1 id=shell-form>shell form</h1><h2 id=entrypoint-command-param>ENTRYPOINT command param</h2><p>两者的区别在于：</p><ul><li><code>exec</code> 形式的命令会使用 PID 1 的进程</li><li><code>shell</code> 形式的命令会被执行为 <code>/bin/sh -c &lt;command></code>，不会执行在 PID 1 上，也就不会收到 <code>signal</code></li></ul><p>所以，我们应该选择 <code>exec</code> 模式，让我们的程序成为 PID 1 进程。</p><h2 id=sourcedockerfile-2>[source,Dockerfile]</h2><h2 id=entrypoint-java--jar-appjar>ENTRYPOINT [&ldquo;java&rdquo;, &ldquo;-jar&rdquo;, &ldquo;app.jar&rdquo;]</h2><blockquote><p>更详细的信息，可以查看link:https://docs.docker.com/engine/reference/builder/#entrypoint[官方文档]。</p></blockquote><p>==== exec 命令</p><p><code>exec</code> 形式的 <code>ENTRYPOINT</code> 只能解决 <strong>无需任何准备工作就启动进程</strong> 的场景，而不能解决一些需要准备工作的复杂场景。</p><p>在这样的场景中，我们的 <code>ENTRYPOINT</code> 往往需要执行一个 <code>shell</code> 脚本：</p><h2 id=sourcedockerfile-3>[source,Dockerfile]</h2><h2 id=entrypoint-entrypointsh-1>ENTRYPOINT ["./entrypoint.sh"]</h2><p>然后在这个脚本中执行我们的准备工作，完成后再启动真正的进程。
+这就有可能导致 <code>Eureka</code> 集群的注册表中出现大量的 <code>client</code> 信息，但它们其实已经关闭了。</p>
+<p>== 如何优雅的关闭容器</p>
+<p>通过前面的内容，我们已经了解了容器没有被优雅关闭的原因和可能导致的问题，接下来，我们来看看如何解决。</p>
+<blockquote>
+<p>前面提到的那篇文章中提到可以使用 <code>tini</code> 来解决，但我没有成功过。<code>tini</code> 的确做到了立即关闭进程，但是进程并没有执行 shutdown hook。</p>
+</blockquote>
+<p>=== 使目标进程成为 PID 1</p>
+<p>既然 <code>docker</code> 只会将 <code>sigal</code> 发送给 PID 1 的进程，那就让我们的进程成为 PID 1 的进程就好了。</p>
+<p>==== docker 的 exec 与 shell 模式</p>
+<p><code>Dockerfile</code> 的 <code>ENTRYPOINT</code> 有两种写法，即 <code>exec</code> 和 <code>shell</code>：</p>
+<h2 id=sourcedockerfile-1>[source,Dockerfile]</h2>
+<h1 id=exec-form>exec form</h1>
+<p>ENTRYPOINT [&ldquo;command&rdquo;, &ldquo;param&rdquo;]</p>
+<h1 id=shell-form>shell form</h1>
+<h2 id=entrypoint-command-param>ENTRYPOINT command param</h2>
+<p>两者的区别在于：</p>
+<ul>
+<li><code>exec</code> 形式的命令会使用 PID 1 的进程</li>
+<li><code>shell</code> 形式的命令会被执行为 <code>/bin/sh -c &lt;command></code>，不会执行在 PID 1 上，也就不会收到 <code>signal</code></li>
+</ul>
+<p>所以，我们应该选择 <code>exec</code> 模式，让我们的程序成为 PID 1 进程。</p>
+<h2 id=sourcedockerfile-2>[source,Dockerfile]</h2>
+<h2 id=entrypoint-java--jar-appjar>ENTRYPOINT [&ldquo;java&rdquo;, &ldquo;-jar&rdquo;, &ldquo;app.jar&rdquo;]</h2>
+<blockquote>
+<p>更详细的信息，可以查看link:https://docs.docker.com/engine/reference/builder/#entrypoint[官方文档]。</p>
+</blockquote>
+<p>==== exec 命令</p>
+<p><code>exec</code> 形式的 <code>ENTRYPOINT</code> 只能解决 <strong>无需任何准备工作就启动进程</strong> 的场景，而不能解决一些需要准备工作的复杂场景。</p>
+<p>在这样的场景中，我们的 <code>ENTRYPOINT</code> 往往需要执行一个 <code>shell</code> 脚本：</p>
+<h2 id=sourcedockerfile-3>[source,Dockerfile]</h2>
+<h2 id=entrypoint-entrypointsh-1>ENTRYPOINT ["./entrypoint.sh"]</h2>
+<p>然后在这个脚本中执行我们的准备工作，完成后再启动真正的进程。
 比如上面的例子，做完准备后，启动 <code>java</code> 进程。
-这时候，我们的 <code>java</code> 进程就无法成为 PID 1 进程。</p><p>image::docker-exec-ps-not-pid-1.png[]</p><p>我们可以看到，<code>java</code> 进程的 PID 是 7，也就无法优雅退出了。</p><p>为了解决这个问题，我们可以使用 <code>exec</code> 命令来解决。这个命令的作用就是<strong>使用新的进程替代原有的进程，并保持 PID 不变</strong>。
-这就意味着我们可以在执行 <code>java</code> 命令的时候使用它，从而替换掉 PID 1 的 shell 脚本：</p><h2 id=entrypointsh-1>[source,bash]
-.entrypoint.sh</h2><h2 id=exec-java--jar-appjar>#!/bin/sh
+这时候，我们的 <code>java</code> 进程就无法成为 PID 1 进程。</p>
+<p>image::docker-exec-ps-not-pid-1.png[]</p>
+<p>我们可以看到，<code>java</code> 进程的 PID 是 7，也就无法优雅退出了。</p>
+<p>为了解决这个问题，我们可以使用 <code>exec</code> 命令来解决。这个命令的作用就是<strong>使用新的进程替代原有的进程，并保持 PID 不变</strong>。
+这就意味着我们可以在执行 <code>java</code> 命令的时候使用它，从而替换掉 PID 1 的 shell 脚本：</p>
+<h2 id=entrypointsh-1>[source,bash]
+.entrypoint.sh</h2>
+<h2 id=exec-java--jar-appjar>#!/bin/sh
 echo &ldquo;Do something&rdquo;
-exec java -jar app.jar</h2><p>我们再来看一下容器中的进程：</p><p>image::docker-exec-ps-pid-1.png[]</p><p>使用 <code>exec</code> 命令之后，我们无论是使用 <code>ctrl+c</code> 还是 <code>docker stop</code> 都能让进程接收到信号，执行相应的操作后退出：</p><p>image::docker-stop-success-by-exec.png[]</p><p>这张图我们可以看到很多信息：</p><p>. <code>docker stop</code> 命令很快结束，没有等待十秒
+exec java -jar app.jar</h2>
+<p>我们再来看一下容器中的进程：</p>
+<p>image::docker-exec-ps-pid-1.png[]</p>
+<p>使用 <code>exec</code> 命令之后，我们无论是使用 <code>ctrl+c</code> 还是 <code>docker stop</code> 都能让进程接收到信号，执行相应的操作后退出：</p>
+<p>image::docker-stop-success-by-exec.png[]</p>
+<p>这张图我们可以看到很多信息：</p>
+<p>. <code>docker stop</code> 命令很快结束，没有等待十秒
 . 容器退出收到的信号是 <code>SIGTERM</code>，不是 <code>SIGKILL</code>
-. <code>Spring</code> 进程的最后一行日志是 shutdown hook 的日志</p><p>这些信息表明，<code>java</code> 进程收到了 <code>docker stop</code> 发送的 <code>SIGTERM</code> 信号，并且正确的触发了相关操作，最后退出程序。</p><p>=== 使用 trap</p><p><code>exec</code> 命令在这样的场景下算是一个比较完美的方案。
-但如果你还想探索一下其他方式，或者你的容器中需要运行多个进程，那我们可以接着来看看 <code>trap</code> 命令。</p><p><code>trap</code> 是用来设置陷阱、监听 <code>signal</code> 的 <code>shell</code> 命令，一般用来处理脚本收到的 <code>signal</code>，完成一些操作。</p><h2 id=sourcebash>[source,bash]</h2><h2 id=trap--lp-arg-sigspec->trap [-lp] [[arg] sigspec &mldr;]</h2><blockquote><p>本文不介绍 <code>lp</code> 参数的含义</p></blockquote><ul><li><code>arg</code> 代表接收到某个信号后要执行的操作，是一个 <code>shell</code> 命令</li><li><code>sigspec</code> 表示监听的信号，可以是多个</li></ul><p>举个🌰：</p><h2 id=sourcebash-1>[source,bash]</h2><h2 id=trap-echo-shutting-down-term-1>trap &lsquo;echo &ldquo;Shutting Down&rdquo;&rsquo; TERM #&lt;1></h2><p>&lt;1> 表示在接收到 <code>SIGTERM</code> 信号时输出 &ldquo;Shutting Down&rdquo;</p><p>==== 添加 trap</p><p>简单了解了 <code>trap</code> 命令后，我们就可以来改造一下 <code>entrypoint.sh</code>：</p><h2 id=entrypointsh-2>[source,bash]
-.entrypoint.sh</h2><p>#!/bin/sh
-echo &lsquo;Do something&rsquo;</p><p>kill_jar() {
+. <code>Spring</code> 进程的最后一行日志是 shutdown hook 的日志</p>
+<p>这些信息表明，<code>java</code> 进程收到了 <code>docker stop</code> 发送的 <code>SIGTERM</code> 信号，并且正确的触发了相关操作，最后退出程序。</p>
+<p>=== 使用 trap</p>
+<p><code>exec</code> 命令在这样的场景下算是一个比较完美的方案。
+但如果你还想探索一下其他方式，或者你的容器中需要运行多个进程，那我们可以接着来看看 <code>trap</code> 命令。</p>
+<p><code>trap</code> 是用来设置陷阱、监听 <code>signal</code> 的 <code>shell</code> 命令，一般用来处理脚本收到的 <code>signal</code>，完成一些操作。</p>
+<h2 id=sourcebash>[source,bash]</h2>
+<h2 id=trap--lp-arg-sigspec->trap [-lp] [[arg] sigspec &mldr;]</h2>
+<blockquote>
+<p>本文不介绍 <code>lp</code> 参数的含义</p>
+</blockquote>
+<ul>
+<li><code>arg</code> 代表接收到某个信号后要执行的操作，是一个 <code>shell</code> 命令</li>
+<li><code>sigspec</code> 表示监听的信号，可以是多个</li>
+</ul>
+<p>举个🌰：</p>
+<h2 id=sourcebash-1>[source,bash]</h2>
+<h2 id=trap-echo-shutting-down-term-1>trap &lsquo;echo &ldquo;Shutting Down&rdquo;&rsquo; TERM #&lt;1></h2>
+<p>&lt;1> 表示在接收到 <code>SIGTERM</code> 信号时输出 &ldquo;Shutting Down&rdquo;</p>
+<p>==== 添加 trap</p>
+<p>简单了解了 <code>trap</code> 命令后，我们就可以来改造一下 <code>entrypoint.sh</code>：</p>
+<h2 id=entrypointsh-2>[source,bash]
+.entrypoint.sh</h2>
+<p>#!/bin/sh
+echo &lsquo;Do something&rsquo;</p>
+<p>kill_jar() {
 echo &lsquo;Received TERM&rsquo;
 kill &ldquo;$(ps -ef | grep java | grep app | awk &lsquo;{print $1}')&rdquo; #&lt;1>
-}</p><p>trap &lsquo;kill_jar&rsquo; TERM INT #&lt;2></p><h2 id=java--jar-appjar-1>java -jar app.jar</h2><p>&lt;1> 找到执行的进程，使用 <code>kill</code> 命令向其发送 <code>SIGTERM</code>
-&lt;2> 在脚本中监听 <code>SIGTERM</code> 和 <code>SIGINT</code> 信号，然后执行 <code>kill_jar</code> 函数</p><p>上面的脚本看起来可以正常工作，但实际上不能。</p><p>这是因为在 <code>bash</code> 中，即使 <code>trap</code> 收到了信号，如果这个时候 <code>bash</code> 在等待一个命令结束的话，
-那么 <code>trap</code> 就会等到这个命令结束才会被执行。</p><p>[quote,https://www.gnu.org/software/bash/manual/html_node/Signals.html#Signals]</p><hr><p>If Bash is waiting for a command to complete and receives a signal for which a trap has been set, the trap will not be executed until the command completes.</p><hr><p>在我们的场景中，<code>bash</code> 就在等待 <code>java</code> 进程结束，才能执行 <code>trap</code> 中的命令。
-但是 <code>java</code> 进程又需要 <code>trap</code> 来关闭才能结束，所以程序陷入了循环依赖，只能 <code>docker stop</code> 等待 10s。</p><p>==== 后台运行 java</p><p>既然前面的问题是 <code>bash</code> 在等待 <code>java</code> 进程结束，那么我们就让它不等待就好了——后台执行 <code>java</code>：</p><h2 id=entrypointsh-3>[source,bash]
-.entrypoint.sh</h2><p>#!/bin/sh
-echo &lsquo;Do something&rsquo;</p><p>kill_jar() {
+}</p>
+<p>trap &lsquo;kill_jar&rsquo; TERM INT #&lt;2></p>
+<h2 id=java--jar-appjar-1>java -jar app.jar</h2>
+<p>&lt;1> 找到执行的进程，使用 <code>kill</code> 命令向其发送 <code>SIGTERM</code>
+&lt;2> 在脚本中监听 <code>SIGTERM</code> 和 <code>SIGINT</code> 信号，然后执行 <code>kill_jar</code> 函数</p>
+<p>上面的脚本看起来可以正常工作，但实际上不能。</p>
+<p>这是因为在 <code>bash</code> 中，即使 <code>trap</code> 收到了信号，如果这个时候 <code>bash</code> 在等待一个命令结束的话，
+那么 <code>trap</code> 就会等到这个命令结束才会被执行。</p>
+<p>[quote,https://www.gnu.org/software/bash/manual/html_node/Signals.html#Signals]</p>
+<hr>
+<p>If Bash is waiting for a command to complete and receives a signal for which a trap has been set, the trap will not be executed until the command completes.</p>
+<hr>
+<p>在我们的场景中，<code>bash</code> 就在等待 <code>java</code> 进程结束，才能执行 <code>trap</code> 中的命令。
+但是 <code>java</code> 进程又需要 <code>trap</code> 来关闭才能结束，所以程序陷入了循环依赖，只能 <code>docker stop</code> 等待 10s。</p>
+<p>==== 后台运行 java</p>
+<p>既然前面的问题是 <code>bash</code> 在等待 <code>java</code> 进程结束，那么我们就让它不等待就好了——后台执行 <code>java</code>：</p>
+<h2 id=entrypointsh-3>[source,bash]
+.entrypoint.sh</h2>
+<p>#!/bin/sh
+echo &lsquo;Do something&rsquo;</p>
+<p>kill_jar() {
 echo &lsquo;Received TERM&rsquo;
 kill &ldquo;$(ps -ef | grep java | grep app | awk &lsquo;{print $1}')&rdquo;
 echo &lsquo;Process finished&rsquo;
-}</p><p>trap &lsquo;kill_jar&rsquo; TERM INT</p><p>java -jar app.jar & #&lt;1></p><h2 id=wait--2>wait $! #&lt;2></h2><p>&lt;1> 后台执行 <code>java</code>
-&lt;2> 使用 <code>wait</code> 命令等待 <code>java</code> 进程结束，避免 <code>entrypoint.sh</code> 执行完成后容器直接退出</p><p>是不是觉得这样就 OK 了？
-Naive，上面的这个脚本能够帮助我们立即结束容器，但并不会等待进程自己正常退出：</p><p>image::docker-stop-without-shutdown.png[]</p><p>我们可以看到，<code>kill_jar</code> 方法中的 <code>echo</code> 被成功执行，但是却没有看到 <code>Spring</code> 的 shutdown hook 日志输出。
-这说明容器没有等待程序正常退出就被关闭了。</p><p>这里其实有两个问题。</p><p><code>kill</code> 的问题::
+}</p>
+<p>trap &lsquo;kill_jar&rsquo; TERM INT</p>
+<p>java -jar app.jar & #&lt;1></p>
+<h2 id=wait--2>wait $! #&lt;2></h2>
+<p>&lt;1> 后台执行 <code>java</code>
+&lt;2> 使用 <code>wait</code> 命令等待 <code>java</code> 进程结束，避免 <code>entrypoint.sh</code> 执行完成后容器直接退出</p>
+<p>是不是觉得这样就 OK 了？
+Naive，上面的这个脚本能够帮助我们立即结束容器，但并不会等待进程自己正常退出：</p>
+<p>image::docker-stop-without-shutdown.png[]</p>
+<p>我们可以看到，<code>kill_jar</code> 方法中的 <code>echo</code> 被成功执行，但是却没有看到 <code>Spring</code> 的 shutdown hook 日志输出。
+这说明容器没有等待程序正常退出就被关闭了。</p>
+<p>这里其实有两个问题。</p>
+<p><code>kill</code> 的问题::
 第一个是 <code>kill</code> 命令并不会等待进程结束，它只负责向进程发送 <code>SIG</code> 信号。
-至于程序如何处理、什么时候处理，则与它无瓜。</p><p><code>wait</code> 的问题::
-第二个问题则是 <code>wait</code> 命令，在上面 <code>bash</code> 对 <code>trap</code> 的解释后面，还有一句话：</p><p>[quote,https://www.gnu.org/software/bash/manual/html_node/Signals.html#Signals]</p><hr><p>When Bash is waiting for an asynchronous command via the wait builtin, the reception of a signal for which a trap has been set will cause the wait builtin to return immediately with an exit status greater than 128, immediately after which the trap is executed.</p><hr><p>也就是说，虽然 <code>bash</code> 在等待 <code>wait</code> 结束，但是 <code>wait</code> 又被特殊处理了
-——<code>trap</code> 收到任何大于 128 的信号都会让 <code>wait</code> 命令结束，以执行 <code>trap</code> 中的方法。</p><p>综合以上两点，我们会发现 <code>trap</code> 在执行 <code>kill_jar</code> 时，<code>entrypoint.sh</code> 中的 <code>wait</code> 已经结束，不再等待 <code>java</code> 进程结束。
-<code>kill_jar</code> 仅仅发送了 <code>SIGTERM</code> 信号，也不会等待 <code>java</code> 进程结束。</p><p>由此，我们就可以对脚本进行改进：</p><h2 id=entrypointsh-4>[source,bash]
-.entrypoint.sh</h2><p>#!/bin/sh</p><p>echo &lsquo;Do something&rsquo;</p><p>kill_jar() {
+至于程序如何处理、什么时候处理，则与它无瓜。</p>
+<p><code>wait</code> 的问题::
+第二个问题则是 <code>wait</code> 命令，在上面 <code>bash</code> 对 <code>trap</code> 的解释后面，还有一句话：</p>
+<p>[quote,https://www.gnu.org/software/bash/manual/html_node/Signals.html#Signals]</p>
+<hr>
+<p>When Bash is waiting for an asynchronous command via the wait builtin, the reception of a signal for which a trap has been set will cause the wait builtin to return immediately with an exit status greater than 128, immediately after which the trap is executed.</p>
+<hr>
+<p>也就是说，虽然 <code>bash</code> 在等待 <code>wait</code> 结束，但是 <code>wait</code> 又被特殊处理了
+——<code>trap</code> 收到任何大于 128 的信号都会让 <code>wait</code> 命令结束，以执行 <code>trap</code> 中的方法。</p>
+<p>综合以上两点，我们会发现 <code>trap</code> 在执行 <code>kill_jar</code> 时，<code>entrypoint.sh</code> 中的 <code>wait</code> 已经结束，不再等待 <code>java</code> 进程结束。
+<code>kill_jar</code> 仅仅发送了 <code>SIGTERM</code> 信号，也不会等待 <code>java</code> 进程结束。</p>
+<p>由此，我们就可以对脚本进行改进：</p>
+<h2 id=entrypointsh-4>[source,bash]
+.entrypoint.sh</h2>
+<p>#!/bin/sh</p>
+<p>echo &lsquo;Do something&rsquo;</p>
+<p>kill_jar() {
 echo &lsquo;Received TERM&rsquo;
 kill &ldquo;$(ps -ef | grep java | grep app | awk &lsquo;{print $1}')&rdquo;
 wait $! #&lt;1>
 echo &lsquo;Process finished&rsquo;
-}</p><p>trap &lsquo;kill_jar&rsquo; TERM INT</p><p>java -jar app.jar &</p><h2 id=wait->wait $!</h2><p>&lt;1> 在 <code>kill</code> 后加了一行 <code>wait</code>，因为 <code>kill</code> 会返回进程号，所以这里也可以使用 <code>$!</code>。</p><p>这样，我们的 <code>kill_jar</code> 就会等到 <code>java</code> 进程完全退出后才会结束：</p><p>image::docker-stop-success-by-trap.png[]</p><p>我们可以看到，<code>Spring</code> 的 shutdown hook 在 &ldquo;Process finished&rdquo; 之前输出，证明新加的 <code>wait</code> 命令发挥了作用。</p><p>== 总结</p><p>. <code>ctrl+c</code> 与 <code>docker stop</code> 都只会向容器中 PID 1 进程发送信号
+}</p>
+<p>trap &lsquo;kill_jar&rsquo; TERM INT</p>
+<p>java -jar app.jar &</p>
+<h2 id=wait->wait $!</h2>
+<p>&lt;1> 在 <code>kill</code> 后加了一行 <code>wait</code>，因为 <code>kill</code> 会返回进程号，所以这里也可以使用 <code>$!</code>。</p>
+<p>这样，我们的 <code>kill_jar</code> 就会等到 <code>java</code> 进程完全退出后才会结束：</p>
+<p>image::docker-stop-success-by-trap.png[]</p>
+<p>我们可以看到，<code>Spring</code> 的 shutdown hook 在 &ldquo;Process finished&rdquo; 之前输出，证明新加的 <code>wait</code> 命令发挥了作用。</p>
+<p>== 总结</p>
+<p>. <code>ctrl+c</code> 与 <code>docker stop</code> 都只会向容器中 PID 1 进程发送信号
 . <code>docker stop</code> 默认等待 10s 没有关闭容器后，会向内核发送 <code>SIGKILL</code> 以强制关闭容器
 . 解决方案：
 .. 直接启动进程时，使用 <code>ENTRYPOINT</code> 的 <code>exec form</code>
 .. 启动单一进程，并且需要一点准备工作时，使用 <code>exec</code> 命令
-.. 启动多个进程时，组合使用 <code>trap</code>、<code>wait</code>、<code>kill</code> 命令</p></div><div class=article-footer><blockquote class=mt-2x><ul class="post-copyright list-unstyled"><li class="post-copyright-link hidden-xs"><strong>本文链接:</strong>
-<a href=https://blog.gaoyuexiang.cn/posts/graceful-shutdown-docker-container/ title="你的 docker stop，它优雅吗？" target=_blank rel=external>https://blog.gaoyuexiang.cn/posts/graceful-shutdown-docker-container/</a></li><li class=post-copyright-license><strong>License:</strong>
-<a href=https://creativecommons.org/licenses/by-nc/4.0/deed.zh target=_blank rel=external>CC BY-NC 4.0 CN</a></li></ul></blockquote><div class="panel panel-default panel-badger"><div class=panel-body><figure class=media><div class=media-left><a href=https://github.com/kbyyd24 target=_blank class="img-burn thumb-sm visible-lg"><img src="https://avatars3.githubusercontent.com/u/9191275?s=460&u=a7ea5a50516804b275b4f7a36b36efc36c75e095&v=4" class="img-rounded w-full" alt></a></div><div class=media-body><h3 class=media-heading><a href=https://github.com/kbyyd24 target=_blank><span class=text-dark>无糖拿铁</span><small class=ml-1x>无糖拿铁，谢谢</small></a></h3><div>Good Good Study, Day Day Up~</div></div></figure></div></div></div></article><section id=comments><div id=vcomments></div></section></div><nav class="bar bar-footer clearfix" data-stick-bottom><div class=bar-inner><ul class="pager pull-left"><li class=prev><a href=https://blog.gaoyuexiang.cn/posts/spring-security-authorization/ title="Spring Security 的权限验证"><i class="icon icon-angle-left" aria-hidden=true></i><span>&nbsp;&nbsp;下一篇</span></a></li><li class=next><a href=https://blog.gaoyuexiang.cn/posts/spring-security-acl-conception-and-component/ title="Spring Security ACL 核心概念和组件"><span>上一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden=true></i></a></li><li class=toggle-toc><a class="toggle-btn collapsed" data-toggle=collapse href=#collapseToc aria-expanded=false title=文章目录 role=button><span>[&nbsp;</span><span>文章目录</span>
-<i class="text-collapsed icon icon-anchor"></i><i class="text-in icon icon-close"></i><span>]</span></a></li></ul><button type=button class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle=modal data-target=#donateModal><span>赏</span></button><div class=bar-right><div class=share-component data-sites="weibo,qq,qzone,wechat,facebook,twitter, linkedin" data-mobile-sites="weibo,qq,qzone,wechat,facebook,twitter, linkedin"></div></div></div></nav><div class="modal modal-center modal-small modal-xs-full fade" id=donateModal tabindex=-1 role=dialog><div class=modal-dialog role=document><div class="modal-content donate"><button type=button class=close data-dismiss=modal aria-label=Close><span aria-hidden=true>&#215;</span></button><div class=modal-body><div class=donate-box><div class=donate-head><p>赏杯咖啡吧</p></div><div class=tab-content><div role=tabpanel class="tab-pane fade active in" id=alipay><div class=donate-payimg><img src=https://blog.gaoyuexiang.cn/images/alipay.jpeg alt=扫码支持 title=扫一扫></div><p class="text-muted mv">扫码打赏, 多少你说了算~</p><p class=text-grey>打开支付宝扫一扫，即可进行扫码打赏哦~</p></div><div role=tabpanel class="tab-pane fade" id=wechatpay><div class=donate-payimg><img src=https://blog.gaoyuexiang.cn/images/wechatpay.png alt=扫码支持 title=扫一扫></div><p class="text-muted mv">扫码打赏, 多少你说了算~</p><p class=text-grey>打开微信扫一扫，即可进行扫码打赏哦</p></div></div><div class=donate-footer><ul class="nav nav-tabs nav-justified" role=tablist><li role=presentation class=active><a href=#alipay id=alipay-tab role=tab data-toggle=tab aria-controls=alipay aria-expanded=true><i class="icon icon-alipay"></i>支付宝</a></li><li role=presentation><a href=#wechatpay role=tab id=wechatpay-tab data-toggle=tab aria-controls=wechatpay aria-expanded=false><i class="icon icon-wepay"></i>微信支付</a></li></ul></div></div></div></div></div></div></main><footer class=footer itemscope itemtype=http://schema.org/WPFooter><ul class=social-links><li><a href=https://github.com/kbyyd24 target=_blank title=github data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li><li><a href=https://blog.gaoyuexiang.cn/index.xml target=_blank title=rss data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li><li><a href=https://blog.gaoyuexiang.cn/images/wechat_channel_with_name.png target=_blank title=wechat data-toggle=tooltip data-placement=top><i class="icon icon-wechat"></i></a></li></ul><div class=copyright>&copy;2016 -
-2022<div class=publishby>Theme by <a href=https://github.com/xiaoheiAh target=_blank>xiaoheiAh </a>base on<a href=https://github.com/xiaoheiAh/hugo-theme-pure target=_blank> pure</a>.</div><div><a href=https://beian.miit.gov.cn/ target=_blank>蜀ICP备15031888号-2</a></div></div></footer><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script><script type=text/x-mathjax-config>
+.. 启动多个进程时，组合使用 <code>trap</code>、<code>wait</code>、<code>kill</code> 命令</p>
+</div>
+<div class=article-footer>
+<blockquote class=mt-2x>
+<ul class="post-copyright list-unstyled">
+<li class="post-copyright-link hidden-xs">
+<strong>本文链接: </strong>
+<a href=https://blog.gaoyuexiang.cn/posts/graceful-shutdown-docker-container/ title="你的 docker stop，它优雅吗？" target=_blank rel=external>https://blog.gaoyuexiang.cn/posts/graceful-shutdown-docker-container/</a>
+</li>
+<li class=post-copyright-license>
+<strong>License: </strong>
+<a href=https://creativecommons.org/licenses/by-nc/4.0/deed.zh target=_blank rel=external>CC BY-NC 4.0 CN</a>
+</li>
+</ul>
+</blockquote>
+<div class="panel panel-default panel-badger">
+<div class=panel-body>
+<figure class=media>
+<div class=media-left>
+<a href=https://github.com/kbyyd24 target=_blank class="img-burn thumb-sm visible-lg">
+<img src="https://avatars3.githubusercontent.com/u/9191275?s=460&u=a7ea5a50516804b275b4f7a36b36efc36c75e095&v=4" class="img-rounded w-full" alt>
+</a>
+</div>
+<div class=media-body>
+<h3 class=media-heading><a href=https://github.com/kbyyd24 target=_blank><span class=text-dark>无糖拿铁</span><small class=ml-1x>无糖拿铁，谢谢</small></a></h3>
+<div>Good Good Study, Day Day Up~</div>
+</div>
+</figure>
+</div>
+</div>
+</div>
+</article>
+<section id=comments>
+<div id=vcomments></div>
+</section>
+</div><nav class="bar bar-footer clearfix" data-stick-bottom>
+<div class=bar-inner>
+<ul class="pager pull-left">
+<li class=prev>
+<a href=https://blog.gaoyuexiang.cn/posts/spring-security-authorization/ title="Spring Security 的权限验证"><i class="icon icon-angle-left" aria-hidden=true></i><span>&nbsp;&nbsp;下一篇</span></a>
+</li>
+<li class=next>
+<a href=https://blog.gaoyuexiang.cn/posts/spring-security-acl-conception-and-component/ title="Spring Security ACL 核心概念和组件"><span>上一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden=true></i></a>
+</li>
+<li class=toggle-toc>
+<a class="toggle-btn collapsed" data-toggle=collapse href=#collapseToc aria-expanded=false title=文章目录 role=button>
+<span>[&nbsp;</span><span>文章目录</span>
+<i class="text-collapsed icon icon-anchor"></i>
+<i class="text-in icon icon-close"></i>
+<span>]</span>
+</a>
+</li>
+</ul>
+<button type=button class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle=modal data-target=#donateModal><span>赏</span></button>
+<div class=bar-right>
+<div class=share-component data-sites="weibo,qq,qzone,wechat,facebook,twitter, linkedin" data-mobile-sites="weibo,qq,qzone,wechat,facebook,twitter, linkedin"></div>
+</div>
+</div>
+</nav>
+<div class="modal modal-center modal-small modal-xs-full fade" id=donateModal tabindex=-1 role=dialog>
+<div class=modal-dialog role=document>
+<div class="modal-content donate">
+<button type=button class=close data-dismiss=modal aria-label=Close><span aria-hidden=true>&#215;</span></button>
+<div class=modal-body>
+<div class=donate-box>
+<div class=donate-head>
+<p>赏杯咖啡吧</p>
+</div>
+<div class=tab-content>
+<div role=tabpanel class="tab-pane fade active in" id=alipay>
+<div class=donate-payimg>
+<img src=https://blog.gaoyuexiang.cn/images/alipay.jpeg alt=扫码支持 title=扫一扫>
+</div>
+<p class="text-muted mv">扫码打赏, 多少你说了算~</p>
+<p class=text-grey>打开支付宝扫一扫，即可进行扫码打赏哦~</p>
+</div>
+<div role=tabpanel class="tab-pane fade" id=wechatpay>
+<div class=donate-payimg>
+<img src=https://blog.gaoyuexiang.cn/images/wechatpay.png alt=扫码支持 title=扫一扫>
+</div>
+<p class="text-muted mv">扫码打赏, 多少你说了算~</p>
+<p class=text-grey>打开微信扫一扫，即可进行扫码打赏哦</p>
+</div>
+</div>
+<div class=donate-footer>
+<ul class="nav nav-tabs nav-justified" role=tablist>
+<li role=presentation class=active>
+<a href=#alipay id=alipay-tab role=tab data-toggle=tab aria-controls=alipay aria-expanded=true><i class="icon icon-alipay"></i> 支付宝</a>
+</li>
+<li role=presentation>
+<a href=#wechatpay role=tab id=wechatpay-tab data-toggle=tab aria-controls=wechatpay aria-expanded=false><i class="icon icon-wepay"></i>
+微信支付</a>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main><footer class=footer itemscope itemtype=http://schema.org/WPFooter>
+<ul class=social-links>
+<li><a href=https://github.com/kbyyd24 target=_blank title=github data-toggle=tooltip data-placement=top>
+<i class="icon icon-github"></i></a></li>
+<li><a href=https://blog.gaoyuexiang.cn/index.xml target=_blank title=rss data-toggle=tooltip data-placement=top>
+<i class="icon icon-rss"></i></a></li>
+<li><a href=https://blog.gaoyuexiang.cn/images/wechat_channel_with_name.png target=_blank title=wechat data-toggle=tooltip data-placement=top>
+<i class="icon icon-wechat"></i></a></li>
+</ul>
+<div class=copyright>
+&copy;2016 -
+2022
+<div class=publishby>
+Theme by <a href=https://github.com/xiaoheiAh target=_blank> xiaoheiAh </a>base on<a href=https://github.com/xiaoheiAh/hugo-theme-pure target=_blank> pure</a>.
+</div>
+<div>
+<a href=https://beian.miit.gov.cn/ target=_blank>蜀ICP备15031888号-2</a>
+</div>
+</div>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
+<script type=text/x-mathjax-config>
     MathJax.Hub.Config({
             showMathMenu: false, //disables context menu
             tex2jax: {
             inlineMath: [ ['$','$'], ['\\(','\\)'] ]
            }
     });
-</script><script src=https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js></script><script>window.jQuery||document.write('<script src="js/jquery.min.js"><\/script>')</script><script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/highlight.min.js></script><script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/python.min.js defer></script><script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/javascript.min.js defer></script><script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/java.min.js defer></script><script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/groovy.min.js defer></script><script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/gradle.min.js defer></script><script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/kotlin.min.js defer></script><script>hljs.configure({tabReplace:'    ',classPrefix:''})
-hljs.initHighlightingOnLoad();</script><script src=https://blog.gaoyuexiang.cn/js/application.min.bdeb64b910570b6c41badc6a05b7afb0c8ad9efd8525de3c7257d59e786326a3.js></script><script src=https://blog.gaoyuexiang.cn/js/plugin.min.51ff8c7317566f82259170fa36e09c4493adc9b9378b427a01ad3f017ebac7dd.js></script><script>(function(window){var INSIGHT_CONFIG={TRANSLATION:{POSTS:'文章',PAGES:'页面',CATEGORIES:'分类',TAGS:'标签',UNTITLED:'(未命名)',},ROOT_URL:'https:\/\/blog.gaoyuexiang.cn\/',CONTENT_URL:'https:\/\/blog.gaoyuexiang.cn\/\/searchindex.json ',};window.INSIGHT_CONFIG=INSIGHT_CONFIG;})(window);</script><script type=text/javascript src=https://blog.gaoyuexiang.cn/js/insight.min.a343cd9a5a7698336b28ef3a7c16a3a1b1d2d5fb17dc8ed04022bbe08cc5459073a15bdafa3a8a58cdd56080784bdd69fa70b1ae8597565c799c57ed00f0e120.js defer></script><script src=https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.min.js></script><script>tocbot.init({tocSelector:'.js-toc',contentSelector:'.js-toc-content',headingSelector:'h1, h2, h3',hasInnerContainers:true,});</script><script defer src=https://cdn1.lncld.net/static/js/av-min-1.2.1.js></script><script defer>AV.init({appId:'',appKey:''});function showTime(Counter){var query=new AV.Query(Counter);var visitors=$('.leancloud_visitors');query.greaterThanOrEqualTo("time",0);query.find({success:function(results){if(results.length==0){return;}
-var data=results;visitors.each(function(){var url=$(this).attr('id').trim();for(var i=0;i<data.length;i++){var object=data[i];var content=object.get('time');var _url=object.get('url')
-if(url==_url){$(this).text(content);}}})},error:function(object,error){console.log("Error: "+error.code+" "+error.message);}});}
-function addCount(Counter){var Counter=AV.Object.extend("Counter");url=$(".leancloud_visitors").attr('id').trim();title=$(".leancloud_visitors").attr('data-flag-title').trim();var query=new AV.Query(Counter);query.equalTo("url",url);query.find({success:function(results){if(results.length>0){var counter=results[0];counter.fetchWhenSave(true);counter.increment("time");counter.save(null,{success:function(counter){var content=counter.get('time');$(document.getElementById(url)).text(content);},error:function(counter,error){console.log('Failed to save Visitor num, with error message: '+error.message);}});}else{var newcounter=new Counter();newcounter.set("title",title);newcounter.set("url",url);newcounter.set("time",1);newcounter.save(null,{success:function(newcounter){console.log("newcounter.get('time')="+newcounter.get('time'));var content=newcounter.get('time');$(document.getElementById(url)).text(content);},error:function(newcounter,error){console.log('Failed to create');}});}},error:function(error){console.log('Error:'+error.code+" "+error.message);}});}
-$(function(){var Counter=AV.Object.extend("Counter");if($('.leancloud_visitors').length==1){addCount(Counter);}else{showTime(Counter);}});</script><script src=https://cdn1.lncld.net/static/js/3.0.4/av-min.js></script><script src=https://cdn.jsdelivr.net/npm/valine></script><script type=text/javascript>var GUEST=['nick','mail','link'];var meta='nick,mail';meta=meta.split(',').filter(function(item){return GUEST.indexOf(item)>-1;});new Valine({el:'#vcomments',verify:null,notify:null,appId:'Voz5TpLaiKvWLiVk63CrRybt-gzGzoHsz',appKey:'xzDAABvBBG6vK7iwgd1VKUnw',placeholder:'enjoy~',avatar:'mm',meta:meta,pageSize:'10'||10,visitor:false});</script></body></html>
+</script>
+<script src=https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js></script>
+<script>window.jQuery||document.write('<script src="js/jquery.min.js"><\/script>')</script>
+<script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/highlight.min.js></script>
+<script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/python.min.js defer></script>
+<script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/javascript.min.js defer></script>
+<script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/java.min.js defer></script>
+<script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/groovy.min.js defer></script>
+<script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/gradle.min.js defer></script>
+<script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/kotlin.min.js defer></script><script>hljs.configure({tabReplace:'    ',classPrefix:''}),hljs.initHighlightingOnLoad()</script>
+<script src=https://blog.gaoyuexiang.cn/js/application.min.a94ab19cb63a95c8d7fbd7b85cab3ddeea8c369bdf75b9cab6708787ead123af.js></script>
+<script src=https://blog.gaoyuexiang.cn/js/plugin.min.19c5bcb2fb0789ab4f2b7834e5ceb5e92635645605bab902c1024b25f1502364.js></script>
+<script>(function(a){var b={TRANSLATION:{POSTS:'文章',PAGES:'页面',CATEGORIES:'分类',TAGS:'标签',UNTITLED:'(未命名)'},ROOT_URL:'https://blog.gaoyuexiang.cn/',CONTENT_URL:'https://blog.gaoyuexiang.cn//searchindex.json '};a.INSIGHT_CONFIG=b})(window)</script>
+<script type=text/javascript src=https://blog.gaoyuexiang.cn/js/insight.min.4a2d52de4bfff73e0c688404fe3d17c9a3ae12d9888e1e1ac9c690e4890de2ded50fe55f2b819c2ba55435a76f396f3ea6805765f0b0af5635cdf74ea459eab0.js defer></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.min.js></script>
+<script>tocbot.init({tocSelector:'.js-toc',contentSelector:'.js-toc-content',headingSelector:'h1, h2, h3',hasInnerContainers:!0})</script>
+<script defer src=https://cdn1.lncld.net/static/js/av-min-1.2.1.js></script>
+<script defer>AV.init({appId:'',appKey:''});function showTime(b){var a=new AV.Query(b),c=$('.leancloud_visitors');a.greaterThanOrEqualTo("time",0),a.find({success:function(a){if(a.length==0)return;var b=a;c.each(function(){for(var d=$(this).attr('id').trim(),a=0,c,e,f;a<b.length;a++)c=b[a],e=c.get('time'),f=c.get('url'),d==f&&$(this).text(e)})},error:function(b,a){console.log("Error: "+a.code+" "+a.message)}})}function addCount(a){var a=AV.Object.extend("Counter"),b;url=$(".leancloud_visitors").attr('id').trim(),title=$(".leancloud_visitors").attr('data-flag-title').trim(),b=new AV.Query(a),b.equalTo("url",url),b.find({success:function(d){var c,b;d.length>0?(c=d[0],c.fetchWhenSave(!0),c.increment("time"),c.save(null,{success:function(a){var b=a.get('time');$(document.getElementById(url)).text(b)},error:function(b,a){console.log('Failed to save Visitor num, with error message: '+a.message)}})):(b=new a,b.set("title",title),b.set("url",url),b.set("time",1),b.save(null,{success:function(a){console.log("newcounter.get('time')="+a.get('time'));var b=a.get('time');$(document.getElementById(url)).text(b)},error:function(a,b){console.log('Failed to create')}}))},error:function(a){console.log('Error:'+a.code+" "+a.message)}})}$(function(){var a=AV.Object.extend("Counter");$('.leancloud_visitors').length==1?addCount(a):showTime(a)})</script>
+<script src=https://cdn1.lncld.net/static/js/3.0.4/av-min.js></script>
+<script src=https://cdn.jsdelivr.net/npm/valine></script>
+<script type=text/javascript>var GUEST=['nick','mail','link'],meta='nick,mail';meta=meta.split(',').filter(function(a){return GUEST.indexOf(a)>-1}),new Valine({el:'#vcomments',verify:null,notify:null,appId:'Voz5TpLaiKvWLiVk63CrRybt-gzGzoHsz',appKey:'xzDAABvBBG6vK7iwgd1VKUnw',placeholder:'enjoy~',avatar:'mm',meta,pageSize:'10'||10,visitor:!1})</script>
+</body>
+</html>

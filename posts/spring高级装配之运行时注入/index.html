@@ -1,8 +1,121 @@
-<!doctype html><html lang=zh><head><title>Spring高级装配之运行时注入 - 无糖拿铁，谢谢</title><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,minimal-ui"><meta name=renderer content="webkit"><meta http-equiv=cache-control content="no-transform"><meta http-equiv=cache-control content="no-siteapp"><meta name=apple-mobile-web-app-capable content="yes"><meta name=apple-mobile-web-app-status-bar-style content="black"><meta name=format-detection content="telephone=no,email=no,adress=no"><meta name=theme-color content="#000000"><meta http-equiv=window-target content="_top"><meta name=description content="{:toc #zhuru} 运行时注入与硬编码注入是相对的。硬编码注入在编译时就已经确定了，运行时注入则可能需要一些外部的参数来解决。 Spring提供的两种在运行时"><meta name=generator content="Hugo 0.79.1 with theme pure"><title>Spring高级装配之运行时注入 - 无糖拿铁，谢谢</title><link rel=stylesheet href=https://blog.gaoyuexiang.cn/css/style.min.544edf4e480fd84dba4b535b9c42ace7af9a975d149b3f584c0e3a6f120cee55.css><link rel=stylesheet href=https://cdn.staticfile.org/highlight.js/9.15.10/styles/github.min.css async><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.css async><meta property="og:title" content="Spring高级装配之运行时注入"><meta property="og:description" content="{:toc #zhuru} 运行时注入与硬编码注入是相对的。硬编码注入在编译时就已经确定了，运行时注入则可能需要一些外部的参数来解决。 Spring提供的两种在运行时"><meta property="og:type" content="article"><meta property="og:url" content="https://blog.gaoyuexiang.cn/posts/spring%E9%AB%98%E7%BA%A7%E8%A3%85%E9%85%8D%E4%B9%8B%E8%BF%90%E8%A1%8C%E6%97%B6%E6%B3%A8%E5%85%A5/"><meta property="article:published_time" content="2016-08-17T00:00:00+00:00"><meta property="article:modified_time" content="2016-08-17T00:00:00+00:00"><meta itemprop=name content="Spring高级装配之运行时注入"><meta itemprop=description content="{:toc #zhuru} 运行时注入与硬编码注入是相对的。硬编码注入在编译时就已经确定了，运行时注入则可能需要一些外部的参数来解决。 Spring提供的两种在运行时"><meta itemprop=datePublished content="2016-08-17T00:00:00+00:00"><meta itemprop=dateModified content="2016-08-17T00:00:00+00:00"><meta itemprop=wordCount content="1599"><meta itemprop=keywords content><meta name=twitter:card content="summary"><meta name=twitter:title content="Spring高级装配之运行时注入"><meta name=twitter:description content="{:toc #zhuru} 运行时注入与硬编码注入是相对的。硬编码注入在编译时就已经确定了，运行时注入则可能需要一些外部的参数来解决。 Spring提供的两种在运行时"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script><script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]--></head><body class="main-center theme-blue" itemscope itemtype=http://schema.org/WebPage><header class=header itemscope itemtype=http://schema.org/WPHeader><div class=slimContent><div class=navbar-header><div class="profile-block text-center"><a id=avatar href=https://github.com/kbyyd24 target=_blank><img class="img-circle img-rotate" src="https://avatars3.githubusercontent.com/u/9191275?s=460&u=a7ea5a50516804b275b4f7a36b36efc36c75e095&v=4" width=200 height=200></a><h2 id=name class="hidden-xs hidden-sm">无糖拿铁</h2><h3 id=title class="hidden-xs hidden-sm hidden-md">无糖拿铁，谢谢</h3><small id=location class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i>Chengdu, China</small></div><div class=search id=search-form-wrap><form class="search-form sidebar-form"><div class=input-group><input type=text class="search-form-input form-control" placeholder=搜索>
-<span class=input-group-btn><button type=submit class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button></span></div><div class=ins-search><div class=ins-search-mask></div><div class=ins-search-container><div class=ins-input-wrapper><input type=text class=ins-search-input placeholder=想要查找什么... x-webkit-speech>
-<button type=button class="close ins-close ins-selectable" data-dismiss=modal aria-label=Close><span aria-hidden=true>×</span></button></div><div class=ins-section-wrapper><div class=ins-section-container></div></div></div></div></form></div><button class="navbar-toggle collapsed" type=button data-toggle=collapse data-target=#main-navbar aria-controls=main-navbar aria-expanded=false>
+<!doctype html><html lang=zh>
+<head>
+<title>
+Spring高级装配之运行时注入 - 无糖拿铁，谢谢
+</title>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
+<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,minimal-ui">
+<meta name=renderer content="webkit">
+<meta http-equiv=cache-control content="no-transform">
+<meta http-equiv=cache-control content="no-siteapp">
+<meta name=apple-mobile-web-app-capable content="yes">
+<meta name=apple-mobile-web-app-status-bar-style content="black">
+<meta name=format-detection content="telephone=no,email=no,adress=no">
+<meta name=theme-color content="#000000">
+<meta http-equiv=window-target content="_top">
+<meta name=description content="运行时注入与硬编码注入是相对的。硬编码注入在编译时就已经确定了，运行时注入则可能需要一些外部的参数来解决。 Spring提供的两种在运行时求值">
+<meta name=generator content="Hugo 0.92.1 with theme pure">
+<title>Spring高级装配之运行时注入 - 无糖拿铁，谢谢</title>
+<link rel=stylesheet href=https://blog.gaoyuexiang.cn/css/style.min.e64d754037c0ee0ec4e20ab1d6f07740ace61729bc03850559b8caa21ae4a597.css>
+<link rel=stylesheet href=https://cdn.staticfile.org/highlight.js/9.15.10/styles/github.min.css async>
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.css async>
+<meta property="og:title" content="Spring高级装配之运行时注入">
+<meta property="og:description" content="运行时注入与硬编码注入是相对的。硬编码注入在编译时就已经确定了，运行时注入则可能需要一些外部的参数来解决。 Spring提供的两种在运行时求值">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://blog.gaoyuexiang.cn/posts/spring%E9%AB%98%E7%BA%A7%E8%A3%85%E9%85%8D%E4%B9%8B%E8%BF%90%E8%A1%8C%E6%97%B6%E6%B3%A8%E5%85%A5/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2016-08-17T00:00:00+00:00">
+<meta property="article:modified_time" content="2016-08-17T00:00:00+00:00">
+<meta itemprop=name content="Spring高级装配之运行时注入">
+<meta itemprop=description content="运行时注入与硬编码注入是相对的。硬编码注入在编译时就已经确定了，运行时注入则可能需要一些外部的参数来解决。 Spring提供的两种在运行时求值"><meta itemprop=datePublished content="2016-08-17T00:00:00+00:00">
+<meta itemprop=dateModified content="2016-08-17T00:00:00+00:00">
+<meta itemprop=wordCount content="1597">
+<meta itemprop=keywords content><meta name=twitter:card content="summary">
+<meta name=twitter:title content="Spring高级装配之运行时注入">
+<meta name=twitter:description content="运行时注入与硬编码注入是相对的。硬编码注入在编译时就已经确定了，运行时注入则可能需要一些外部的参数来解决。 Spring提供的两种在运行时求值"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
+<script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]-->
+</head>
+<body class="main-center theme-blue" itemscope itemtype=http://schema.org/WebPage><header class=header itemscope itemtype=http://schema.org/WPHeader>
+<div class=slimContent>
+<div class=navbar-header>
+<div class="profile-block text-center">
+<a id=avatar href=https://github.com/kbyyd24 target=_blank>
+<img class="img-circle img-rotate" src="https://avatars3.githubusercontent.com/u/9191275?s=460&u=a7ea5a50516804b275b4f7a36b36efc36c75e095&v=4" width=200 height=200>
+</a>
+<h2 id=name class="hidden-xs hidden-sm">无糖拿铁</h2>
+<h3 id=title class="hidden-xs hidden-sm hidden-md">无糖拿铁，谢谢</h3>
+<small id=location class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i>Chengdu, China</small>
+</div><div class=search id=search-form-wrap>
+<form class="search-form sidebar-form">
+<div class=input-group>
+<input type=text class="search-form-input form-control" placeholder=搜索>
+<span class=input-group-btn>
+<button type=submit class="search-form-submit btn btn-flat" onclick=return!1><i class="icon icon-search"></i></button>
+</span>
+</div>
+<div class=ins-search>
+<div class=ins-search-mask></div>
+<div class=ins-search-container>
+<div class=ins-input-wrapper>
+<input type=text class=ins-search-input placeholder=想要查找什么... x-webkit-speech>
+<button type=button class="close ins-close ins-selectable" data-dismiss=modal aria-label=Close><span aria-hidden=true>×</span></button>
+</div>
+<div class=ins-section-wrapper>
+<div class=ins-section-container></div>
+</div>
+</div>
+</div>
+</form>
+</div>
+<button class="navbar-toggle collapsed" type=button data-toggle=collapse data-target=#main-navbar aria-controls=main-navbar aria-expanded=false>
 <span class=sr-only>Toggle navigation</span>
-<span class=icon-bar></span><span class=icon-bar></span><span class=icon-bar></span></button></div><nav id=main-navbar class="collapse navbar-collapse" itemscope itemtype=http://schema.org/SiteNavigationElement role=navigation><ul class="nav navbar-nav main-nav"><li class="menu-item menu-item-home"><a href=/><i class="icon icon-home-fill"></i><span class=menu-title>Home</span></a></li><li class="menu-item menu-item-archives"><a href=/posts/><i class="icon icon-archives-fill"></i><span class=menu-title>Archives</span></a></li><li class="menu-item menu-item-series"><a href=/series-index/><i class="icon icon-folder-open"></i><span class=menu-title>Series</span></a></li><li class="menu-item menu-item-tags"><a href=/tags/><i class="icon icon-tags"></i><span class=menu-title>Tags</span></a></li><li class="menu-item menu-item-about"><a href=/about/><i class="icon icon-cup-fill"></i><span class=menu-title>About</span></a></li></ul></nav></div></header><aside class=sidebar itemscope itemtype=http://schema.org/WPSideBar><div class=slimContent><div class=widget><h3 class=widget-title>标签</h3><div id=tag-cloud-list class=widget-body><a href=https://blog.gaoyuexiang.cn/tags/12-factor/ class=tag-list-link rel=1>12-factor<span class=tag-list-count>1</span></a>
+<span class=icon-bar></span>
+<span class=icon-bar></span>
+<span class=icon-bar></span>
+</button>
+</div>
+<nav id=main-navbar class="collapse navbar-collapse" itemscope itemtype=http://schema.org/SiteNavigationElement role=navigation>
+<ul class="nav navbar-nav main-nav">
+<li class="menu-item menu-item-home">
+<a href=/>
+<i class="icon icon-home-fill"></i>
+<span class=menu-title>Home</span>
+</a>
+</li>
+<li class="menu-item menu-item-archives">
+<a href=/posts/>
+<i class="icon icon-archives-fill"></i>
+<span class=menu-title>Archives</span>
+</a>
+</li>
+<li class="menu-item menu-item-series">
+<a href=/series-index/>
+<i class="icon icon-folder-open"></i>
+<span class=menu-title>Series</span>
+</a>
+</li>
+<li class="menu-item menu-item-tags">
+<a href=/tags/>
+<i class="icon icon-tags"></i>
+<span class=menu-title>Tags</span>
+</a>
+</li>
+<li class="menu-item menu-item-about">
+<a href=/about/>
+<i class="icon icon-cup-fill"></i>
+<span class=menu-title>About</span>
+</a>
+</li>
+</ul>
+</nav>
+</div>
+</header>
+<aside class=sidebar itemscope itemtype=http://schema.org/WPSideBar>
+<div class=slimContent>
+<div class=widget>
+<h3 class=widget-title> 标签</h3>
+<div id=tag-cloud-list class=widget-body>
+<a href=https://blog.gaoyuexiang.cn/tags/12-factor/ class=tag-list-link rel=1>12-factor<span class=tag-list-count>1</span></a>
 <a href=https://blog.gaoyuexiang.cn/tags/architecture/ class=tag-list-link rel=2>architecture<span class=tag-list-count>2</span></a>
 <a href=https://blog.gaoyuexiang.cn/tags/auto-configure/ class=tag-list-link rel=1>auto-configure<span class=tag-list-count>1</span></a>
 <a href=https://blog.gaoyuexiang.cn/tags/classpathscanningcandidatecomponentprovider/ class=tag-list-link rel=1>classpathscanningcandidatecomponentprovider<span class=tag-list-count>1</span></a>
@@ -69,12 +182,111 @@
 <a href=https://blog.gaoyuexiang.cn/tags/%E7%AB%AF%E5%8F%A3%E4%B8%8E%E9%80%82%E9%85%8D%E5%99%A8%E6%9E%B6%E6%9E%84/ class=tag-list-link rel=2>端口与适配器架构<span class=tag-list-count>2</span></a>
 <a href=https://blog.gaoyuexiang.cn/tags/%E8%87%AA%E6%88%91%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/ class=tag-list-link rel=1>自我保护模式<span class=tag-list-count>1</span></a>
 <a href=https://blog.gaoyuexiang.cn/tags/%E9%87%8D%E6%9E%84/ class=tag-list-link rel=1>重构<span class=tag-list-count>1</span></a>
-<a href=https://blog.gaoyuexiang.cn/tags/%E9%9C%B0%E5%BC%B9%E5%BC%8F%E4%BF%AE%E6%94%B9/ class=tag-list-link rel=1>霰弹式修改<span class=tag-list-count>1</span></a></div><script>document.onreadystatechange=()=>{if(document.readyState==='complete'){tagCloud('#tag-cloud-list a',8,20);}};function tagCloud(where,min,max){let iMax=0;let iMin=0;$(where).each(function(){let weight=Number($(this).attr("rel"));if(iMax<weight)iMax=weight;if(iMin>weight||iMin==0)iMin=weight;});let step=(max-min)/(iMax-iMin);$(where).each(function(){let weight=$(this).attr("rel")-iMin;$(this).css({"font-size":min+(weight*step)+'px'});});};</script></div><div class=widget><h3 class=widget-title>最新文章</h3><div class=widget-body><ul class="recent-post-list list-unstyled no-thumbnail"><li><div class=item-inner><p class=item-title><a href=https://blog.gaoyuexiang.cn/posts/junit_alternative/ class=title>JUnit 不好用？也许你可以试试这些测试工具</a></p><p class=item-date><time datetime="2021-11-26 00:01:57 +0800 +0800" itemprop=datePublished>2021-11-26</time></p></div></li><li><div class=item-inner><p class=item-title><a href=https://blog.gaoyuexiang.cn/posts/domain-centeric-architectures/ class=title>以领域为核心的架构们如何指导我们写代码</a></p><p class=item-date><time datetime="2021-05-25 22:13:57 +0800 +0800" itemprop=datePublished>2021-05-25</time></p></div></li><li><div class=item-inner><p class=item-title><a href=https://blog.gaoyuexiang.cn/posts/divergent-change-and-shotgun-surgery/ class=title>发散式变化与霰弹式修改</a></p><p class=item-date><time datetime="2021-04-25 20:22:33 +0800 +0800" itemprop=datePublished>2021-04-25</time></p></div></li><li><div class=item-inner><p class=item-title><a href=https://blog.gaoyuexiang.cn/posts/how-to-scan-classes-in-java-package-with-annotation/ class=title>要扫描 Java 的 package 中有某个注解的类，应该怎么做？</a></p><p class=item-date><time datetime="2021-03-21 19:52:45 +0800 +0800" itemprop=datePublished>2021-03-21</time></p></div></li><li><div class=item-inner><p class=item-title><a href=https://blog.gaoyuexiang.cn/posts/jackson-inheritance/ class=title>使用 Jackson 处理抽象类的序列化和反序列化</a></p><p class=item-date><time datetime="2020-10-02 21:38:48 +0000 UTC" itemprop=datePublished>2020-10-02</time></p></div></li></ul></div></div></div></aside><aside class="sidebar sidebar-toc collapse" id=collapseToc itemscope itemtype=http://schema.org/WPSideBar><div class=slimContent><h4 class=toc-title>文章目录</h4><nav id=toc class="js-toc toc"></nav></div></aside><main class=main role=main><div class=content><article id=- class="article article-type-" itemscope itemtype=http://schema.org/BlogPosting><div class=article-header><h1 itemprop=name><a class=article-title href=/posts/spring%E9%AB%98%E7%BA%A7%E8%A3%85%E9%85%8D%E4%B9%8B%E8%BF%90%E8%A1%8C%E6%97%B6%E6%B3%A8%E5%85%A5/>Spring高级装配之运行时注入</a></h1><div class=article-meta><span class=article-date><i class="icon icon-calendar-check"></i>&nbsp;
-<a href=https://blog.gaoyuexiang.cn/posts/spring%E9%AB%98%E7%BA%A7%E8%A3%85%E9%85%8D%E4%B9%8B%E8%BF%90%E8%A1%8C%E6%97%B6%E6%B3%A8%E5%85%A5/ class=article-date><time datetime="2016-08-17 00:00:00 +0000 UTC" itemprop=datePublished>2016-08-17</time></a></span>
-<span class="article-read hidden-xs"><i class="icon icon-eye-fill" aria-hidden=true></i><span id=https://blog.gaoyuexiang.cn/posts/spring%E9%AB%98%E7%BA%A7%E8%A3%85%E9%85%8D%E4%B9%8B%E8%BF%90%E8%A1%8C%E6%97%B6%E6%B3%A8%E5%85%A5/ class=leancloud_visitors data-flag-title=Spring高级装配之运行时注入>0</span></span>
+<a href=https://blog.gaoyuexiang.cn/tags/%E9%9C%B0%E5%BC%B9%E5%BC%8F%E4%BF%AE%E6%94%B9/ class=tag-list-link rel=1>霰弹式修改<span class=tag-list-count>1</span></a>
+</div>
+<script>document.onreadystatechange=()=>{document.readyState==='complete'&&tagCloud('#tag-cloud-list a',8,20)};function tagCloud(c,d,e){let b=0,a=0;$(c).each(function(){let c=Number($(this).attr("rel"));b<c&&(b=c),(a>c||a==0)&&(a=c)});let f=(e-d)/(b-a);$(c).each(function(){let b=$(this).attr("rel")-a;$(this).css({"font-size":d+b*f+'px'})})}</script>
+</div>
+<div class=widget>
+<h3 class=widget-title>最新文章</h3>
+<div class=widget-body>
+<ul class="recent-post-list list-unstyled no-thumbnail">
+<li>
+<div class=item-inner>
+<p class=item-title>
+<a href=https://blog.gaoyuexiang.cn/posts/junit_alternative/ class=title>JUnit 不好用？也许你可以试试这些测试工具</a>
+</p>
+<p class=item-date>
+<time datetime="2021-11-26 00:01:57 +0800 +0800" itemprop=datePublished>2021-11-26</time>
+</p>
+</div>
+</li>
+<li>
+<div class=item-inner>
+<p class=item-title>
+<a href=https://blog.gaoyuexiang.cn/posts/domain-centeric-architectures/ class=title>以领域为核心的架构们如何指导我们写代码</a>
+</p>
+<p class=item-date>
+<time datetime="2021-05-25 22:13:57 +0800 +0800" itemprop=datePublished>2021-05-25</time>
+</p>
+</div>
+</li>
+<li>
+<div class=item-inner>
+<p class=item-title>
+<a href=https://blog.gaoyuexiang.cn/posts/divergent-change-and-shotgun-surgery/ class=title>发散式变化与霰弹式修改</a>
+</p>
+<p class=item-date>
+<time datetime="2021-04-25 20:22:33 +0800 +0800" itemprop=datePublished>2021-04-25</time>
+</p>
+</div>
+</li>
+<li>
+<div class=item-inner>
+<p class=item-title>
+<a href=https://blog.gaoyuexiang.cn/posts/how-to-scan-classes-in-java-package-with-annotation/ class=title>要扫描 Java 的 package 中有某个注解的类，应该怎么做？</a>
+</p>
+<p class=item-date>
+<time datetime="2021-03-21 19:52:45 +0800 +0800" itemprop=datePublished>2021-03-21</time>
+</p>
+</div>
+</li>
+<li>
+<div class=item-inner>
+<p class=item-title>
+<a href=https://blog.gaoyuexiang.cn/posts/jackson-inheritance/ class=title>使用 Jackson 处理抽象类的序列化和反序列化</a>
+</p>
+<p class=item-date>
+<time datetime="2020-10-02 21:38:48 +0000 UTC" itemprop=datePublished>2020-10-02</time>
+</p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</aside>
+<aside class="sidebar sidebar-toc collapse" id=collapseToc itemscope itemtype=http://schema.org/WPSideBar>
+<div class=slimContent>
+<h4 class=toc-title>文章目录</h4>
+<nav id=toc class="js-toc toc">
+</nav>
+</div>
+</aside>
+<main class=main role=main><div class=content>
+<article id=- class="article article-type-" itemscope itemtype=http://schema.org/BlogPosting>
+<div class=article-header>
+<h1 itemprop=name>
+<a class=article-title href=/posts/spring%E9%AB%98%E7%BA%A7%E8%A3%85%E9%85%8D%E4%B9%8B%E8%BF%90%E8%A1%8C%E6%97%B6%E6%B3%A8%E5%85%A5/>Spring高级装配之运行时注入</a>
+</h1>
+<div class=article-meta>
+<span class=article-date>
+<i class="icon icon-calendar-check"></i>&nbsp;
+<a href=https://blog.gaoyuexiang.cn/posts/spring%E9%AB%98%E7%BA%A7%E8%A3%85%E9%85%8D%E4%B9%8B%E8%BF%90%E8%A1%8C%E6%97%B6%E6%B3%A8%E5%85%A5/ class=article-date>
+<time datetime="2016-08-17 00:00:00 +0000 UTC" itemprop=datePublished>2016-08-17</time>
+</a>
+</span>
+<span class="article-read hidden-xs">
+<i class="icon icon-eye-fill" aria-hidden=true></i>
+<span id=https://blog.gaoyuexiang.cn/posts/spring%E9%AB%98%E7%BA%A7%E8%A3%85%E9%85%8D%E4%B9%8B%E8%BF%90%E8%A1%8C%E6%97%B6%E6%B3%A8%E5%85%A5/ class=leancloud_visitors data-flag-title=Spring高级装配之运行时注入>0</span>
+</span>
 <span class=post-comment><i class="icon icon-comment"></i>&nbsp;<a href=/posts/spring%E9%AB%98%E7%BA%A7%E8%A3%85%E9%85%8D%E4%B9%8B%E8%BF%90%E8%A1%8C%E6%97%B6%E6%B3%A8%E5%85%A5/#comments class=article-comment-link>评论</a></span>
-<span class="post-wordcount hidden-xs" itemprop=wordCount>字数统计: 1599字</span>
-<span class="post-readcount hidden-xs" itemprop=timeRequired>阅读时长: 4分</span></div></div><div class="article-entry marked-body js-toc-content" itemprop=articleBody><ul><li></li></ul><p>{:toc #zhuru}</p><p>运行时注入与硬编码注入是相对的。硬编码注入在编译时就已经确定了，运行时注入则可能需要一些外部的参数来解决。</p><p><code>Spring</code>提供的两种在运行时求值的方式：</p><ul><li>属性占位符(Property placeholder)</li><li><code>Spring</code>表达式语言(SpEL)</li></ul><h2 id=注入外部的值>注入外部的值</h2><p>使用<code>@PropertySource</code>注解可以引入<code>.properties</code>文件，使用其中的值。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#a6e22e>@Configuration</span>
+<span class="post-wordcount hidden-xs" itemprop=wordCount>字数统计: 1597字</span>
+<span class="post-readcount hidden-xs" itemprop=timeRequired>阅读时长: 4分 </span>
+</div>
+</div>
+<div class="article-entry marked-body js-toc-content" itemprop=articleBody>
+<ul>
+<li></li>
+</ul>
+<p>运行时注入与硬编码注入是相对的。硬编码注入在编译时就已经确定了，运行时注入则可能需要一些外部的参数来解决。</p>
+<p><code>Spring</code>提供的两种在运行时求值的方式：</p>
+<ul>
+<li>属性占位符(Property placeholder)</li>
+<li><code>Spring</code>表达式语言(SpEL)</li>
+</ul>
+<h2 id=注入外部的值>注入外部的值</h2>
+<p>使用<code>@PropertySource</code>注解可以引入<code>.properties</code>文件，使用其中的值。</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#a6e22e>@Configuration</span>
 <span style=color:#a6e22e>@PropertySource</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;classpath:jdbc.properties&#34;</span><span style=color:#f92672>)</span>
 <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>JDBCConfig</span> <span style=color:#f92672>{</span>
     <span style=color:#a6e22e>@Autowired</span>
@@ -86,29 +298,301 @@
         <span style=color:#f92672>...</span>
     <span style=color:#f92672>}</span>
 <span style=color:#f92672>}</span>
-</code></pre></div><h3 id=深入了解spring中的environment>深入了解<code>Spring</code>中的<code>Environment</code></h3><p>上例的<code>Environment</code>有如下方法获取属性</p><ul><li>String getProperty(String key);</li><li>String getProperty(String key, String defaultValue);</li><li>T getProperty(String key, Class type);</li><li>T getProperty(String key, Class type, T defaultValue);</li></ul><p>这几个重载方法的作用顾名思义。其中第一、三个方法获取一个不存在的属性时，会抛出<code>IllegalStateException</code>异常。</p><p>可以使用<code>containsProperty(String key)</code>方法查看是否存在某个属性。</p><p>其他相关方法：</p><ul><li><code>Class&lt;T> getPropertyAsClass(String key, Class&lt;T> targetType)</code> : 将获取的属性转换为类</li><li><code>String[] getActiveProfiles()</code> : 返回激活<code>profile</code>名称的数组</li><li><code>String[] getDefaultProfiles()</code> : 返回默认<code>profile</code>名称的数组</li><li><code>boolean acceptsProfiles(String... profiles)</code> : 如果<code>environment</code>支持给定的<code>profile</code>，则返回<code>true</code></li></ul><h3 id=解析属性占位符>解析属性占位符</h3><p>使用占位符，可将属性定义到外部的<code>.properties</code>文件中，然后使用占位符插入到<code>bean</code>中。占位符使用<code>${...}</code>包装属性名称。</p><p>在<code>Java</code>配置中使用<code>@Value</code>注解。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> <span style=color:#a6e22e>BlankDisc</span><span style=color:#f92672>(</span><span style=color:#a6e22e>@Value</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;${disc.title}&#34;</span><span style=color:#f92672>)</span> String title<span style=color:#f92672>,</span>
+</code></pre></div><h3 id=深入了解spring中的environment>深入了解<code>Spring</code>中的<code>Environment</code></h3>
+<p>上例的<code>Environment</code>有如下方法获取属性</p>
+<ul>
+<li>String getProperty(String key);</li>
+<li>String getProperty(String key, String defaultValue);</li>
+<li>T getProperty(String key, Class type);</li>
+<li>T getProperty(String key, Class type, T defaultValue);</li>
+</ul>
+<p>这几个重载方法的作用顾名思义。其中第一、三个方法获取一个不存在的属性时，会抛出<code>IllegalStateException</code>异常。</p>
+<p>可以使用<code>containsProperty(String key)</code>方法查看是否存在某个属性。</p>
+<p>其他相关方法：</p>
+<ul>
+<li><code>Class&lt;T> getPropertyAsClass(String key, Class&lt;T> targetType)</code> : 将获取的属性转换为类</li>
+<li><code>String[] getActiveProfiles()</code> : 返回激活<code>profile</code>名称的数组</li>
+<li><code>String[] getDefaultProfiles()</code> : 返回默认<code>profile</code>名称的数组</li>
+<li><code>boolean acceptsProfiles(String... profiles)</code> : 如果<code>environment</code>支持给定的<code>profile</code>，则返回<code>true</code></li>
+</ul>
+<h3 id=解析属性占位符>解析属性占位符</h3>
+<p>使用占位符，可将属性定义到外部的<code>.properties</code>文件中，然后使用占位符插入到<code>bean</code>中。占位符使用<code>${...}</code>包装属性名称。</p>
+<p>在<code>Java</code>配置中使用<code>@Value</code>注解。</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> <span style=color:#a6e22e>BlankDisc</span><span style=color:#f92672>(</span><span style=color:#a6e22e>@Value</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;${disc.title}&#34;</span><span style=color:#f92672>)</span> String title<span style=color:#f92672>,</span>
             <span style=color:#a6e22e>@Value</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;${disc.artist}&#34;</span><span style=color:#f92672>)</span> String artist<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
     <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>title</span> <span style=color:#f92672>=</span> title<span style=color:#f92672>;</span>
     <span style=color:#66d9ef>this</span><span style=color:#f92672>.</span><span style=color:#a6e22e>artist</span> <span style=color:#f92672>=</span> artist<span style=color:#f92672>;</span>
 <span style=color:#f92672>}</span>
-</code></pre></div><p>使用占位符必须配置一个<code>PropertySourcesPlaceholderConfigurer bean</code>，它能够基于<code>Spring Environment</code>及其属性来解析占位符。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#a6e22e>@Bean</span>
+</code></pre></div><p>使用占位符必须配置一个<code>PropertySourcesPlaceholderConfigurer bean</code>，它能够基于<code>Spring Environment</code>及其属性来解析占位符。</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#a6e22e>@Bean</span>
 <span style=color:#66d9ef>public</span> PropertySourcesPlaceholderConfigurer <span style=color:#a6e22e>placeholderConfigurer</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
     <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>new</span> PropertySourcesPlaceholderConfigurer<span style=color:#f92672>();</span>
 <span style=color:#f92672>}</span>
-</code></pre></div><h2 id=使用spring表达式语言进行装配>使用<code>Spring</code>表达式语言进行装配</h2><p><code>SpEL</code>主要特性：</p><ul><li>使用<code>bean</code>的<code>ID</code>来引用<code>bean</code></li><li>访问对象的属性和方法</li><li>可对值进行算数、关系和逻辑运算</li><li>正则表达式匹配</li><li>集合操作</li></ul><p><code>SpEL</code>还可以用在<code>DI</code>之外的地方</p><h3 id=spel样例><code>SpEL</code>样例</h3><p><code>SpEL</code>表达式要放在<code>#{ ... }</code>中，里面的"&mldr;&ldquo;就是<code>SpEL</code>表达式。</p><ul><li>#{1}</li></ul><p>常量，结果始终为<code>1</code></p><ul><li>#{T(System).currentTimeMillis()}</li></ul><p><code>T()</code>表达式会将<code>java.lang.System</code>视为<code>Java</code>中对应的类型，然后调用其方法，获取当前时间戳。</p><ul><li>#{dataSource.user}</li></ul><p><code>dataSource</code>为声明的其他<code>bean</code>，这里可以获取它的属性<code>user</code></p><ul><li>#{systemProperties[&lsquo;username&rsquo;]}</li></ul><p>通过<code>systemProperties</code>对象获取系统属性</p><h3 id=表示字面量>表示字面量</h3><p>可表示的字面量有<code>int</code>,<code>float/double</code>,<code>String</code>,<code>boolean</code>，其中浮点值可以用科学技术法表示：<code>#{6.18E3}</code></p><h3 id=引用bean属性和方法>引用<code>bean</code>、属性和方法</h3><table><thead><tr><th style=text-align:center>引用对象</th><th style=text-align:center>表达式</th></tr></thead><tbody><tr><td style=text-align:center>bean</td><td style=text-align:center><code>#{dataSource}</code></td></tr><tr><td style=text-align:center>bean&rsquo;s field</td><td style=text-align:center><code>#{dataSource.user}</code></td></tr><tr><td style=text-align:center>bean&rsquo;s method</td><td style=text-align:center><code>#{dataSource.getPassword()}</code></td></tr><tr><td style=text-align:center>bean&rsquo;s method&rsquo;s method</td><td style=text-align:center><code>#{dataSource.getPassword().toUpperCase()}</code></td></tr></tbody></table><p>如果方法返回值为<code>null</code>，第四种情况会抛出<code>NullPoniterException</code>。可以使用：</p><p><code>#{dataSource.getPassword()?.toUpperCase()}</code></p><p>其中的<code>?.</code>运算符能够在访问前确保不为<code>null</code>，否则返回<code>null</code>。</p><h3 id=在表达式中使用类型>在表达式中使用类型</h3><p>使用<code>T()</code>表达式来访问<code>Java</code>类中的<code>static</code>方法和常量，在括号内的是类名，返回一个<code>Class</code>对象，然后调用其方法和常量。</p><h3 id=spel运算符><code>SpEL</code>运算符</h3><table><thead><tr><th style=text-align:center>运算符类型</th><th style=text-align:center>运算符</th></tr></thead><tbody><tr><td style=text-align:center>算数运算</td><td style=text-align:center>+, -, *, /, %, ^</td></tr><tr><td style=text-align:center>比较运算</td><td style=text-align:center>&lt;, >, ==, &lt;=, >=, lt, gt, eq, le, ge</td></tr><tr><td style=text-align:center>逻辑运算</td><td style=text-align:center>and, or, not, |</td></tr><tr><td style=text-align:center>条件运算</td><td style=text-align:center>?: (ternary), ?: (Elvis)</td></tr><tr><td style=text-align:center>正则表达式</td><td style=text-align:center>matches</td></tr></tbody></table><ul><li><code>Elvis</code>运算符</li></ul><p>利用三元运算符来检查场景：<code>#{disc.title ?: 'Rattle and Hum'}</code>，当<code>disc.title</code>为<code>null</code>时，返回<code>"Rattle and Hum"</code>。</p><p>名称的来历据说是因为'?&lsquo;长得像猫王的头发。。。 😲😲😲</p><ul><li>正则表达式</li></ul><p>正则表达式利用<code>matches</code>来支持正则匹配。</p><h3 id=计算集合>计算集合</h3><ul><li>引入一个元素 : <code>#{jukebox.songs[4].title}</code></li><li>随机选取 : <code>#{jukebox.songs[T(Math).random() * jukebox.songs.size()].title}</code></li><li>从<code>String</code>中获得<code>char</code> : <code>#{'This is a test'[2]}</code></li><li>使用<code>.?[]</code>进行过滤，得到符合条件的子集 : <code>#{jukebox.songs.?[artist eq 'Aerosmith']}</code></li><li>使用<code>.^[]</code>和<code>.$[]</code>进行过滤，得到第一个和最后一个匹配项</li><li>使用<code>.![]</code>从集合的每个成员选择特定属性放入新集合中 : <code>#{jukebox.songs.![title]}</code></li></ul><blockquote><p>最后四个表达式有点像<code>lambda</code>表达式</p></blockquote><p><code>SpEL</code>的表达式可以相互组合使用。</p><blockquote><p>更多<code>Spring</code>学习笔记：<a href=https://github.com/kbyyd24/spring.demo.test/issues>https://github.com/kbyyd24/spring.demo.test/issues</a></p></blockquote></div><div class=article-footer><blockquote class=mt-2x><ul class="post-copyright list-unstyled"><li class="post-copyright-link hidden-xs"><strong>本文链接:</strong>
-<a href=https://blog.gaoyuexiang.cn/posts/spring%E9%AB%98%E7%BA%A7%E8%A3%85%E9%85%8D%E4%B9%8B%E8%BF%90%E8%A1%8C%E6%97%B6%E6%B3%A8%E5%85%A5/ title=Spring高级装配之运行时注入 target=_blank rel=external>https://blog.gaoyuexiang.cn/posts/spring%E9%AB%98%E7%BA%A7%E8%A3%85%E9%85%8D%E4%B9%8B%E8%BF%90%E8%A1%8C%E6%97%B6%E6%B3%A8%E5%85%A5/</a></li><li class=post-copyright-license><strong>License:</strong>
-<a href=https://creativecommons.org/licenses/by-nc/4.0/deed.zh target=_blank rel=external>CC BY-NC 4.0 CN</a></li></ul></blockquote><div class="panel panel-default panel-badger"><div class=panel-body><figure class=media><div class=media-left><a href=https://github.com/kbyyd24 target=_blank class="img-burn thumb-sm visible-lg"><img src="https://avatars3.githubusercontent.com/u/9191275?s=460&u=a7ea5a50516804b275b4f7a36b36efc36c75e095&v=4" class="img-rounded w-full" alt></a></div><div class=media-body><h3 class=media-heading><a href=https://github.com/kbyyd24 target=_blank><span class=text-dark>无糖拿铁</span><small class=ml-1x>无糖拿铁，谢谢</small></a></h3><div>Good Good Study, Day Day Up~</div></div></figure></div></div></div></article><section id=comments><div id=vcomments></div></section></div><nav class="bar bar-footer clearfix" data-stick-bottom><div class=bar-inner><ul class="pager pull-left"><li class=prev><a href=https://blog.gaoyuexiang.cn/posts/sort_solors-%E8%A7%A3%E9%A2%98%E6%80%9D%E8%B7%AF/ title="Sort Colors 解题思路"><i class="icon icon-angle-left" aria-hidden=true></i><span>&nbsp;&nbsp;下一篇</span></a></li><li class=next><a href=https://blog.gaoyuexiang.cn/posts/%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%85%8D%E7%BD%AE%E5%B0%8F%E8%AE%B0/ title=服务器配置小记><span>上一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden=true></i></a></li><li class=toggle-toc><a class="toggle-btn collapsed" data-toggle=collapse href=#collapseToc aria-expanded=false title=文章目录 role=button><span>[&nbsp;</span><span>文章目录</span>
-<i class="text-collapsed icon icon-anchor"></i><i class="text-in icon icon-close"></i><span>]</span></a></li></ul><button type=button class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle=modal data-target=#donateModal><span>赏</span></button><div class=bar-right><div class=share-component data-sites="weibo,qq,qzone,wechat,facebook,twitter, linkedin" data-mobile-sites="weibo,qq,qzone,wechat,facebook,twitter, linkedin"></div></div></div></nav><div class="modal modal-center modal-small modal-xs-full fade" id=donateModal tabindex=-1 role=dialog><div class=modal-dialog role=document><div class="modal-content donate"><button type=button class=close data-dismiss=modal aria-label=Close><span aria-hidden=true>&#215;</span></button><div class=modal-body><div class=donate-box><div class=donate-head><p>赏杯咖啡吧</p></div><div class=tab-content><div role=tabpanel class="tab-pane fade active in" id=alipay><div class=donate-payimg><img src=https://blog.gaoyuexiang.cn/images/alipay.jpeg alt=扫码支持 title=扫一扫></div><p class="text-muted mv">扫码打赏, 多少你说了算~</p><p class=text-grey>打开支付宝扫一扫，即可进行扫码打赏哦~</p></div><div role=tabpanel class="tab-pane fade" id=wechatpay><div class=donate-payimg><img src=https://blog.gaoyuexiang.cn/images/wechatpay.png alt=扫码支持 title=扫一扫></div><p class="text-muted mv">扫码打赏, 多少你说了算~</p><p class=text-grey>打开微信扫一扫，即可进行扫码打赏哦</p></div></div><div class=donate-footer><ul class="nav nav-tabs nav-justified" role=tablist><li role=presentation class=active><a href=#alipay id=alipay-tab role=tab data-toggle=tab aria-controls=alipay aria-expanded=true><i class="icon icon-alipay"></i>支付宝</a></li><li role=presentation><a href=#wechatpay role=tab id=wechatpay-tab data-toggle=tab aria-controls=wechatpay aria-expanded=false><i class="icon icon-wepay"></i>微信支付</a></li></ul></div></div></div></div></div></div></main><footer class=footer itemscope itemtype=http://schema.org/WPFooter><ul class=social-links><li><a href=https://github.com/kbyyd24 target=_blank title=github data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li><li><a href=https://blog.gaoyuexiang.cn/index.xml target=_blank title=rss data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li><li><a href=https://blog.gaoyuexiang.cn/images/wechat_channel_with_name.png target=_blank title=wechat data-toggle=tooltip data-placement=top><i class="icon icon-wechat"></i></a></li></ul><div class=copyright>&copy;2016 -
-2022<div class=publishby>Theme by <a href=https://github.com/xiaoheiAh target=_blank>xiaoheiAh </a>base on<a href=https://github.com/xiaoheiAh/hugo-theme-pure target=_blank> pure</a>.</div><div><a href=https://beian.miit.gov.cn/ target=_blank>蜀ICP备15031888号-2</a></div></div></footer><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script><script type=text/x-mathjax-config>
+</code></pre></div><h2 id=使用spring表达式语言进行装配>使用<code>Spring</code>表达式语言进行装配</h2>
+<p><code>SpEL</code>主要特性：</p>
+<ul>
+<li>使用<code>bean</code>的<code>ID</code>来引用<code>bean</code></li>
+<li>访问对象的属性和方法</li>
+<li>可对值进行算数、关系和逻辑运算</li>
+<li>正则表达式匹配</li>
+<li>集合操作</li>
+</ul>
+<p><code>SpEL</code>还可以用在<code>DI</code>之外的地方</p>
+<h3 id=spel样例><code>SpEL</code>样例</h3>
+<p><code>SpEL</code>表达式要放在<code>#{ ... }</code>中，里面的"&mldr;&ldquo;就是<code>SpEL</code>表达式。</p>
+<ul>
+<li>#{1}</li>
+</ul>
+<p>常量，结果始终为<code>1</code></p>
+<ul>
+<li>#{T(System).currentTimeMillis()}</li>
+</ul>
+<p><code>T()</code>表达式会将<code>java.lang.System</code>视为<code>Java</code>中对应的类型，然后调用其方法，获取当前时间戳。</p>
+<ul>
+<li>#{dataSource.user}</li>
+</ul>
+<p><code>dataSource</code>为声明的其他<code>bean</code>，这里可以获取它的属性<code>user</code></p>
+<ul>
+<li>#{systemProperties[&lsquo;username&rsquo;]}</li>
+</ul>
+<p>通过<code>systemProperties</code>对象获取系统属性</p>
+<h3 id=表示字面量>表示字面量</h3>
+<p>可表示的字面量有<code>int</code>,<code>float/double</code>,<code>String</code>,<code>boolean</code>，其中浮点值可以用科学技术法表示：<code>#{6.18E3}</code></p>
+<h3 id=引用bean属性和方法>引用<code>bean</code>、属性和方法</h3>
+<table>
+<thead>
+<tr>
+<th style=text-align:center>引用对象</th>
+<th style=text-align:center>表达式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style=text-align:center>bean</td>
+<td style=text-align:center><code>#{dataSource}</code></td>
+</tr>
+<tr>
+<td style=text-align:center>bean&rsquo;s field</td>
+<td style=text-align:center><code>#{dataSource.user}</code></td>
+</tr>
+<tr>
+<td style=text-align:center>bean&rsquo;s method</td>
+<td style=text-align:center><code>#{dataSource.getPassword()}</code></td>
+</tr>
+<tr>
+<td style=text-align:center>bean&rsquo;s method&rsquo;s method</td>
+<td style=text-align:center><code>#{dataSource.getPassword().toUpperCase()}</code></td>
+</tr>
+</tbody>
+</table>
+<p>如果方法返回值为<code>null</code>，第四种情况会抛出<code>NullPoniterException</code>。可以使用：</p>
+<p><code>#{dataSource.getPassword()?.toUpperCase()}</code></p>
+<p>其中的<code>?.</code>运算符能够在访问前确保不为<code>null</code>，否则返回<code>null</code>。</p>
+<h3 id=在表达式中使用类型>在表达式中使用类型</h3>
+<p>使用<code>T()</code>表达式来访问<code>Java</code>类中的<code>static</code>方法和常量，在括号内的是类名，返回一个<code>Class</code>对象，然后调用其方法和常量。</p>
+<h3 id=spel运算符><code>SpEL</code>运算符</h3>
+<table>
+<thead>
+<tr>
+<th style=text-align:center>运算符类型</th>
+<th style=text-align:center>运算符</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style=text-align:center>算数运算</td>
+<td style=text-align:center>+, -, *, /, %, ^</td>
+</tr>
+<tr>
+<td style=text-align:center>比较运算</td>
+<td style=text-align:center>&lt;, >, ==, &lt;=, >=, lt, gt, eq, le, ge</td>
+</tr>
+<tr>
+<td style=text-align:center>逻辑运算</td>
+<td style=text-align:center>and, or, not, |</td>
+</tr>
+<tr>
+<td style=text-align:center>条件运算</td>
+<td style=text-align:center>?: (ternary), ?: (Elvis)</td>
+</tr>
+<tr>
+<td style=text-align:center>正则表达式</td>
+<td style=text-align:center>matches</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><code>Elvis</code>运算符</li>
+</ul>
+<p>利用三元运算符来检查场景：<code>#{disc.title ?: 'Rattle and Hum'}</code>，当<code>disc.title</code>为<code>null</code>时，返回<code>"Rattle and Hum"</code>。</p>
+<p>名称的来历据说是因为'?&lsquo;长得像猫王的头发。。。 😲😲😲</p>
+<ul>
+<li>正则表达式</li>
+</ul>
+<p>正则表达式利用<code>matches</code>来支持正则匹配。</p>
+<h3 id=计算集合>计算集合</h3>
+<ul>
+<li>引入一个元素 : <code>#{jukebox.songs[4].title}</code></li>
+<li>随机选取 : <code>#{jukebox.songs[T(Math).random() * jukebox.songs.size()].title}</code></li>
+<li>从<code>String</code>中获得<code>char</code> : <code>#{'This is a test'[2]}</code></li>
+<li>使用<code>.?[]</code>进行过滤，得到符合条件的子集 : <code>#{jukebox.songs.?[artist eq 'Aerosmith']}</code></li>
+<li>使用<code>.^[]</code>和<code>.$[]</code>进行过滤，得到第一个和最后一个匹配项</li>
+<li>使用<code>.![]</code>从集合的每个成员选择特定属性放入新集合中 : <code>#{jukebox.songs.![title]}</code></li>
+</ul>
+<blockquote>
+<p>最后四个表达式有点像<code>lambda</code>表达式</p>
+</blockquote>
+<p><code>SpEL</code>的表达式可以相互组合使用。</p>
+<blockquote>
+<p>更多<code>Spring</code>学习笔记：<a href=https://github.com/kbyyd24/spring.demo.test/issues>https://github.com/kbyyd24/spring.demo.test/issues</a></p>
+</blockquote>
+</div>
+<div class=article-footer>
+<blockquote class=mt-2x>
+<ul class="post-copyright list-unstyled">
+<li class="post-copyright-link hidden-xs">
+<strong>本文链接: </strong>
+<a href=https://blog.gaoyuexiang.cn/posts/spring%E9%AB%98%E7%BA%A7%E8%A3%85%E9%85%8D%E4%B9%8B%E8%BF%90%E8%A1%8C%E6%97%B6%E6%B3%A8%E5%85%A5/ title=Spring高级装配之运行时注入 target=_blank rel=external>https://blog.gaoyuexiang.cn/posts/spring%E9%AB%98%E7%BA%A7%E8%A3%85%E9%85%8D%E4%B9%8B%E8%BF%90%E8%A1%8C%E6%97%B6%E6%B3%A8%E5%85%A5/</a>
+</li>
+<li class=post-copyright-license>
+<strong>License: </strong>
+<a href=https://creativecommons.org/licenses/by-nc/4.0/deed.zh target=_blank rel=external>CC BY-NC 4.0 CN</a>
+</li>
+</ul>
+</blockquote>
+<div class="panel panel-default panel-badger">
+<div class=panel-body>
+<figure class=media>
+<div class=media-left>
+<a href=https://github.com/kbyyd24 target=_blank class="img-burn thumb-sm visible-lg">
+<img src="https://avatars3.githubusercontent.com/u/9191275?s=460&u=a7ea5a50516804b275b4f7a36b36efc36c75e095&v=4" class="img-rounded w-full" alt>
+</a>
+</div>
+<div class=media-body>
+<h3 class=media-heading><a href=https://github.com/kbyyd24 target=_blank><span class=text-dark>无糖拿铁</span><small class=ml-1x>无糖拿铁，谢谢</small></a></h3>
+<div>Good Good Study, Day Day Up~</div>
+</div>
+</figure>
+</div>
+</div>
+</div>
+</article>
+<section id=comments>
+<div id=vcomments></div>
+</section>
+</div><nav class="bar bar-footer clearfix" data-stick-bottom>
+<div class=bar-inner>
+<ul class="pager pull-left">
+<li class=prev>
+<a href=https://blog.gaoyuexiang.cn/posts/sort_solors-%E8%A7%A3%E9%A2%98%E6%80%9D%E8%B7%AF/ title="Sort Colors 解题思路"><i class="icon icon-angle-left" aria-hidden=true></i><span>&nbsp;&nbsp;下一篇</span></a>
+</li>
+<li class=next>
+<a href=https://blog.gaoyuexiang.cn/posts/%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%85%8D%E7%BD%AE%E5%B0%8F%E8%AE%B0/ title=服务器配置小记><span>上一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden=true></i></a>
+</li>
+<li class=toggle-toc>
+<a class="toggle-btn collapsed" data-toggle=collapse href=#collapseToc aria-expanded=false title=文章目录 role=button>
+<span>[&nbsp;</span><span>文章目录</span>
+<i class="text-collapsed icon icon-anchor"></i>
+<i class="text-in icon icon-close"></i>
+<span>]</span>
+</a>
+</li>
+</ul>
+<button type=button class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle=modal data-target=#donateModal><span>赏</span></button>
+<div class=bar-right>
+<div class=share-component data-sites="weibo,qq,qzone,wechat,facebook,twitter, linkedin" data-mobile-sites="weibo,qq,qzone,wechat,facebook,twitter, linkedin"></div>
+</div>
+</div>
+</nav>
+<div class="modal modal-center modal-small modal-xs-full fade" id=donateModal tabindex=-1 role=dialog>
+<div class=modal-dialog role=document>
+<div class="modal-content donate">
+<button type=button class=close data-dismiss=modal aria-label=Close><span aria-hidden=true>&#215;</span></button>
+<div class=modal-body>
+<div class=donate-box>
+<div class=donate-head>
+<p>赏杯咖啡吧</p>
+</div>
+<div class=tab-content>
+<div role=tabpanel class="tab-pane fade active in" id=alipay>
+<div class=donate-payimg>
+<img src=https://blog.gaoyuexiang.cn/images/alipay.jpeg alt=扫码支持 title=扫一扫>
+</div>
+<p class="text-muted mv">扫码打赏, 多少你说了算~</p>
+<p class=text-grey>打开支付宝扫一扫，即可进行扫码打赏哦~</p>
+</div>
+<div role=tabpanel class="tab-pane fade" id=wechatpay>
+<div class=donate-payimg>
+<img src=https://blog.gaoyuexiang.cn/images/wechatpay.png alt=扫码支持 title=扫一扫>
+</div>
+<p class="text-muted mv">扫码打赏, 多少你说了算~</p>
+<p class=text-grey>打开微信扫一扫，即可进行扫码打赏哦</p>
+</div>
+</div>
+<div class=donate-footer>
+<ul class="nav nav-tabs nav-justified" role=tablist>
+<li role=presentation class=active>
+<a href=#alipay id=alipay-tab role=tab data-toggle=tab aria-controls=alipay aria-expanded=true><i class="icon icon-alipay"></i> 支付宝</a>
+</li>
+<li role=presentation>
+<a href=#wechatpay role=tab id=wechatpay-tab data-toggle=tab aria-controls=wechatpay aria-expanded=false><i class="icon icon-wepay"></i>
+微信支付</a>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main><footer class=footer itemscope itemtype=http://schema.org/WPFooter>
+<ul class=social-links>
+<li><a href=https://github.com/kbyyd24 target=_blank title=github data-toggle=tooltip data-placement=top>
+<i class="icon icon-github"></i></a></li>
+<li><a href=https://blog.gaoyuexiang.cn/index.xml target=_blank title=rss data-toggle=tooltip data-placement=top>
+<i class="icon icon-rss"></i></a></li>
+<li><a href=https://blog.gaoyuexiang.cn/images/wechat_channel_with_name.png target=_blank title=wechat data-toggle=tooltip data-placement=top>
+<i class="icon icon-wechat"></i></a></li>
+</ul>
+<div class=copyright>
+&copy;2016 -
+2022
+<div class=publishby>
+Theme by <a href=https://github.com/xiaoheiAh target=_blank> xiaoheiAh </a>base on<a href=https://github.com/xiaoheiAh/hugo-theme-pure target=_blank> pure</a>.
+</div>
+<div>
+<a href=https://beian.miit.gov.cn/ target=_blank>蜀ICP备15031888号-2</a>
+</div>
+</div>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
+<script type=text/x-mathjax-config>
     MathJax.Hub.Config({
             showMathMenu: false, //disables context menu
             tex2jax: {
             inlineMath: [ ['$','$'], ['\\(','\\)'] ]
            }
     });
-</script><script src=https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js></script><script>window.jQuery||document.write('<script src="js/jquery.min.js"><\/script>')</script><script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/highlight.min.js></script><script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/python.min.js defer></script><script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/javascript.min.js defer></script><script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/java.min.js defer></script><script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/groovy.min.js defer></script><script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/gradle.min.js defer></script><script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/kotlin.min.js defer></script><script>hljs.configure({tabReplace:'    ',classPrefix:''})
-hljs.initHighlightingOnLoad();</script><script src=https://blog.gaoyuexiang.cn/js/application.min.bdeb64b910570b6c41badc6a05b7afb0c8ad9efd8525de3c7257d59e786326a3.js></script><script src=https://blog.gaoyuexiang.cn/js/plugin.min.51ff8c7317566f82259170fa36e09c4493adc9b9378b427a01ad3f017ebac7dd.js></script><script>(function(window){var INSIGHT_CONFIG={TRANSLATION:{POSTS:'文章',PAGES:'页面',CATEGORIES:'分类',TAGS:'标签',UNTITLED:'(未命名)',},ROOT_URL:'https:\/\/blog.gaoyuexiang.cn\/',CONTENT_URL:'https:\/\/blog.gaoyuexiang.cn\/\/searchindex.json ',};window.INSIGHT_CONFIG=INSIGHT_CONFIG;})(window);</script><script type=text/javascript src=https://blog.gaoyuexiang.cn/js/insight.min.a343cd9a5a7698336b28ef3a7c16a3a1b1d2d5fb17dc8ed04022bbe08cc5459073a15bdafa3a8a58cdd56080784bdd69fa70b1ae8597565c799c57ed00f0e120.js defer></script><script src=https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.min.js></script><script>tocbot.init({tocSelector:'.js-toc',contentSelector:'.js-toc-content',headingSelector:'h1, h2, h3',hasInnerContainers:true,});</script><script defer src=https://cdn1.lncld.net/static/js/av-min-1.2.1.js></script><script defer>AV.init({appId:'',appKey:''});function showTime(Counter){var query=new AV.Query(Counter);var visitors=$('.leancloud_visitors');query.greaterThanOrEqualTo("time",0);query.find({success:function(results){if(results.length==0){return;}
-var data=results;visitors.each(function(){var url=$(this).attr('id').trim();for(var i=0;i<data.length;i++){var object=data[i];var content=object.get('time');var _url=object.get('url')
-if(url==_url){$(this).text(content);}}})},error:function(object,error){console.log("Error: "+error.code+" "+error.message);}});}
-function addCount(Counter){var Counter=AV.Object.extend("Counter");url=$(".leancloud_visitors").attr('id').trim();title=$(".leancloud_visitors").attr('data-flag-title').trim();var query=new AV.Query(Counter);query.equalTo("url",url);query.find({success:function(results){if(results.length>0){var counter=results[0];counter.fetchWhenSave(true);counter.increment("time");counter.save(null,{success:function(counter){var content=counter.get('time');$(document.getElementById(url)).text(content);},error:function(counter,error){console.log('Failed to save Visitor num, with error message: '+error.message);}});}else{var newcounter=new Counter();newcounter.set("title",title);newcounter.set("url",url);newcounter.set("time",1);newcounter.save(null,{success:function(newcounter){console.log("newcounter.get('time')="+newcounter.get('time'));var content=newcounter.get('time');$(document.getElementById(url)).text(content);},error:function(newcounter,error){console.log('Failed to create');}});}},error:function(error){console.log('Error:'+error.code+" "+error.message);}});}
-$(function(){var Counter=AV.Object.extend("Counter");if($('.leancloud_visitors').length==1){addCount(Counter);}else{showTime(Counter);}});</script><script src=https://cdn1.lncld.net/static/js/3.0.4/av-min.js></script><script src=https://cdn.jsdelivr.net/npm/valine></script><script type=text/javascript>var GUEST=['nick','mail','link'];var meta='nick,mail';meta=meta.split(',').filter(function(item){return GUEST.indexOf(item)>-1;});new Valine({el:'#vcomments',verify:null,notify:null,appId:'Voz5TpLaiKvWLiVk63CrRybt-gzGzoHsz',appKey:'xzDAABvBBG6vK7iwgd1VKUnw',placeholder:'enjoy~',avatar:'mm',meta:meta,pageSize:'10'||10,visitor:false});</script></body></html>
+</script>
+<script src=https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js></script>
+<script>window.jQuery||document.write('<script src="js/jquery.min.js"><\/script>')</script>
+<script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/highlight.min.js></script>
+<script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/python.min.js defer></script>
+<script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/javascript.min.js defer></script>
+<script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/java.min.js defer></script>
+<script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/groovy.min.js defer></script>
+<script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/gradle.min.js defer></script>
+<script type=text/javascript src=https://cdn.staticfile.org/highlight.js/9.15.10/languages/kotlin.min.js defer></script><script>hljs.configure({tabReplace:'    ',classPrefix:''}),hljs.initHighlightingOnLoad()</script>
+<script src=https://blog.gaoyuexiang.cn/js/application.min.a94ab19cb63a95c8d7fbd7b85cab3ddeea8c369bdf75b9cab6708787ead123af.js></script>
+<script src=https://blog.gaoyuexiang.cn/js/plugin.min.19c5bcb2fb0789ab4f2b7834e5ceb5e92635645605bab902c1024b25f1502364.js></script>
+<script>(function(a){var b={TRANSLATION:{POSTS:'文章',PAGES:'页面',CATEGORIES:'分类',TAGS:'标签',UNTITLED:'(未命名)'},ROOT_URL:'https://blog.gaoyuexiang.cn/',CONTENT_URL:'https://blog.gaoyuexiang.cn//searchindex.json '};a.INSIGHT_CONFIG=b})(window)</script>
+<script type=text/javascript src=https://blog.gaoyuexiang.cn/js/insight.min.4a2d52de4bfff73e0c688404fe3d17c9a3ae12d9888e1e1ac9c690e4890de2ded50fe55f2b819c2ba55435a76f396f3ea6805765f0b0af5635cdf74ea459eab0.js defer></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.min.js></script>
+<script>tocbot.init({tocSelector:'.js-toc',contentSelector:'.js-toc-content',headingSelector:'h1, h2, h3',hasInnerContainers:!0})</script>
+<script defer src=https://cdn1.lncld.net/static/js/av-min-1.2.1.js></script>
+<script defer>AV.init({appId:'',appKey:''});function showTime(b){var a=new AV.Query(b),c=$('.leancloud_visitors');a.greaterThanOrEqualTo("time",0),a.find({success:function(a){if(a.length==0)return;var b=a;c.each(function(){for(var d=$(this).attr('id').trim(),a=0,c,e,f;a<b.length;a++)c=b[a],e=c.get('time'),f=c.get('url'),d==f&&$(this).text(e)})},error:function(b,a){console.log("Error: "+a.code+" "+a.message)}})}function addCount(a){var a=AV.Object.extend("Counter"),b;url=$(".leancloud_visitors").attr('id').trim(),title=$(".leancloud_visitors").attr('data-flag-title').trim(),b=new AV.Query(a),b.equalTo("url",url),b.find({success:function(d){var c,b;d.length>0?(c=d[0],c.fetchWhenSave(!0),c.increment("time"),c.save(null,{success:function(a){var b=a.get('time');$(document.getElementById(url)).text(b)},error:function(b,a){console.log('Failed to save Visitor num, with error message: '+a.message)}})):(b=new a,b.set("title",title),b.set("url",url),b.set("time",1),b.save(null,{success:function(a){console.log("newcounter.get('time')="+a.get('time'));var b=a.get('time');$(document.getElementById(url)).text(b)},error:function(a,b){console.log('Failed to create')}}))},error:function(a){console.log('Error:'+a.code+" "+a.message)}})}$(function(){var a=AV.Object.extend("Counter");$('.leancloud_visitors').length==1?addCount(a):showTime(a)})</script>
+<script src=https://cdn1.lncld.net/static/js/3.0.4/av-min.js></script>
+<script src=https://cdn.jsdelivr.net/npm/valine></script>
+<script type=text/javascript>var GUEST=['nick','mail','link'],meta='nick,mail';meta=meta.split(',').filter(function(a){return GUEST.indexOf(a)>-1}),new Valine({el:'#vcomments',verify:null,notify:null,appId:'Voz5TpLaiKvWLiVk63CrRybt-gzGzoHsz',appKey:'xzDAABvBBG6vK7iwgd1VKUnw',placeholder:'enjoy~',avatar:'mm',meta,pageSize:'10'||10,visitor:!1})</script>
+</body>
+</html>
