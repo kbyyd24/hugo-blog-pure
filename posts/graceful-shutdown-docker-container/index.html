@@ -29,7 +29,7 @@
 <meta itemprop=name content="你的 docker stop，它优雅吗？">
 <meta itemprop=description content="如何优雅的关闭 Docker container"><meta itemprop=datePublished content="2020-06-18T22:46:13+00:00">
 <meta itemprop=dateModified content="2020-06-18T22:46:13+00:00">
-<meta itemprop=wordCount content="3309">
+<meta itemprop=wordCount content="3094">
 <meta itemprop=keywords content="docker,linux,exec,trap,wait,"><meta name=twitter:card content="summary">
 <meta name=twitter:title content="你的 docker stop，它优雅吗？">
 <meta name=twitter:description content="如何优雅的关闭 Docker container"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
@@ -279,222 +279,540 @@
 <span id=https://blog.gaoyuexiang.cn/posts/graceful-shutdown-docker-container/ class=leancloud_visitors data-flag-title="你的 docker stop，它优雅吗？">0</span>
 </span>
 <span class=post-comment><i class="icon icon-comment"></i>&nbsp;<a href=/posts/graceful-shutdown-docker-container/#comments class=article-comment-link>评论</a></span>
-<span class="post-wordcount hidden-xs" itemprop=wordCount>字数统计: 3309字</span>
+<span class="post-wordcount hidden-xs" itemprop=wordCount>字数统计: 3094字</span>
 <span class="post-readcount hidden-xs" itemprop=timeRequired>阅读时长: 7分 </span>
 </div>
 </div>
 <div class="article-entry marked-body js-toc-content" itemprop=articleBody>
+<div class=paragraph>
 <p>我们平时在使用 <code>Docker</code> 的时候，一般会使用 <code>ctrl+c</code> 或者 <code>docker stop</code> 的方式关闭容器。
 但有时候我们可能会遇到 <code>ctrl+c</code> 不生效，或者 <code>docker stop</code> 之后要等待 10s 的情况，就像这样：</p>
-<p>image::docker-stop-10s.png[]</p>
+</div>
+<div class=imageblock>
+<div class=content>
+<img src=docker-stop-10s.png alt="docker stop 10s">
+</div>
+</div>
+<div class=paragraph>
 <p>也许你会觉得 10s 是一个可以忍受的时间，
 但这样的问题真的只有 10s 这么简单吗？
 为什么有的时候不能立即关闭容器呢？</p>
-<p>== docker stop 怎么关闭容器</p>
+</div>
+<div class=sect1>
+<h2 id=_docker_stop_怎么关闭容器>docker stop 怎么关闭容器</h2>
+<div class=sectionbody>
+<div class=paragraph>
 <p>首先我们来看一下这两个命令做了什么。</p>
-<p>=== <code>ctrl+c</code> 到底做了什么</p>
+</div>
+<div class=sect2>
+<h3 id=_ctrlc_到底做了什么><code>ctrl+c</code> 到底做了什么</h3>
+<div class=paragraph>
 <p>我们能够使用 <code>ctrl+c</code> 的场景，是我们在使用 <code>foreground</code> 模式运行容器的时候。
 这时我们按下 <code>ctrl+c</code> 就像在普通的 <code>shell</code> 中按下这个组合键一样，发送一个 <code>SIGINT</code> 信号给当前的进程，通知它终止运行。</p>
-<p>=== docker stop 做了什么</p>
+</div>
+</div>
+<div class=sect2>
+<h3 id=_docker_stop_做了什么>docker stop 做了什么</h3>
+<div class=paragraph>
 <p><code>docker stop</code> 命令是在对 <code>detached</code> 模式运行的容器发出停止命令时使用的，从发送信号上来讲，它将发送 <code>SIGTERM</code> 信号给容器，通知其结束运行。</p>
+</div>
+<div class=quoteblock>
 <blockquote>
+<div class=paragraph>
 <p><code>SIGINT</code> 一般用于关闭前台进程，<code>SIGTERM</code> 会要求进程自己正常退出。</p>
+</div>
 </blockquote>
+</div>
+<div class=paragraph>
 <p>当我们在 <code>shell</code> 中给进程发送 <code>SIGTERM</code> 和 <code>SIGINT</code> 信号的时候，这些进程往往都能正确的处理。
 但是在 <code>docker</code> 中却不灵了。
 这是因为在 <code>docker</code> 中，只会将 <code>SIGTERM</code> 等所有的 <code>signal</code> 信号发送给 PID 为 1 的进程，当我们 <code>docker</code> 中运行的进程的进程号不是 1 时，就不会收到这样的信号。</p>
+</div>
+<div class=quoteblock>
 <blockquote>
-<p>根据link:https://mp.weixin.qq.com/s/vaIBGHmdUT0bHP2O722AQQ[这篇文章]的说法，只有 <code>alpine</code> 会出现这个问题，但从我搜到的资料和实验来看，并不是这样，而是所有的镜像都会有这个问题。</p>
+<div class=paragraph>
+<p>根据<a href=https://mp.weixin.qq.com/s/vaIBGHmdUT0bHP2O722AQQ>这篇文章</a>的说法，只有 <code>alpine</code> 会出现这个问题，但从我搜到的资料和实验来看，并不是这样，而是所有的镜像都会有这个问题。</p>
+</div>
 </blockquote>
-<p>=== 为什么是 10s</p>
+</div>
+</div>
+<div class=sect2>
+<h3 id=_为什么是_10s>为什么是 10s</h3>
+<div class=paragraph>
 <p>其实这只是 <code>docker</code> 的默认设置，如果你愿意，等十年都可以。
-文档链接：link:https://docs.docker.com/engine/reference/commandline/stop/[]</p>
+文档链接：<a href=https://docs.docker.com/engine/reference/commandline/stop/ class=bare>https://docs.docker.com/engine/reference/commandline/stop/</a></p>
+</div>
+<div class=paragraph>
 <p>如果达到上面的时间限制，<code>docker</code> 将会通过给内核发送 <code>SIGKILL</code> 从而强制结束容器。</p>
-<p>=== 验证上面的回答</p>
+</div>
+</div>
+<div class=sect2>
+<h3 id=_验证上面的回答>验证上面的回答</h3>
+<div class=paragraph>
 <p>为了验证上面查到的这些结果，我写了一点 demo。
 在 demo 的场景里，我们会在 <code>ENTRYPOINT</code> 配置运行一个 <code>shell</code> 脚本，在脚本中做一些准备工作后启动进程。</p>
-<h2 id=sourcedockerfile>[source,Dockerfile]</h2>
-<h2 id=entrypoint-entrypointsh>FROM openjdk:8-jre-alpine
+</div>
+<div class=listingblock>
+<div class=content>
+<pre class=highlight><code class=language-Dockerfile data-lang=Dockerfile>FROM openjdk:8-jre-alpine
 COPY ./build/libs/app.jar /app/app.jar
 COPY ./docker/entrypoint.sh /app/entrypoint.sh
 WORKDIR /app
 EXPOSE 8080
-ENTRYPOINT ["./entrypoint.sh"]</h2>
-<h2 id=entrypointsh>[source,bash]
-.entrypoint.sh</h2>
-<h2 id=java--jar-appjar>#!/bin/sh
-echo &lsquo;Do something&rsquo;
-java -jar app.jar</h2>
+ENTRYPOINT [&#34;./entrypoint.sh&#34;]</code></pre>
+</div>
+</div>
+<div class=listingblock>
+<div class=title>entrypoint.sh</div>
+<div class=content>
+<pre class=highlight><code class=language-bash data-lang=bash>#!/bin/sh
+echo &#39;Do something&#39;
+java -jar app.jar</code></pre>
+</div>
+</div>
+<div class=quoteblock>
 <blockquote>
+<div class=paragraph>
 <p>后面还会用到这个例子</p>
+</div>
 </blockquote>
+</div>
+<div class=paragraph>
 <p>我们可以观察一下 <code>docker stop</code> 之后，<code>shell</code> 给我们的返回值</p>
-<p>image::docker-stop-10s-kill.png[title=注意红色方框]</p>
+</div>
+<div class=imageblock>
+<div class=content>
+<img src=docker-stop-10s-kill.png alt="docker stop 10s kill">
+</div>
+<div class=title>Figure 1. 注意红色方框</div>
+</div>
+<div class=paragraph>
 <p>根据这张图，我们可以看到:</p>
-<p>. <code>docker stop</code> 命令等待了 10s 才结束
-. 结束的 docker container 返回了 <code>137</code>，表示进程是因为内核接收到了 <code>SIGKILL</code> 而结束的（<code>zsh</code> 给美化成了 KILL）</p>
-<p>=== Kill 导致的问题</p>
+</div>
+<div class="olist arabic">
+<ol class=arabic>
+<li>
+<p><code>docker stop</code> 命令等待了 10s 才结束</p>
+</li>
+<li>
+<p>结束的 docker container 返回了 <code>137</code>，表示进程是因为内核接收到了 <code>SIGKILL</code> 而结束的（<code>zsh</code> 给美化成了 KILL）</p>
+</li>
+</ol>
+</div>
+</div>
+<div class=sect2>
+<h3 id=_kill_导致的问题>Kill 导致的问题</h3>
+<div class=paragraph>
 <p>现在我们已经了解了 <code>ctrl+c</code> 为什么不生效和 <code>docker stop</code> 等待 10s 的原因了。
 我们再来看看另一个问题：
 <strong>强制关闭容器，真的就没问题吗？</strong></p>
+</div>
+<div class=paragraph>
 <p>或许你能想到，很多进程在结束阶段会做一些清理工作：比如删除临时目录、执行 shutdown hook 等。
 但是当进程被强制关闭时，这些任务就不会被执行，那么我们就可能得到一些并不期望的结果。</p>
+</div>
+<div class=paragraph>
 <p>以 <code>Eureka</code> 为例。
 <code>Eureka client</code> 在结束进程时，需要向 <code>Eureka server</code> 发送 shutdown 信号，以注销 <code>client</code>。
 这本来没什么问题，因为 <code>Eureka server</code> 即使没有收到这样的信息，也会定期清理 <code>client</code> 信息。
 但是 <code>Eureka server</code> 还有一个 <code>self preservation</code> 模式，以防止意外的网络事件导致大量的 <code>client</code> 下线。
 这就有可能导致 <code>Eureka</code> 集群的注册表中出现大量的 <code>client</code> 信息，但它们其实已经关闭了。</p>
-<p>== 如何优雅的关闭容器</p>
+</div>
+</div>
+</div>
+</div>
+<div class=sect1>
+<h2 id=_如何优雅的关闭容器>如何优雅的关闭容器</h2>
+<div class=sectionbody>
+<div class=paragraph>
 <p>通过前面的内容，我们已经了解了容器没有被优雅关闭的原因和可能导致的问题，接下来，我们来看看如何解决。</p>
+</div>
+<div class=quoteblock>
 <blockquote>
+<div class=paragraph>
 <p>前面提到的那篇文章中提到可以使用 <code>tini</code> 来解决，但我没有成功过。<code>tini</code> 的确做到了立即关闭进程，但是进程并没有执行 shutdown hook。</p>
+</div>
 </blockquote>
-<p>=== 使目标进程成为 PID 1</p>
+</div>
+<div class=sect2>
+<h3 id=_使目标进程成为_pid_1>使目标进程成为 PID 1</h3>
+<div class=paragraph>
 <p>既然 <code>docker</code> 只会将 <code>sigal</code> 发送给 PID 1 的进程，那就让我们的进程成为 PID 1 的进程就好了。</p>
-<p>==== docker 的 exec 与 shell 模式</p>
+</div>
+<div class=sect3>
+<h4 id=_docker_的_exec_与_shell_模式>docker 的 exec 与 shell 模式</h4>
+<div class=paragraph>
 <p><code>Dockerfile</code> 的 <code>ENTRYPOINT</code> 有两种写法，即 <code>exec</code> 和 <code>shell</code>：</p>
-<h2 id=sourcedockerfile-1>[source,Dockerfile]</h2>
-<h1 id=exec-form>exec form</h1>
-<p>ENTRYPOINT [&ldquo;command&rdquo;, &ldquo;param&rdquo;]</p>
-<h1 id=shell-form>shell form</h1>
-<h2 id=entrypoint-command-param>ENTRYPOINT command param</h2>
+</div>
+<div class=listingblock>
+<div class=content>
+<pre class=highlight><code class=language-Dockerfile data-lang=Dockerfile># exec form
+ENTRYPOINT [&#34;command&#34;, &#34;param&#34;]
+# shell form
+ENTRYPOINT command param</code></pre>
+</div>
+</div>
+<div class=paragraph>
 <p>两者的区别在于：</p>
+</div>
+<div class=ulist>
 <ul>
-<li><code>exec</code> 形式的命令会使用 PID 1 的进程</li>
-<li><code>shell</code> 形式的命令会被执行为 <code>/bin/sh -c &lt;command></code>，不会执行在 PID 1 上，也就不会收到 <code>signal</code></li>
+<li>
+<p><code>exec</code> 形式的命令会使用 PID 1 的进程</p>
+</li>
+<li>
+<p><code>shell</code> 形式的命令会被执行为 <code>/bin/sh -c &lt;command></code>，不会执行在 PID 1 上，也就不会收到 <code>signal</code></p>
+</li>
 </ul>
+</div>
+<div class=paragraph>
 <p>所以，我们应该选择 <code>exec</code> 模式，让我们的程序成为 PID 1 进程。</p>
-<h2 id=sourcedockerfile-2>[source,Dockerfile]</h2>
-<h2 id=entrypoint-java--jar-appjar>ENTRYPOINT [&ldquo;java&rdquo;, &ldquo;-jar&rdquo;, &ldquo;app.jar&rdquo;]</h2>
+</div>
+<div class=listingblock>
+<div class=content>
+<pre class=highlight><code class=language-Dockerfile data-lang=Dockerfile>ENTRYPOINT [&#34;java&#34;, &#34;-jar&#34;, &#34;app.jar&#34;]</code></pre>
+</div>
+</div>
+<div class=quoteblock>
 <blockquote>
-<p>更详细的信息，可以查看link:https://docs.docker.com/engine/reference/builder/#entrypoint[官方文档]。</p>
+<div class=paragraph>
+<p>更详细的信息，可以查看<a href=https://docs.docker.com/engine/reference/builder/#entrypoint>官方文档</a>。</p>
+</div>
 </blockquote>
-<p>==== exec 命令</p>
-<p><code>exec</code> 形式的 <code>ENTRYPOINT</code> 只能解决 <strong>无需任何准备工作就启动进程</strong> 的场景，而不能解决一些需要准备工作的复杂场景。</p>
+</div>
+</div>
+<div class=sect3>
+<h4 id=_exec_命令>exec 命令</h4>
+<div class=paragraph>
+<p><code>exec</code> 形式的 <code>ENTRYPOINT</code> 只能解决 <em>无需任何准备工作就启动进程</em> 的场景，而不能解决一些需要准备工作的复杂场景。</p>
+</div>
+<div class=paragraph>
 <p>在这样的场景中，我们的 <code>ENTRYPOINT</code> 往往需要执行一个 <code>shell</code> 脚本：</p>
-<h2 id=sourcedockerfile-3>[source,Dockerfile]</h2>
-<h2 id=entrypoint-entrypointsh-1>ENTRYPOINT ["./entrypoint.sh"]</h2>
+</div>
+<div class=listingblock>
+<div class=content>
+<pre class=highlight><code class=language-Dockerfile data-lang=Dockerfile>ENTRYPOINT [&#34;./entrypoint.sh&#34;]</code></pre>
+</div>
+</div>
+<div class=paragraph>
 <p>然后在这个脚本中执行我们的准备工作，完成后再启动真正的进程。
 比如上面的例子，做完准备后，启动 <code>java</code> 进程。
 这时候，我们的 <code>java</code> 进程就无法成为 PID 1 进程。</p>
-<p>image::docker-exec-ps-not-pid-1.png[]</p>
+</div>
+<div class=imageblock>
+<div class=content>
+<img src=docker-exec-ps-not-pid-1.png alt="docker exec ps not pid 1">
+</div>
+</div>
+<div class=paragraph>
 <p>我们可以看到，<code>java</code> 进程的 PID 是 7，也就无法优雅退出了。</p>
+</div>
+<div class=paragraph>
 <p>为了解决这个问题，我们可以使用 <code>exec</code> 命令来解决。这个命令的作用就是<strong>使用新的进程替代原有的进程，并保持 PID 不变</strong>。
 这就意味着我们可以在执行 <code>java</code> 命令的时候使用它，从而替换掉 PID 1 的 shell 脚本：</p>
-<h2 id=entrypointsh-1>[source,bash]
-.entrypoint.sh</h2>
-<h2 id=exec-java--jar-appjar>#!/bin/sh
-echo &ldquo;Do something&rdquo;
-exec java -jar app.jar</h2>
+</div>
+<div class=listingblock>
+<div class=title>entrypoint.sh</div>
+<div class=content>
+<pre class=highlight><code class=language-bash data-lang=bash>#!/bin/sh
+echo &#34;Do something&#34;
+exec java -jar app.jar</code></pre>
+</div>
+</div>
+<div class=paragraph>
 <p>我们再来看一下容器中的进程：</p>
-<p>image::docker-exec-ps-pid-1.png[]</p>
+</div>
+<div class=imageblock>
+<div class=content>
+<img src=docker-exec-ps-pid-1.png alt="docker exec ps pid 1">
+</div>
+</div>
+<div class=paragraph>
 <p>使用 <code>exec</code> 命令之后，我们无论是使用 <code>ctrl+c</code> 还是 <code>docker stop</code> 都能让进程接收到信号，执行相应的操作后退出：</p>
-<p>image::docker-stop-success-by-exec.png[]</p>
+</div>
+<div class=imageblock>
+<div class=content>
+<img src=docker-stop-success-by-exec.png alt="docker stop success by exec">
+</div>
+</div>
+<div class=paragraph>
 <p>这张图我们可以看到很多信息：</p>
-<p>. <code>docker stop</code> 命令很快结束，没有等待十秒
-. 容器退出收到的信号是 <code>SIGTERM</code>，不是 <code>SIGKILL</code>
-. <code>Spring</code> 进程的最后一行日志是 shutdown hook 的日志</p>
+</div>
+<div class="olist arabic">
+<ol class=arabic>
+<li>
+<p><code>docker stop</code> 命令很快结束，没有等待十秒</p>
+</li>
+<li>
+<p>容器退出收到的信号是 <code>SIGTERM</code>，不是 <code>SIGKILL</code></p>
+</li>
+<li>
+<p><code>Spring</code> 进程的最后一行日志是 shutdown hook 的日志</p>
+</li>
+</ol>
+</div>
+<div class=paragraph>
 <p>这些信息表明，<code>java</code> 进程收到了 <code>docker stop</code> 发送的 <code>SIGTERM</code> 信号，并且正确的触发了相关操作，最后退出程序。</p>
-<p>=== 使用 trap</p>
+</div>
+</div>
+</div>
+<div class=sect2>
+<h3 id=_使用_trap>使用 trap</h3>
+<div class=paragraph>
 <p><code>exec</code> 命令在这样的场景下算是一个比较完美的方案。
 但如果你还想探索一下其他方式，或者你的容器中需要运行多个进程，那我们可以接着来看看 <code>trap</code> 命令。</p>
+</div>
+<div class=paragraph>
 <p><code>trap</code> 是用来设置陷阱、监听 <code>signal</code> 的 <code>shell</code> 命令，一般用来处理脚本收到的 <code>signal</code>，完成一些操作。</p>
-<h2 id=sourcebash>[source,bash]</h2>
-<h2 id=trap--lp-arg-sigspec->trap [-lp] [[arg] sigspec &mldr;]</h2>
+</div>
+<div class=listingblock>
+<div class=content>
+<pre class=highlight><code class=language-bash data-lang=bash>trap [-lp] [[arg] sigspec ...]</code></pre>
+</div>
+</div>
+<div class=quoteblock>
 <blockquote>
+<div class=paragraph>
 <p>本文不介绍 <code>lp</code> 参数的含义</p>
+</div>
 </blockquote>
+</div>
+<div class=ulist>
 <ul>
-<li><code>arg</code> 代表接收到某个信号后要执行的操作，是一个 <code>shell</code> 命令</li>
-<li><code>sigspec</code> 表示监听的信号，可以是多个</li>
+<li>
+<p><code>arg</code> 代表接收到某个信号后要执行的操作，是一个 <code>shell</code> 命令</p>
+</li>
+<li>
+<p><code>sigspec</code> 表示监听的信号，可以是多个</p>
+</li>
 </ul>
+</div>
+<div class=paragraph>
 <p>举个🌰：</p>
-<h2 id=sourcebash-1>[source,bash]</h2>
-<h2 id=trap-echo-shutting-down-term-1>trap &lsquo;echo &ldquo;Shutting Down&rdquo;&rsquo; TERM #&lt;1></h2>
-<p>&lt;1> 表示在接收到 <code>SIGTERM</code> 信号时输出 &ldquo;Shutting Down&rdquo;</p>
-<p>==== 添加 trap</p>
+</div>
+<div class=listingblock>
+<div class=content>
+<pre class=highlight><code class=language-bash data-lang=bash>trap &#39;echo &#34;Shutting Down&#34;&#39; TERM #<b class=conum>(1)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p>表示在接收到 <code>SIGTERM</code> 信号时输出 "Shutting Down"</p>
+</li>
+</ol>
+</div>
+<div class=sect3>
+<h4 id=_添加_trap>添加 trap</h4>
+<div class=paragraph>
 <p>简单了解了 <code>trap</code> 命令后，我们就可以来改造一下 <code>entrypoint.sh</code>：</p>
-<h2 id=entrypointsh-2>[source,bash]
-.entrypoint.sh</h2>
-<p>#!/bin/sh
-echo &lsquo;Do something&rsquo;</p>
-<p>kill_jar() {
-echo &lsquo;Received TERM&rsquo;
-kill &ldquo;$(ps -ef | grep java | grep app | awk &lsquo;{print $1}')&rdquo; #&lt;1>
-}</p>
-<p>trap &lsquo;kill_jar&rsquo; TERM INT #&lt;2></p>
-<h2 id=java--jar-appjar-1>java -jar app.jar</h2>
-<p>&lt;1> 找到执行的进程，使用 <code>kill</code> 命令向其发送 <code>SIGTERM</code>
-&lt;2> 在脚本中监听 <code>SIGTERM</code> 和 <code>SIGINT</code> 信号，然后执行 <code>kill_jar</code> 函数</p>
+</div>
+<div class=listingblock>
+<div class=title>entrypoint.sh</div>
+<div class=content>
+<pre class=highlight><code class=language-bash data-lang=bash>#!/bin/sh
+echo &#39;Do something&#39;
+
+kill_jar() {
+  echo &#39;Received TERM&#39;
+  kill &#34;$(ps -ef | grep java | grep app | awk &#39;{print $1}&#39;)&#34; #<b class=conum>(1)</b>
+}
+
+trap &#39;kill_jar&#39; TERM INT #<b class=conum>(2)</b>
+
+java -jar app.jar</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p>找到执行的进程，使用 <code>kill</code> 命令向其发送 <code>SIGTERM</code></p>
+</li>
+<li>
+<p>在脚本中监听 <code>SIGTERM</code> 和 <code>SIGINT</code> 信号，然后执行 <code>kill_jar</code> 函数</p>
+</li>
+</ol>
+</div>
+<div class=paragraph>
 <p>上面的脚本看起来可以正常工作，但实际上不能。</p>
+</div>
+<div class=paragraph>
 <p>这是因为在 <code>bash</code> 中，即使 <code>trap</code> 收到了信号，如果这个时候 <code>bash</code> 在等待一个命令结束的话，
 那么 <code>trap</code> 就会等到这个命令结束才会被执行。</p>
-<p>[quote,https://www.gnu.org/software/bash/manual/html_node/Signals.html#Signals]</p>
-<hr>
+</div>
+<div class=quoteblock>
+<blockquote>
+<div class=paragraph>
 <p>If Bash is waiting for a command to complete and receives a signal for which a trap has been set, the trap will not be executed until the command completes.</p>
-<hr>
+</div>
+</blockquote>
+<div class=attribution>
+— https://www.gnu.org/software/bash/manual/html_node/Signals.html#Signals
+</div>
+</div>
+<div class=paragraph>
 <p>在我们的场景中，<code>bash</code> 就在等待 <code>java</code> 进程结束，才能执行 <code>trap</code> 中的命令。
 但是 <code>java</code> 进程又需要 <code>trap</code> 来关闭才能结束，所以程序陷入了循环依赖，只能 <code>docker stop</code> 等待 10s。</p>
-<p>==== 后台运行 java</p>
+</div>
+</div>
+<div class=sect3>
+<h4 id=_后台运行_java>后台运行 java</h4>
+<div class=paragraph>
 <p>既然前面的问题是 <code>bash</code> 在等待 <code>java</code> 进程结束，那么我们就让它不等待就好了——后台执行 <code>java</code>：</p>
-<h2 id=entrypointsh-3>[source,bash]
-.entrypoint.sh</h2>
-<p>#!/bin/sh
-echo &lsquo;Do something&rsquo;</p>
-<p>kill_jar() {
-echo &lsquo;Received TERM&rsquo;
-kill &ldquo;$(ps -ef | grep java | grep app | awk &lsquo;{print $1}')&rdquo;
-echo &lsquo;Process finished&rsquo;
-}</p>
-<p>trap &lsquo;kill_jar&rsquo; TERM INT</p>
-<p>java -jar app.jar & #&lt;1></p>
-<h2 id=wait--2>wait $! #&lt;2></h2>
-<p>&lt;1> 后台执行 <code>java</code>
-&lt;2> 使用 <code>wait</code> 命令等待 <code>java</code> 进程结束，避免 <code>entrypoint.sh</code> 执行完成后容器直接退出</p>
+</div>
+<div class=listingblock>
+<div class=title>entrypoint.sh</div>
+<div class=content>
+<pre class=highlight><code class=language-bash data-lang=bash>#!/bin/sh
+echo &#39;Do something&#39;
+
+kill_jar() {
+  echo &#39;Received TERM&#39;
+  kill &#34;$(ps -ef | grep java | grep app | awk &#39;{print $1}&#39;)&#34;
+  echo &#39;Process finished&#39;
+}
+
+trap &#39;kill_jar&#39; TERM INT
+
+java -jar app.jar &amp; #<b class=conum>(1)</b>
+
+wait $! #<b class=conum>(2)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p>后台执行 <code>java</code></p>
+</li>
+<li>
+<p>使用 <code>wait</code> 命令等待 <code>java</code> 进程结束，避免 <code>entrypoint.sh</code> 执行完成后容器直接退出</p>
+</li>
+</ol>
+</div>
+<div class=paragraph>
 <p>是不是觉得这样就 OK 了？
 Naive，上面的这个脚本能够帮助我们立即结束容器，但并不会等待进程自己正常退出：</p>
-<p>image::docker-stop-without-shutdown.png[]</p>
+</div>
+<div class=imageblock>
+<div class=content>
+<img src=docker-stop-without-shutdown.png alt="docker stop without shutdown">
+</div>
+</div>
+<div class=paragraph>
 <p>我们可以看到，<code>kill_jar</code> 方法中的 <code>echo</code> 被成功执行，但是却没有看到 <code>Spring</code> 的 shutdown hook 日志输出。
 这说明容器没有等待程序正常退出就被关闭了。</p>
+</div>
+<div class=paragraph>
 <p>这里其实有两个问题。</p>
-<p><code>kill</code> 的问题::
-第一个是 <code>kill</code> 命令并不会等待进程结束，它只负责向进程发送 <code>SIG</code> 信号。
+</div>
+<div class=dlist>
+<dl>
+<dt class=hdlist1><code>kill</code> 的问题</dt>
+<dd>
+<p>第一个是 <code>kill</code> 命令并不会等待进程结束，它只负责向进程发送 <code>SIG</code> 信号。
 至于程序如何处理、什么时候处理，则与它无瓜。</p>
-<p><code>wait</code> 的问题::
-第二个问题则是 <code>wait</code> 命令，在上面 <code>bash</code> 对 <code>trap</code> 的解释后面，还有一句话：</p>
-<p>[quote,https://www.gnu.org/software/bash/manual/html_node/Signals.html#Signals]</p>
-<hr>
+</dd>
+<dt class=hdlist1><code>wait</code> 的问题</dt>
+<dd>
+<p>第二个问题则是 <code>wait</code> 命令，在上面 <code>bash</code> 对 <code>trap</code> 的解释后面，还有一句话：</p>
+</dd>
+</dl>
+</div>
+<div class=quoteblock>
+<blockquote>
+<div class=paragraph>
 <p>When Bash is waiting for an asynchronous command via the wait builtin, the reception of a signal for which a trap has been set will cause the wait builtin to return immediately with an exit status greater than 128, immediately after which the trap is executed.</p>
-<hr>
+</div>
+</blockquote>
+<div class=attribution>
+— https://www.gnu.org/software/bash/manual/html_node/Signals.html#Signals
+</div>
+</div>
+<div class=paragraph>
 <p>也就是说，虽然 <code>bash</code> 在等待 <code>wait</code> 结束，但是 <code>wait</code> 又被特殊处理了
 ——<code>trap</code> 收到任何大于 128 的信号都会让 <code>wait</code> 命令结束，以执行 <code>trap</code> 中的方法。</p>
+</div>
+<div class=paragraph>
 <p>综合以上两点，我们会发现 <code>trap</code> 在执行 <code>kill_jar</code> 时，<code>entrypoint.sh</code> 中的 <code>wait</code> 已经结束，不再等待 <code>java</code> 进程结束。
 <code>kill_jar</code> 仅仅发送了 <code>SIGTERM</code> 信号，也不会等待 <code>java</code> 进程结束。</p>
+</div>
+<div class=paragraph>
 <p>由此，我们就可以对脚本进行改进：</p>
-<h2 id=entrypointsh-4>[source,bash]
-.entrypoint.sh</h2>
-<p>#!/bin/sh</p>
-<p>echo &lsquo;Do something&rsquo;</p>
-<p>kill_jar() {
-echo &lsquo;Received TERM&rsquo;
-kill &ldquo;$(ps -ef | grep java | grep app | awk &lsquo;{print $1}')&rdquo;
-wait $! #&lt;1>
-echo &lsquo;Process finished&rsquo;
-}</p>
-<p>trap &lsquo;kill_jar&rsquo; TERM INT</p>
-<p>java -jar app.jar &</p>
-<h2 id=wait->wait $!</h2>
-<p>&lt;1> 在 <code>kill</code> 后加了一行 <code>wait</code>，因为 <code>kill</code> 会返回进程号，所以这里也可以使用 <code>$!</code>。</p>
+</div>
+<div class=listingblock>
+<div class=title>entrypoint.sh</div>
+<div class=content>
+<pre class=highlight><code class=language-bash data-lang=bash>#!/bin/sh
+
+echo &#39;Do something&#39;
+
+kill_jar() {
+  echo &#39;Received TERM&#39;
+  kill &#34;$(ps -ef | grep java | grep app | awk &#39;{print $1}&#39;)&#34;
+  wait $! #<b class=conum>(1)</b>
+  echo &#39;Process finished&#39;
+}
+
+trap &#39;kill_jar&#39; TERM INT
+
+java -jar app.jar &amp;
+
+wait $!</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p>在 <code>kill</code> 后加了一行 <code>wait</code>，因为 <code>kill</code> 会返回进程号，所以这里也可以使用 <code>$!</code>。</p>
+</li>
+</ol>
+</div>
+<div class=paragraph>
 <p>这样，我们的 <code>kill_jar</code> 就会等到 <code>java</code> 进程完全退出后才会结束：</p>
-<p>image::docker-stop-success-by-trap.png[]</p>
-<p>我们可以看到，<code>Spring</code> 的 shutdown hook 在 &ldquo;Process finished&rdquo; 之前输出，证明新加的 <code>wait</code> 命令发挥了作用。</p>
-<p>== 总结</p>
-<p>. <code>ctrl+c</code> 与 <code>docker stop</code> 都只会向容器中 PID 1 进程发送信号
-. <code>docker stop</code> 默认等待 10s 没有关闭容器后，会向内核发送 <code>SIGKILL</code> 以强制关闭容器
-. 解决方案：
-.. 直接启动进程时，使用 <code>ENTRYPOINT</code> 的 <code>exec form</code>
-.. 启动单一进程，并且需要一点准备工作时，使用 <code>exec</code> 命令
-.. 启动多个进程时，组合使用 <code>trap</code>、<code>wait</code>、<code>kill</code> 命令</p>
+</div>
+<div class=imageblock>
+<div class=content>
+<img src=docker-stop-success-by-trap.png alt="docker stop success by trap">
+</div>
+</div>
+<div class=paragraph>
+<p>我们可以看到，<code>Spring</code> 的 shutdown hook 在 "Process finished" 之前输出，证明新加的 <code>wait</code> 命令发挥了作用。</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class=sect1>
+<h2 id=_总结>总结</h2>
+<div class=sectionbody>
+<div class="olist arabic">
+<ol class=arabic>
+<li>
+<p><code>ctrl+c</code> 与 <code>docker stop</code> 都只会向容器中 PID 1 进程发送信号</p>
+</li>
+<li>
+<p><code>docker stop</code> 默认等待 10s 没有关闭容器后，会向内核发送 <code>SIGKILL</code> 以强制关闭容器</p>
+</li>
+<li>
+<p>解决方案：</p>
+<div class="olist loweralpha">
+<ol class=loweralpha type=a>
+<li>
+<p>直接启动进程时，使用 <code>ENTRYPOINT</code> 的 <code>exec form</code></p>
+</li>
+<li>
+<p>启动单一进程，并且需要一点准备工作时，使用 <code>exec</code> 命令</p>
+</li>
+<li>
+<p>启动多个进程时，组合使用 <code>trap</code>、<code>wait</code>、<code>kill</code> 命令</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
 </div>
 <div class=article-footer>
 <blockquote class=mt-2x>
