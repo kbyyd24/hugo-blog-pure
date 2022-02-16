@@ -29,7 +29,7 @@
 <meta itemprop=name content="如何使用 Spring Security ACL">
 <meta itemprop=description content="使用 Spring Security ACL 的例子"><meta itemprop=datePublished content="2020-07-18T12:17:26+00:00">
 <meta itemprop=dateModified content="2020-07-18T12:17:26+00:00">
-<meta itemprop=wordCount content="4406">
+<meta itemprop=wordCount content="4313">
 <meta itemprop=keywords content="Spring,Spring Security,Spring Security ACL,Spring Security ACL demo,"><meta name=twitter:card content="summary">
 <meta name=twitter:title content="如何使用 Spring Security ACL">
 <meta name=twitter:description content="使用 Spring Security ACL 的例子"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
@@ -278,294 +278,673 @@
 <span id=https://blog.gaoyuexiang.cn/posts/how-to-use-spring-security-acl/ class=leancloud_visitors data-flag-title="如何使用 Spring Security ACL">0</span>
 </span>
 <span class=post-comment><i class="icon icon-comment"></i>&nbsp;<a href=/posts/how-to-use-spring-security-acl/#comments class=article-comment-link>评论</a></span>
-<span class="post-wordcount hidden-xs" itemprop=wordCount>字数统计: 4406字</span>
+<span class="post-wordcount hidden-xs" itemprop=wordCount>字数统计: 4313字</span>
 <span class="post-readcount hidden-xs" itemprop=timeRequired>阅读时长: 9分 </span>
 </div>
 </div>
 <div class="article-entry marked-body js-toc-content" itemprop=articleBody>
-<p>在link:../spring-security-acl-conception-and-component/[上一篇文章]中，我们了解了 Spring Security ACL 的基本概念。
+<div class=paragraph>
+<p>在<a href=../spring-security-acl-conception-and-component/>上一篇文章</a>中，我们了解了 Spring Security ACL 的基本概念。
 但是几乎没有涉及实现与使用的部分。这篇文章我们就来看一看如何在使用了 Spring 的项目中使用 Spring Security。</p>
-<p>== 导入 Jar 包</p>
+</div>
+<div class=sect1>
+<h2 id=_导入_jar_包>导入 Jar 包</h2>
+<div class=sectionbody>
+<div class=paragraph>
 <p>Spring Security ACL 的 GAV 是 <code>org.springframework.security:spring-security-acl:&lt;version></code>，
-被加入到了 link:https://docs.spring.io/platform/docs/1.0.1.RELEASE/reference/htmlsingle/#appendix-dependency-versions[Spring IO Platform bom] 中，所以可以使用 Spring 的依赖管理插件来管理版本号。</p>
+被加入到了 <a href=https://docs.spring.io/platform/docs/1.0.1.RELEASE/reference/htmlsingle/#appendix-dependency-versions>Spring IO Platform bom</a> 中，所以可以使用 Spring 的依赖管理插件来管理版本号。</p>
+</div>
+<div class=paragraph>
 <p>但是 Spring 没有提供相应的 boot starter，使用的时候需要自己进行配置。
 毕竟 ACL 中提供的默认实现很可能达不到需求，还不如自己动手。</p>
-<p>== 存储 ACL</p>
+</div>
+</div>
+</div>
+<div class=sect1>
+<h2 id=_存储_acl>存储 ACL</h2>
+<div class=sectionbody>
+<div class=paragraph>
 <p>ACL 需要被持久化起来，否则系统重启后就丢掉了权限信息。</p>
-<p>=== 基于 JDBC 的持久化</p>
+</div>
+<div class=sect2>
+<h3 id=_基于_jdbc_的持久化>基于 JDBC 的持久化</h3>
+<div class=paragraph>
 <p>Spring Security ACL 提供了默认的 <code>AclService</code> 和 <code>MutableAclService</code> 实现：<code>JdbcAclService</code> 和 <code>JdbcMutableAclService</code>。</p>
+</div>
+<div class=paragraph>
 <p>因为是基于 <code>JDBC</code> 的实现，所以就可能存在性能问题（绝大多数情况下不需要更新 ACL，但使用 JDBC 时总是会访问数据库，得到一模一样的 ACL）。
 于是 ACL 又设计了一个缓存机制来减少对数据库的请求。缓存的接口是 <code>AclCache</code>，Spring 提供了基于 Eh-Cache 和 Spring Cache 的两个实现。</p>
+</div>
+<div class=quoteblock>
 <blockquote>
+<div class=paragraph>
 <p><code>AclCache</code> 接口被安排在了 <code>org.springframework.security.acls.model</code> 包中。
 个人觉得这不是一个必须的元素，算不上核心概念，不应该和其他核心概念放到一起。</p>
+</div>
 </blockquote>
-<p>==== 创建数据库</p>
-<p><code>JdbcAclService</code> 需要创建四张表，创建表的 SQL 已经在 jar 包里了（<em>但是有坑</em>），我们只是来看看这几张表分别保存了什么内容。</p>
-<p>acl_sid::</p>
+</div>
+<div class=sect3>
+<h4 id=_创建数据库>创建数据库</h4>
+<div class=paragraph>
+<p><code>JdbcAclService</code> 需要创建四张表，创建表的 SQL 已经在 jar 包里了（<strong>但是有坑</strong>），我们只是来看看这几张表分别保存了什么内容。</p>
+</div>
+<div class=dlist>
+<dl>
+<dt class=hdlist1>acl_sid</dt>
+<dd>
+<div class=ulist>
 <ul>
-<li>id: 主键</li>
-<li>principal: 一个布尔值，表示这个 sid 是不是 <code>PrincipalSid</code>，如果值为 <code>false</code> 则表示 sid 是 <code>GrantedAuthoritySid</code></li>
+<li>
+<p>id: 主键</p>
+</li>
+<li>
+<p>principal: 一个布尔值，表示这个 sid 是不是 <code>PrincipalSid</code>，如果值为 <code>false</code> 则表示 sid 是 <code>GrantedAuthoritySid</code></p>
+<div class=quoteblock>
+<blockquote>
+<div class=paragraph>
+<p>这个设计简直把扩展堵死了 🙄️</p>
+</div>
+</blockquote>
+</div>
+</li>
+<li>
+<p>sid: <code>Sid</code> 实例中保存的字符串，也就是 <code>Principal.getName()</code> 或 <code>GrantedAuthority.getAuthority()</code> 或自己写代码生成的字符串</p>
+</li>
 </ul>
+</div>
+</dd>
+<dt class=hdlist1>acl_class</dt>
+<dd>
+<div class=ulist>
 <ul>
-<li></li>
+<li>
+<p>id: 主键</p>
+</li>
+<li>
+<p>class: Domain Object 类型的全限定名</p>
+<div class=paragraph>
+<p><code>ObjectIdentity</code> 的默认实现使用 全限定名+id 的方式确定一个 Domain Object</p>
+</div>
+</li>
+<li>
+<p>class_id_type: 可选字段，保存 <code>ObjectIdentity</code> 中 <code>identifier</code> 的类型，默认是 <code>Long</code></p>
+<div class=paragraph>
+<p><strong>这就是坑的所在</strong>。Jar 包中给出的 SQL 有不同的数据库的版本，只有 <code>PostgreSql</code> 和 <code>HSQL</code> 的版本中有这个字段。
+如果不创建这个字段，那么 <code>ObjectIdentity</code> 就只能支持 <code>Long</code> 类型的 id。
+<code>JdbcService</code> 默认也不会查询这个字段，需要特别配置。</p>
+</div>
+</li>
 </ul>
+</div>
+</dd>
+<dt class=hdlist1>acl_object_identity</dt>
+<dd>
+<div class=ulist>
 <ul>
-<li>sid: <code>Sid</code> 实例中保存的字符串，也就是 <code>Principal.getName()</code> 或 <code>GrantedAuthority.getAuthority()</code> 或自己写代码生成的字符串</li>
+<li>
+<p>id: 主键</p>
+</li>
+<li>
+<p>object_id_class: 外键依赖 <code>acl_class.id</code></p>
+</li>
+<li>
+<p>object_id_identity: <code>ObjectIdentity.getIdentifer()</code> 的值，与 <code>object_id_class</code> 组成唯一键</p>
+</li>
+<li>
+<p>parent_object: 外键依赖 <code>acl_object_identity.id</code>，在 <code>Acl</code> 继承时使用</p>
+</li>
+<li>
+<p>owner_sid: 外键依赖 <code>acl_sid.id</code>，是 <code>Acl</code> 实例的 owner，拥有修改 <code>Acl</code> 的权限</p>
+</li>
+<li>
+<p>entries_inheriting: 布尔值，表示 child acl 是否要继承 parent acl 的 ACE</p>
+</li>
 </ul>
-<p>acl_class::</p>
-<ul>
-<li>id: 主键</li>
-<li>class: Domain Object 类型的全限定名</li>
-</ul>
-<ul>
-<li></li>
-</ul>
-<ul>
-<li>class_id_type: 可选字段，保存 <code>ObjectIdentity</code> 中 <code>identifier</code> 的类型，默认是 <code>Long</code></li>
-</ul>
-<ul>
-<li></li>
-</ul>
-<p>acl_object_identity::</p>
-<ul>
-<li>id: 主键</li>
-<li>object_id_class: 外键依赖 <code>acl_class.id</code></li>
-<li>object_id_identity: <code>ObjectIdentity.getIdentifer()</code> 的值，与 <code>object_id_class</code> 组成唯一键</li>
-<li>parent_object: 外键依赖 <code>acl_object_identity.id</code>，在 <code>Acl</code> 继承时使用</li>
-<li>owner_sid: 外键依赖 <code>acl_sid.id</code>，是 <code>Acl</code> 实例的 owner，拥有修改 <code>Acl</code> 的权限</li>
-<li>entries_inheriting: 布尔值，表示 child acl 是否要继承 parent acl 的 ACE</li>
-</ul>
+</div>
+</dd>
+</dl>
+</div>
+<div class=paragraph>
 <p>这张表里保存的都是 <code>Acl</code> 持有的信息，也就是说，这张表的一行记录对应了一个 <code>Acl</code> 实例。</p>
-<p>acl_entry::</p>
+</div>
+<div class=dlist>
+<dl>
+<dt class=hdlist1>acl_entry</dt>
+<dd>
+<div class=ulist>
 <ul>
-<li>id: 主键</li>
-<li>acl_object_identity: 外键依赖 <code>acl_object_identity.id</code>，表示属于哪一个 <code>Acl</code></li>
-<li>ace_order: 表示这一条 ACE 在 <code>Acl</code> 中的顺序，和 <code>acl_object_identity</code> 组成唯一键</li>
-<li>sid: 外键依赖 <code>acl_sid.id</code>，表示这条 ACE 的权限对应哪一个 <code>Sid</code></li>
-<li>mask: 表示权限的 32 位二进制数字</li>
-<li>granting: 布尔值，表示这条 ACE 是否生效</li>
-<li>audit_success</li>
-<li>audit_failure: 这两条是用于审计的信息，对应了 <code>AuditableAccessControlEntry</code> 接口，本文不会涉及</li>
+<li>
+<p>id: 主键</p>
+</li>
+<li>
+<p>acl_object_identity: 外键依赖 <code>acl_object_identity.id</code>，表示属于哪一个 <code>Acl</code></p>
+</li>
+<li>
+<p>ace_order: 表示这一条 ACE 在 <code>Acl</code> 中的顺序，和 <code>acl_object_identity</code> 组成唯一键</p>
+</li>
+<li>
+<p>sid: 外键依赖 <code>acl_sid.id</code>，表示这条 ACE 的权限对应哪一个 <code>Sid</code></p>
+</li>
+<li>
+<p>mask: 表示权限的 32 位二进制数字</p>
+</li>
+<li>
+<p>granting: 布尔值，表示这条 ACE 是否生效</p>
+</li>
+<li>
+<p>audit_success</p>
+</li>
+<li>
+<p>audit_failure: 这两条是用于审计的信息，对应了 <code>AuditableAccessControlEntry</code> 接口，本文不会涉及</p>
+</li>
 </ul>
+</div>
+</dd>
+</dl>
+</div>
+<div class=paragraph>
 <p>这张表保存的是 ACE 的信息，一行记录对应了一个 ACE 实例。</p>
-<p>==== 配置 JdbcAclService</p>
+</div>
+</div>
+<div class=sect3>
+<h4 id=_配置_jdbcaclservice>配置 JdbcAclService</h4>
+<div class=paragraph>
 <p>在动手之前，我们先来看看 <code>JdbcAclService</code> 都有什么依赖：</p>
-<p>image::jdbc-acl-service-dependencies.png[]</p>
+</div>
+<div class=imageblock>
+<div class=content>
+<img src=jdbc-acl-service-dependencies.png alt="jdbc acl service dependencies">
+</div>
+</div>
+<div class=paragraph>
 <p>因为 ACL 没有 Spring Boot 的 auto configure，所以除了 <code>DataSource</code>，我们需要自己来配置这些依赖。</p>
+</div>
+<div class=paragraph>
 <p>除非项目中不需要修改 ACL，否则都会选择创建一个 <code>JdbcMutableAclService</code> 而不是 <code>JdbcAclService</code>。</p>
-<p>===== 注入 JdbcMutableAclService</p>
-<h2 id=sourcejava>[source,java]</h2>
-<h2 id=heading>@Bean
+</div>
+<div class=sect4>
+<h5 id=_注入_jdbcmutableaclservice>注入 JdbcMutableAclService</h5>
+<div class=listingblock>
+<div class=content>
+<pre class=highlight><code class=language-java data-lang=java>@Bean
 public MutableAclService mutableAclService() {
-JdbcMutableAclService jdbcMutableAclService = new JdbcMutableAclService(datasource, lookupStrategy(), aclCache());
-jdbcMutableAclService.setAclClassIdSupported(true); &lt;1>
-jdbcMutableAclService.setClassIdentityQuery(&ldquo;SELECT @@IDENTITY&rdquo;); &lt;2>
-jdbcMutableAclService.setSidIdentityQuery(&ldquo;SELECT @@IDENTITY&rdquo;); &lt;3>
-return jdbcMutableAclService;
-}</h2>
-<p>&lt;1> 如果要支持 <code>acl_class.class_id_type</code> 字段，则需要将 <code>aclClassIdSupported</code> 设置为 <code>true</code>。这样 <code>JdbcAclService</code> 在查询时和 <code>JdbcMutableAclService</code> 更新时才会考虑这个字段的值。
-&lt;2> <code>classIdentityQuery</code> 会在创建 <code>Acl</code> 对象时用到，用来获取刚刚插入的 <code>acl_class.id</code>。默认值是 <code>call identity()</code>，这是 <code>H2</code> 数据库的方言，这里的例子是 <code>MySql</code> 的方言。
-&lt;3> 与 2 相同，只是用来获取刚刚插入的 <code>acl_sid.id</code></p>
+  JdbcMutableAclService jdbcMutableAclService = new JdbcMutableAclService(datasource, lookupStrategy(), aclCache());
+  jdbcMutableAclService.setAclClassIdSupported(true); <b class=conum>(1)</b>
+  jdbcMutableAclService.setClassIdentityQuery(&#34;SELECT @@IDENTITY&#34;); <b class=conum>(2)</b>
+  jdbcMutableAclService.setSidIdentityQuery(&#34;SELECT @@IDENTITY&#34;); <b class=conum>(3)</b>
+  return jdbcMutableAclService;
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p>如果要支持 <code>acl_class.class_id_type</code> 字段，则需要将 <code>aclClassIdSupported</code> 设置为 <code>true</code>。这样 <code>JdbcAclService</code> 在查询时和 <code>JdbcMutableAclService</code> 更新时才会考虑这个字段的值。</p>
+</li>
+<li>
+<p><code>classIdentityQuery</code> 会在创建 <code>Acl</code> 对象时用到，用来获取刚刚插入的 <code>acl_class.id</code>。默认值是 <code>call identity()</code>，这是 <code>H2</code> 数据库的方言，这里的例子是 <code>MySql</code> 的方言。</p>
+</li>
+<li>
+<p>与 2 相同，只是用来获取刚刚插入的 <code>acl_sid.id</code></p>
+</li>
+</ol>
+</div>
+<div class=paragraph>
 <p>接着，我们需要配置 <code>LookupStrategy</code> 和 <code>AclCache</code>。</p>
-<p>===== 注入 LookupStrategy</p>
+</div>
+</div>
+<div class=sect4>
+<h5 id=_注入_lookupstrategy>注入 LookupStrategy</h5>
+<div class=paragraph>
 <p><code>LookupStratege</code> 只有一个实现：<code>BasicLookupStrategy</code></p>
-<h2 id=sourcejava-1>[source,java]</h2>
-<h2 id=heading-1>@Bean
+</div>
+<div class=listingblock>
+<div class=content>
+<pre class=highlight><code class=language-java data-lang=java>@Bean
 public LookupStrategy lookupStrategy() {
-BasicLookupStrategy basicLookupStrategy = new BasicLookupStrategy(datasource, aclCache(), aclAuthorizationStrategy(), permissionGrantingStrategy());
-basicLookupStrategy.setAclClassIdSupported(true); &lt;1>
-return basicLookupStrategy;
-}</h2>
-<p>&lt;1> <code>BasicLookupStrategy</code> 也会自己组装 sql，需要调用这个方法以支持 <code>acl_class.class_id_type</code>。</p>
+  BasicLookupStrategy basicLookupStrategy = new BasicLookupStrategy(datasource, aclCache(), aclAuthorizationStrategy(), permissionGrantingStrategy());
+  basicLookupStrategy.setAclClassIdSupported(true); <b class=conum>(1)</b>
+  return basicLookupStrategy;
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p><code>BasicLookupStrategy</code> 也会自己组装 sql，需要调用这个方法以支持 <code>acl_class.class_id_type</code>。</p>
+</li>
+</ol>
+</div>
+<div class=paragraph>
 <p>接着，我们先来看一下 <code>AclAuthorizationStrategy</code> 和 <code>PermissionGratingStrategy</code> 这两个简单一点的依赖。</p>
-<p>===== 注入 AclAuthorizationStrategy</p>
-<h2 id=sourcejava-2>[source,java]</h2>
-<h2 id=heading-2>@Bean
+</div>
+</div>
+<div class=sect4>
+<h5 id=_注入_aclauthorizationstrategy>注入 AclAuthorizationStrategy</h5>
+<div class=listingblock>
+<div class=content>
+<pre class=highlight><code class=language-java data-lang=java>@Bean
 public AclAuthorizationStrategy aclAuthorizationStrategy() {
-return new AclAuthorizationStrategyImpl(new SimpleGrantedAuthority(&ldquo;owner&rdquo;));
-}</h2>
+  return new AclAuthorizationStrategyImpl(new SimpleGrantedAuthority(&#34;owner&#34;));
+}</code></pre>
+</div>
+</div>
+<div class=paragraph>
 <p><code>AclAuthorizationStrategy</code> 是用来判断当前的 <code>Autentication</code> 是否有权限修改 <code>Acl</code> 的接口，它只有 <code>AclAuthorizationStrategyImpl</code> 这一个实现。
 这个接口规定了三种权限：</p>
+</div>
+<div class=ulist>
 <ul>
-<li>change ownership 修改 Acl 的 owner</li>
-<li>change auditing 修改 Acl 的审计信息</li>
-<li>change general 修改 ACE</li>
+<li>
+<p>change ownership 修改 Acl 的 owner</p>
+</li>
+<li>
+<p>change auditing 修改 Acl 的审计信息</p>
+</li>
+<li>
+<p>change general 修改 ACE</p>
+</li>
 </ul>
+</div>
+<div class=paragraph>
 <p>实现中有三个 <code>GrantedAuthority</code> 属性，对应了上面的三种权限，表示对 <code>Acl</code> 进行某种操作时，<code>Authentication</code> 需要满足对应的 <code>GrantedAuthority</code>。</p>
+</div>
+<div class=paragraph>
 <p>它的构造方法接受一个或三个 <code>GrantedAuthority</code>:</p>
+</div>
+<div class=ulist>
 <ul>
-<li>如果只有一个参数，那么三个权限都是这个 <code>GrantedAuthority</code></li>
-<li>如果有三个参数，那么就会按上面的顺序赋值给这三个权限</li>
+<li>
+<p>如果只有一个参数，那么三个权限都是这个 <code>GrantedAuthority</code></p>
+</li>
+<li>
+<p>如果有三个参数，那么就会按上面的顺序赋值给这三个权限</p>
+</li>
 </ul>
+</div>
+<div class=paragraph>
 <p>在判断权限时，如果是 <code>Acl</code> 的 owner，且不是在修改审计信息时，就可以直接获得权限；否则就需要 <code>Authentication</code> 具备对应的 <code>GrantedAuthority</code>。</p>
-<p>===== 注入 PermissionGrantingStrategy</p>
-<h2 id=sourcejava-3>[source,java]</h2>
-<h2 id=heading-3>@Bean
+</div>
+</div>
+<div class=sect4>
+<h5 id=_注入_permissiongrantingstrategy>注入 PermissionGrantingStrategy</h5>
+<div class=listingblock>
+<div class=content>
+<pre class=highlight><code class=language-java data-lang=java>@Bean
 public PermissionGrantingStrategy permissionGrantingStrategy() {
-return new DefaultPermissionGrantingStrategy(new ConsoleAuditLogger());
-}</h2>
+  return new DefaultPermissionGrantingStrategy(new ConsoleAuditLogger());
+}</code></pre>
+</div>
+</div>
+<div class=paragraph>
 <p><code>PermissionGrantingStrategy</code> 抽象了 <code>isGranted</code> 方法，被 <code>AclImpl</code> 调用，是真正执行权限判断的地方。
 这个接口只有这一个实现。</p>
-<p>===== 注入 AclCache</p>
+</div>
+</div>
+<div class=sect4>
+<h5 id=_注入_aclcache>注入 AclCache</h5>
+<div class=paragraph>
 <p><code>AclCache</code> 有两种实现，这里为了简单，我们就使用 Spring 提供的这种实现</p>
-<h2 id=sourcejava-4>[source,java]</h2>
-<p>@Bean
+</div>
+<div class=listingblock>
+<div class=content>
+<pre class=highlight><code class=language-java data-lang=java>@Bean
 public AclCache aclCache() {
-return new SpringCacheBasedAclCache(cache(), permissionGrantingStrategy(), aclAuthorizationStrategy());
-}</p>
-<h2 id=heading-4>@Bean
-public Cache cache() {
-return new NoOpCache(&ldquo;any&rdquo;);
-}</h2>
-<p><code>Cache</code> 是 Spring 提供的接口，有多个实现，这里为了简单，就选择了 <code>NoOpCache</code>。</p>
-<p>到这里，<code>JdbcAclService</code> 的配置就暂时告一段落了，这些配置已经足够我们在创建、更新、删除 Domain Object 之后修改 <code>Acl</code> 对象了。接下来我们就来看看如何更新 <code>Acl</code>。</p>
-<p>=== 创建 ACL</p>
-<p>创建 ACL 发生在创建 Domain Object 的时候。我们可以编写代码创建 <code>Acl</code> 对象：</p>
-<h2 id=sourcejava-5>[source,java]</h2>
-<p>public void onCreate(Class&lt;?> domainClass, String id, Authentication authentication) {
-ObjectIdentity objectIdentity = new ObjectIdentityImpl(domainClass, id);
-PrincipalSid sid = new PrincipalSid(authentication);
-MutableAcl acl = findOrCreate(objectIdentity);
-acl.insertAce(acl.getEntries().size(), BasePermission.ADMINISTRATION, sid, true);
-// &mldr; &lt;1>
-mutableAclService.updateAcl(acl);
-}</p>
-<h2 id=heading-5>private MutableAcl findOrCreate(ObjectIdentity objectIdentity) {
-try {
-return (MutableAcl) mutableAclService.readAclById(objectIdentity); &lt;2>
-} catch (NotFoundException e) {
-return mutableAclService.createAcl(objectIdentity);
+  return new SpringCacheBasedAclCache(cache(), permissionGrantingStrategy(), aclAuthorizationStrategy());
 }
-}</h2>
-<p>&lt;1> 这里可以向 <code>Acl</code> 中插入任意需要的 ACE
-&lt;2> 这里的强制转换不会出错是因为 <code>AclImpl</code> 是 <code>Acl</code> 和 <code>MutableAcl</code> 的共有且唯一的实现</p>
+
+@Bean
+public Cache cache() {
+  return new NoOpCache(&#34;any&#34;);
+}</code></pre>
+</div>
+</div>
+<div class=paragraph>
+<p><code>Cache</code> 是 Spring 提供的接口，有多个实现，这里为了简单，就选择了 <code>NoOpCache</code>。</p>
+</div>
+<div class=paragraph>
+<p>到这里，<code>JdbcAclService</code> 的配置就暂时告一段落了，这些配置已经足够我们在创建、更新、删除 Domain Object 之后修改 <code>Acl</code> 对象了。接下来我们就来看看如何更新 <code>Acl</code>。</p>
+</div>
+</div>
+</div>
+</div>
+<div class=sect2>
+<h3 id=_创建_acl>创建 ACL</h3>
+<div class=paragraph>
+<p>创建 ACL 发生在创建 Domain Object 的时候。我们可以编写代码创建 <code>Acl</code> 对象：</p>
+</div>
+<div class=listingblock>
+<div class=content>
+<pre class=highlight><code class=language-java data-lang=java>public void onCreate(Class&lt;?&gt; domainClass, String id, Authentication authentication) {
+  ObjectIdentity objectIdentity = new ObjectIdentityImpl(domainClass, id);
+  PrincipalSid sid = new PrincipalSid(authentication);
+  MutableAcl acl = findOrCreate(objectIdentity);
+  acl.insertAce(acl.getEntries().size(), BasePermission.ADMINISTRATION, sid, true);
+  // ... <b class=conum>(1)</b>
+  mutableAclService.updateAcl(acl);
+}
+
+private MutableAcl findOrCreate(ObjectIdentity objectIdentity) {
+  try {
+    return (MutableAcl) mutableAclService.readAclById(objectIdentity); <b class=conum>(2)</b>
+  } catch (NotFoundException e) {
+    return mutableAclService.createAcl(objectIdentity);
+  }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p>这里可以向 <code>Acl</code> 中插入任意需要的 ACE</p>
+</li>
+<li>
+<p>这里的强制转换不会出错是因为 <code>AclImpl</code> 是 <code>Acl</code> 和 <code>MutableAcl</code> 的共有且唯一的实现</p>
+</li>
+</ol>
+</div>
+<div class=paragraph>
 <p>我们来梳理一下这段代码的逻辑：</p>
-<p>. 根据 domainClass 和 id 创建 <code>ObjectIdentity</code>，它可以用来标识一个 domain object
-. 根据当前的 <code>Authentication</code> 创建一个 <code>PrincipalSid</code>，它后续会被用作 ACE 的 sid
-. 根据 <code>ObjectIdentity</code> 对象查找或创建 <code>Acl</code> 对象
-+
-创建时会使用当前的 <code>Authentication</code> 新建一个 <code>PrincipalSid</code> 对象，和这里的不是同一个对象
-. 向 <code>Acl</code> 中插入 ACE
-+
-这里可添加当前用户的 ACE，也可以添加某种 <code>GrantedAuthority</code> 的权限
-. 保存 <code>Acl</code></p>
+</div>
+<div class="olist arabic">
+<ol class=arabic>
+<li>
+<p>根据 domainClass 和 id 创建 <code>ObjectIdentity</code>，它可以用来标识一个 domain object</p>
+</li>
+<li>
+<p>根据当前的 <code>Authentication</code> 创建一个 <code>PrincipalSid</code>，它后续会被用作 ACE 的 sid</p>
+</li>
+<li>
+<p>根据 <code>ObjectIdentity</code> 对象查找或创建 <code>Acl</code> 对象</p>
+<div class=paragraph>
+<p>创建时会使用当前的 <code>Authentication</code> 新建一个 <code>PrincipalSid</code> 对象，和这里的不是同一个对象</p>
+</div>
+</li>
+<li>
+<p>向 <code>Acl</code> 中插入 ACE</p>
+<div class=paragraph>
+<p>这里可添加当前用户的 ACE，也可以添加某种 <code>GrantedAuthority</code> 的权限</p>
+</div>
+</li>
+<li>
+<p>保存 <code>Acl</code></p>
+</li>
+</ol>
+</div>
+<div class=paragraph>
 <p>接着我们来看一下添加 ACE 的细节，也就是 <code>Acl.insertAce()</code> 方法。</p>
-<p>==== insertAce</p>
+</div>
+<div class=sect3>
+<h4 id=_insertace>insertAce</h4>
+<div class=paragraph>
 <p>这个方法的作用是向 <code>Acl</code> 实例的 <code>List&lt;AccessControlEntry></code> 中插入 ACE 实例。</p>
+</div>
+<div class=paragraph>
 <p>第一个参数指定了这个 ACE 在列表中的索引值。</p>
+</div>
+<div class=paragraph>
 <p>第二个参数指定这个 ACE 的权限是什么。这里我们使用了 <code>BasePermission</code> 这个实现提供的值。
-但无论如何，<code>Permission</code> 接口的 <code>getMask()</code> 方法一定返回的是一个 32 位的二进制数字。（类型是 int，但取值范围是 0~2^32^-1，这也就是所能设计的权限的个数。）</p>
+但无论如何，<code>Permission</code> 接口的 <code>getMask()</code> 方法一定返回的是一个 32 位的二进制数字。（类型是 int，但取值范围是 0~2<sup>32</sup>-1，这也就是所能设计的权限的个数。）</p>
+</div>
+<div class=paragraph>
 <p>第三个参数是一个 <code>Sid</code>，表示这个 <code>Sid</code> 拥有对应的权限。</p>
+</div>
+<div class=paragraph>
 <p>第四个参数是 granting，代表这条 ACE 是否生效，作用类似于 enable。</p>
+</div>
+<div class=paragraph>
 <p>调用了这个方法之后，一个新的 ACE 就被加入到 <code>Acl</code> 中了。接下来的权限判断就可以使用到这个新的 ACE。</p>
-<p>=== 更新 ACL</p>
+</div>
+</div>
+</div>
+<div class=sect2>
+<h3 id=_更新_acl>更新 ACL</h3>
+<div class=paragraph>
 <p>更新 ACL 可能更多的出现在协作软件中，比如邀请他人一起编写文档等操作。</p>
-<p>==== 添加新的 ACE</p>
+</div>
+<div class=sect3>
+<h4 id=_添加新的_ace>添加新的 ACE</h4>
+<div class=paragraph>
 <p>我们就以邀请协作作为例子，看看如何添加 ACE：</p>
-<h2 id=sourcejava-6>[source,java]</h2>
-<p>public void onInvite(Class&lt;?> domainClass, String id, String invitedUserPrincipalName) {
-ObjectIdentity objectIdentity = new ObjectIdentityImpl(domainClass, id);
-PrincipalSid sid = new PrincipalSid(invitedUserPrincipalName); &lt;1>
-MutableAcl acl = findAcl(objectIdentity);
-acl.insertAce(acl.getEntries().size(), BasePermission.WRITE, sid, true);
-mutableAclService.updateAcl(acl);
-}</p>
-<h2 id=heading-6>private MutableAcl findAcl(ObjectIdentity objectIdentity) {
-return (MutableAcl) mutableAclService.readAclById(objectIdentity);
-}</h2>
-<p>&lt;1> <code>PrincipalSid</code> 其实保存的是 <code>Authentication.getName()</code> 的返回值，本质上就是 principal name，所以可以直接使用一个字符串作为 principal name。</p>
+</div>
+<div class=listingblock>
+<div class=content>
+<pre class=highlight><code class=language-java data-lang=java>public void onInvite(Class&lt;?&gt; domainClass, String id, String invitedUserPrincipalName) {
+  ObjectIdentity objectIdentity = new ObjectIdentityImpl(domainClass, id);
+  PrincipalSid sid = new PrincipalSid(invitedUserPrincipalName); <b class=conum>(1)</b>
+  MutableAcl acl = findAcl(objectIdentity);
+  acl.insertAce(acl.getEntries().size(), BasePermission.WRITE, sid, true);
+  mutableAclService.updateAcl(acl);
+}
+
+private MutableAcl findAcl(ObjectIdentity objectIdentity) {
+  return (MutableAcl) mutableAclService.readAclById(objectIdentity);
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p><code>PrincipalSid</code> 其实保存的是 <code>Authentication.getName()</code> 的返回值，本质上就是 principal name，所以可以直接使用一个字符串作为 principal name。</p>
+</li>
+</ol>
+</div>
+<div class=paragraph>
 <p>这里，我们给了一个具体的被邀请者一个 WRITE 权限。我们甚至可以给一组用户权限，只需要提供不同的 <code>Sid</code>。</p>
-<h2 id=sourcejava-7>[source,java]</h2>
-<h2 id=grantedauthoritysid-sid--new-grantedauthoritysidteama>GrantedAuthoritySid sid = new GrantedAuthoritySid(&ldquo;teamA&rdquo;);</h2>
-<p>==== 更新已有的 ACE</p>
+</div>
+<div class=listingblock>
+<div class=content>
+<pre class=highlight><code class=language-java data-lang=java>GrantedAuthoritySid sid = new GrantedAuthoritySid(&#34;teamA&#34;);</code></pre>
+</div>
+</div>
+</div>
+<div class=sect3>
+<h4 id=_更新已有的_ace>更新已有的 ACE</h4>
+<div class=paragraph>
 <p>还是前面的例子，假设某个协作者完成了自己的工作，不想误操作导致修改，希望将权限修改为只读。
 那么这个时候就会使用到 <code>MutableAcl.updateAce()</code> 方法。</p>
+</div>
+<div class=paragraph>
 <p>这个方法只有两个参数，第一个是要修改的 ACE 的索引，第二个是需要修改成的权限，那么我们的代码可能写出来是这个样子：</p>
-<h2 id=sourcejava-8>[source,java]</h2>
-<h2 id=foreachidx---aclupdateaceidx-permission>List aces = acl.getEntries();
+</div>
+<div class=listingblock>
+<div class=content>
+<pre class=highlight><code class=language-java data-lang=java>List&lt;AccessControlEntry&gt; aces = acl.getEntries();
 aces.stream()
-.filter(ace -> ace.getSid().equals(sid))
-.mapToInt(aces::indexOf)
-.forEach(idx -> acl.updateAce(idx, permission));</h2>
+  .filter(ace -&gt; ace.getSid().equals(sid))
+  .mapToInt(aces::indexOf)
+  .forEach(idx -&gt; acl.updateAce(idx, permission));</code></pre>
+</div>
+</div>
+<div class=paragraph>
 <p>这样我们就能将任何匹配到 <code>Sid</code> 的 ACE 的权限修改为指定的 <code>Permission</code>。</p>
-<p>==== 删除已有的 ACE</p>
+</div>
+</div>
+<div class=sect3>
+<h4 id=_删除已有的_ace>删除已有的 ACE</h4>
+<div class=paragraph>
 <p>还是前面的例子，假设我们协作完成了，需要关闭其他人的权限，那么我们就需要删除对应的 ACE。</p>
+</div>
+<div class=quoteblock>
 <blockquote>
+<div class=paragraph>
 <p>个人更倾向于软删除，也就是将 ACE 的 <code>granting</code> 字段设置为 <code>false</code>。但是 Spring ACL 在模型设计上没有提供修改的方法，具体实现上，这个字段也被标记为 <code>final</code>。</p>
+</div>
 </blockquote>
+</div>
+<div class=paragraph>
 <p>删除 ACE 同样需要它的索引：</p>
-<h2 id=sourcejava-9>[source,java]</h2>
-<h2 id=foreachacldeleteace>List aces = acl.getEntries();
+</div>
+<div class=listingblock>
+<div class=content>
+<pre class=highlight><code class=language-java data-lang=java>List&lt;AccessControlEntry&gt; aces = acl.getEntries();
 aces.stream()
-.filter(ace -> ace.getSid().equals(sid))
-.mapToInt(aces::indexOf)
-.forEach(acl::deleteAce);</h2>
-<p>=== 删除 ACL</p>
+  .filter(ace -&gt; ace.getSid().equals(sid))
+  .mapToInt(aces::indexOf)
+  .forEach(acl::deleteAce);</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class=sect2>
+<h3 id=_删除_acl>删除 ACL</h3>
+<div class=paragraph>
 <p>一个 ACL 关联到一个 domain object，当一个 domain object 被删除时，ACL 也应该被删除。</p>
+</div>
+<div class=paragraph>
 <p><code>MutaleAclService</code> 也定义了 <code>deleteAcl</code> 方法用来删除 ACL，它被 <code>JdbcMutableAclService</code> 实现。</p>
-<h2 id=sourcejava-10>[source,java]</h2>
-<h2 id=mutableaclservicedeleteaclacl-true>mutableAclService.deleteAcl(acl, true);</h2>
+</div>
+<div class=listingblock>
+<div class=content>
+<pre class=highlight><code class=language-java data-lang=java>mutableAclService.deleteAcl(acl, true);</code></pre>
+</div>
+</div>
+<div class=paragraph>
 <p>其中的第二个参数表示是否要删除子 Acl。（因为 ACL 可以继承）</p>
+</div>
+<div class=quoteblock>
 <blockquote>
+<div class=paragraph>
 <p>在具体的实现中，默认的 sql 会删除整个 ACL。所以如果想要实现软删除，那么不仅需要调用对应的 setter 方法来修改对应的 sql，还需要修改表结构来支持软删除。</p>
+</div>
 </blockquote>
-<p>== 使用 ACL 保护业务调用</p>
+</div>
+</div>
+</div>
+</div>
+<div class=sect1>
+<h2 id=_使用_acl_保护业务调用>使用 ACL 保护业务调用</h2>
+<div class=sectionbody>
+<div class=paragraph>
 <p>现在我们知道了如何操作 ACL，那么接下来看看如果使用 ACL 来判断请求是否有权限调用业务方法。</p>
-<p>在link:../spring-security-acl-conception-and-component/#_acl_验证逻辑的入口[上一篇文章]中，我们介绍过 Spring ACL 提供的三种使用 ACL 的机制，接下来我们以 expression based access control 作为例子，看看如何使用 ACL 保护业务方法。</p>
+</div>
+<div class=paragraph>
+<p>在<a href=../spring-security-acl-conception-and-component/#_acl_验证逻辑的入口>上一篇文章</a>中，我们介绍过 Spring ACL 提供的三种使用 ACL 的机制，接下来我们以 expression based access control 作为例子，看看如何使用 ACL 保护业务方法。</p>
+</div>
+<div class=paragraph>
 <p>在这个例子中，我们使用 <code>PostAuthorize</code> 来保护业务方法：</p>
-<h2 id=sourcejava-11>[source,java]</h2>
-<h2 id=heading-7>@PostAuthorize(&ldquo;hasPermission(returnObject, &lsquo;READ&rsquo;)")
+</div>
+<div class=listingblock>
+<div class=content>
+<pre class=highlight><code class=language-java data-lang=java>@PostAuthorize(&#34;hasPermission(returnObject, &#39;READ&#39;)&#34;)
 public DomainObject find(String id) {
-//&mldr;
-return domainObject;
-}</h2>
+  //...
+  return domainObject;
+}</code></pre>
+</div>
+</div>
+<div class=paragraph>
 <p>这个例子中，业务方法返回的 domainObject 会被作为表达式中的 returnObject 传递给 <code>hasPermission</code> 方法，验证当前用户是否有指定的 READ 权限。</p>
+</div>
+<div class=paragraph>
 <p>这里的 <code>hasPermission</code> 方法会调用到 <code>SecurityExpressionRoot</code>，最终到达 <code>AclPermissionEvaluator.hasPermission()</code> 方法。</p>
+</div>
+<div class=paragraph>
 <p>在这个方法中，returnObject 会被交给 <code>ObjectIdnetityRetrievalStrategy</code> 接口，得到 <code>ObjectIdentity</code>，用来查找对应的 <code>Acl</code> 实例。</p>
+</div>
+<div class=quoteblock>
 <blockquote>
+<div class=paragraph>
 <p>具体实现上，其实是通过反射得到 className 和 <code>getId()</code> 方法，然后调用这个方法得到 identity。所以这里的 returnObject 一定要有 <code>getId()</code> 方法。</p>
+</div>
 </blockquote>
+</div>
+<div class=paragraph>
 <p>我们传递的 <code>'READ'</code> 参数，就是 permission，但这里被当作了 <code>Object</code>。<code>AclPermissionEvaluator</code> 通过自己实现的 <code>resolvePermission()</code> 方法来处理不同类型的参数。
 我们的 <code>'READ'</code> 会被当做字符串处理，交给 <code>PermissionFactory</code> 的默认实现处理。
-默认实现中提供了两个 <code>Map</code>，分别保存了 <code>permission name -> BasePermission</code> 和 <code>mask int -> BasePermission</code> 的映射关系。
+默认实现中提供了两个 <code>Map</code>，分别保存了 <code>permission name → BasePermission</code> 和 <code>mask int → BasePermission</code> 的映射关系。
 我们的 <code>'READ'</code> 也就这样被映射到了 <code>BasePermission.READ</code>。</p>
-<p>=== 启用 Method Security</p>
+</div>
+<div class=sect2>
+<h3 id=_启用_method_security>启用 Method Security</h3>
+<div class=paragraph>
 <p>解释完了上面的方法，接下来就是要让这个表达式生效了。</p>
+</div>
+<div class=paragraph>
 <p>Spring Security 默认没用启用 Method Security，而 <code>PostAuthorize</code> 则需要这个支持。</p>
+</div>
+<div class=paragraph>
 <p>要启用这个功能很简单，我们只需要：</p>
-<p>. enable pre/post security
-. 创建 <code>AclPermissionEvaluator</code>
-. 创建 <code>MethodSecurityExpressionHanler</code>，并将 <code>AclPermissionEvaluator</code> 设置为它的 <code>PermissionEvaluator</code></p>
-<h2 id=sourcejava-12>[source,java]</h2>
-<p>@Configuration
+</div>
+<div class="olist arabic">
+<ol class=arabic>
+<li>
+<p>enable pre/post security</p>
+</li>
+<li>
+<p>创建 <code>AclPermissionEvaluator</code></p>
+</li>
+<li>
+<p>创建 <code>MethodSecurityExpressionHanler</code>，并将 <code>AclPermissionEvaluator</code> 设置为它的 <code>PermissionEvaluator</code></p>
+</li>
+</ol>
+</div>
+<div class=listingblock>
+<div class=content>
+<pre class=highlight><code class=language-java data-lang=java>@Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class MethodSecurityConfig {
-@Autowired private AclService aclService;</p>
-<h2 id=heading-8>@Bean
-public MethodSecurityExpressionHandler methodSecurityExpressionHandler() {
-MethodSecurityExpressionHandler handler = new DefaultMethodSecurityExpressionHandler();
-handler.setPermissionEvaluator(new AclPermissionEvaluator(aclService)); &lt;1>
-return handler;
-}
-}</h2>
-<p>&lt;1> 我们可以给它提供一个 <code>AclSerivce</code> 而不是 <code>MutableAclService</code>，因为它不会修改 ACL</p>
+  @Autowired private AclService aclService;
+
+  @Bean
+  public MethodSecurityExpressionHandler methodSecurityExpressionHandler() {
+    MethodSecurityExpressionHandler handler = new DefaultMethodSecurityExpressionHandler();
+    handler.setPermissionEvaluator(new AclPermissionEvaluator(aclService)); <b class=conum>(1)</b>
+    return handler;
+  }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p>我们可以给它提供一个 <code>AclSerivce</code> 而不是 <code>MutableAclService</code>，因为它不会修改 ACL</p>
+</li>
+</ol>
+</div>
+<div class=paragraph>
 <p>这样我们的表达式就能生效了，当一个没有 READ 权限的用户尝试访问 domain object 的时候，就会得到一个 403 响应。</p>
-<hr>
+</div>
+<div class=quoteblock>
+<blockquote>
+<div class=paragraph>
 <p>这里就不再讲使用 <code>AclEntryVoter</code> 和 after invocation 的例子了，无论使用哪种方式，都需要自己进行相应的配置。读者如果感兴趣可以自己研究研究。</p>
-<hr>
-<p>== 总结</p>
+</div>
+</blockquote>
+</div>
+</div>
+</div>
+</div>
+<div class=sect1>
+<h2 id=_总结>总结</h2>
+<div class=sectionbody>
+<div class=paragraph>
 <p>这篇文章从代码的角度简单研究了如何使用 ACL。</p>
+</div>
+<div class=paragraph>
 <p>相信你也看出来了，没有 Spring Boot auto configure 的支持，使用 ACL 需要些大量的配置代码。
 这还不止。在研究源码时，发现 ACL 的实现其实比较简单，覆盖的场景看起来特别单一。
 如果实际项目想要使用，应该需要花一些工作来提供项目和适配的实现。</p>
+</div>
+<div class=quoteblock>
 <blockquote>
+<div class=paragraph>
 <p>举个例子，<code>AclEntryVoter</code> 的实现中，要求 <code>MethodInvocation</code> 的餐宿中一定要有 domain object，这一点可能就和一些项目的实践相违背。</p>
+</div>
 </blockquote>
+</div>
+<div class=paragraph>
 <p>尽管如此，我仍然认为 ACL 是一种不错的设计，很好的分离了业务和访问控制的关注点，抽象的接口也可以方便的进行扩展，值得去试一试。</p>
+</div>
+<div class=quoteblock>
 <blockquote>
-<p>查看系列文章： link:../../series/spring-security-servlet/[点这里]</p>
+<div class=paragraph>
+<p>查看系列文章： <a href=../../series/spring-security-servlet/>点这里</a></p>
+</div>
 </blockquote>
+</div>
+</div>
+</div>
 </div>
 <div class=article-footer>
 <blockquote class=mt-2x>

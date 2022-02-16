@@ -29,7 +29,7 @@ Spring Security ACL 核心概念和组件 - 无糖拿铁，谢谢
 <meta itemprop=name content="Spring Security ACL 核心概念和组件">
 <meta itemprop=description content="介绍 Spring Security ACL 中核心的概念和组件"><meta itemprop=datePublished content="2020-07-02T01:21:40+00:00">
 <meta itemprop=dateModified content="2020-07-02T01:21:40+00:00">
-<meta itemprop=wordCount content="3367">
+<meta itemprop=wordCount content="3170">
 <meta itemprop=keywords content="Spring,Spring Security,Spring Security ACL,"><meta name=twitter:card content="summary">
 <meta name=twitter:title content="Spring Security ACL 核心概念和组件">
 <meta name=twitter:description content="介绍 Spring Security ACL 中核心的概念和组件"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
@@ -277,173 +277,414 @@ Spring Security ACL 核心概念和组件 - 无糖拿铁，谢谢
 <span id=https://blog.gaoyuexiang.cn/posts/spring-security-acl-conception-and-component/ class=leancloud_visitors data-flag-title="Spring Security ACL 核心概念和组件">0</span>
 </span>
 <span class=post-comment><i class="icon icon-comment"></i>&nbsp;<a href=/posts/spring-security-acl-conception-and-component/#comments class=article-comment-link>评论</a></span>
-<span class="post-wordcount hidden-xs" itemprop=wordCount>字数统计: 3367字</span>
+<span class="post-wordcount hidden-xs" itemprop=wordCount>字数统计: 3170字</span>
 <span class="post-readcount hidden-xs" itemprop=timeRequired>阅读时长: 7分 </span>
 </div>
 </div>
 <div class="article-entry marked-body js-toc-content" itemprop=articleBody>
+<div class=paragraph>
 <p>Spring Security 提供了一个 ACL 模块，也就是 Access Control List，用来做访问控制。
-目的是解决 <strong><strong>谁</strong>对<strong>什么资源</strong>有<strong>什么权限</strong></strong> 的问题。
+目的是解决 <em><strong>谁</strong>对<strong>什么资源</strong>有<strong>什么权限</strong></em> 的问题。
 这里的重点是具体的资源。</p>
-<p>== 面临的问题</p>
+</div>
+<div class=sect1>
+<h2 id=_面临的问题>面临的问题</h2>
+<div class=sectionbody>
+<div class=paragraph>
 <p>我们通过 Spring Security 的 <code>WebSecurityConfigurerAdapter.configure(HttpSecurity)</code> 方法，
 对 <code>HttpSecurity</code> 对象进行配置，只能精确到 API 层面，决定拥有哪些权限的用户可以访问哪些 API，
 但是对于哪些用户对一个具体的资源有访问权限却无能为力。</p>
+</div>
+<div class=paragraph>
 <p>举个🌰，对于一个多用户的博客系统，可能存在一个 API <code>/my/drafts</code> ，
 可以查看当前用户的草稿，但是不能查看其他用户的草稿。
 那么上面的 <code>HttpSecurity</code> 就无法完成这个需求。</p>
+</div>
+<div class=paragraph>
 <p>为了解决这个问题，我们可能会有很多解决方法：</p>
+</div>
+<div class=ulist>
 <ul>
-<li>实现一个 <code>AccessDecisionVoter</code>，访问数据库中的 <code>Blog</code> 记录，然后判断当前的用户是否有权限访问</li>
-<li>实现一个 <code>AccessDecisionVoter</code>，通过 <code>Authentication</code> 对象中的 <code>GrantedAuthority[]</code> 判断是否有权限访问</li>
-<li>抛弃 Spring Security，自己实现一套权限控制机制</li>
-<li>将访问控制的代码和业务代码组织到一起</li>
+<li>
+<p>实现一个 <code>AccessDecisionVoter</code>，访问数据库中的 <code>Blog</code> 记录，然后判断当前的用户是否有权限访问</p>
+</li>
+<li>
+<p>实现一个 <code>AccessDecisionVoter</code>，通过 <code>Authentication</code> 对象中的 <code>GrantedAuthority[]</code> 判断是否有权限访问</p>
+</li>
+<li>
+<p>抛弃 Spring Security，自己实现一套权限控制机制</p>
+</li>
+<li>
+<p>将访问控制的代码和业务代码组织到一起</p>
+</li>
 </ul>
+</div>
+<div class=paragraph>
 <p>这些方法也不是不能用，但都有各自的缺陷（Spring Security ACL 也有，只是比这些要好一点）：</p>
+</div>
+<div class=ulist>
 <ul>
-<li>第一个方案意味着在 <code>AccessDecisionVoter</code> 中会进行数据库访问，这会造成性能上的隐患</li>
-<li>第二个方案在数据量上升后可能会面临 <code>Authentication</code> 对象无比巨大的问题</li>
-<li>第三个方案就像自己创造一个加密算法一样，看起来厉害，但可能会有很多漏洞，毕竟没有经过实践检验</li>
-<li>第四个方案是最轻量的，但是很容易破坏代码的单一职责原则，最后变成没人愿意维护的代码</li>
+<li>
+<p>第一个方案意味着在 <code>AccessDecisionVoter</code> 中会进行数据库访问，这会造成性能上的隐患</p>
+</li>
+<li>
+<p>第二个方案在数据量上升后可能会面临 <code>Authentication</code> 对象无比巨大的问题</p>
+</li>
+<li>
+<p>第三个方案就像自己创造一个加密算法一样，看起来厉害，但可能会有很多漏洞，毕竟没有经过实践检验</p>
+</li>
+<li>
+<p>第四个方案是最轻量的，但是很容易破坏代码的单一职责原则，最后变成没人愿意维护的代码</p>
+</li>
 </ul>
-<p>== ACL 核心概念</p>
+</div>
+</div>
+</div>
+<div class=sect1>
+<h2 id=_acl_核心概念>ACL 核心概念</h2>
+<div class=sectionbody>
+<div class=paragraph>
 <p>针对上面的缺点，Spring Security ACL 则是采用了面向 Domain Object 的方式，
 抽象出了 Domain Object 这个概念，把 ACL 与业务代码解耦。</p>
+</div>
+<div class=paragraph>
 <p>我们可以先来看一下 ACL 中的核心概念：</p>
-<p>image::acl-cmap.png[]</p>
+</div>
+<div class=imageblock>
+<div class=content>
+<img src=acl-cmap.png alt="acl cmap">
+</div>
+</div>
+<div class=paragraph>
 <p>除了 Domain Object 和 Security Object，其他概念都是 ACL 中的接口。
 这些接口都在 <code>org.springframework.security.acls.model</code> package 中。</p>
-<p>=== Domain Object</p>
+</div>
+<div class=sect2>
+<h3 id=_domain_object>Domain Object</h3>
+<div class=paragraph>
 <p>Domain Object 是对业务类实例的抽象，用 <code>DDD</code> 的话说，就是对领域模型实例的抽象。
 一个 Domain Object 对应的是一个实例。
 它可能是一篇博客，也可能是一条评论。</p>
+</div>
+<div class=paragraph>
 <p>一个 Domain Object 被一个 <code>ObjectIdentity</code> 唯一标识。</p>
+</div>
+<div class=paragraph>
 <p>因为有了这个抽象，我们就可以将 ACL 的代码和业务逻辑解耦，仅仅通过 <code>ObjectIdentity</code> 来标识 <code>Acl</code> 和 Domain Object 的关联关系。</p>
-<p>=== Security Object</p>
+</div>
+</div>
+<div class=sect2>
+<h3 id=_security_object>Security Object</h3>
+<div class=paragraph>
 <p>Security Object 是对用户和角色的抽象。代表了一个用户，或一种角色，或一个权限组等。
 往往是 <code>Principal</code> 和 <code>GrantedAuthority</code> 的抽象。</p>
-<p>=== Acl</p>
+</div>
+</div>
+<div class=sect2>
+<h3 id=_acl>Acl</h3>
+<div class=paragraph>
 <p><code>Acl</code> 类是 ACL 中的核心，也就是 Access Control List 的简称。</p>
+</div>
+<div class=paragraph>
 <p>一个 <code>Acl</code> 实例拥有一个 <code>ObjectIdentity</code>，标识了一个 Domain Object。</p>
+</div>
+<div class=paragraph>
 <p>一个 <code>Acl</code> 实例拥有一组 <code>AccessControlEntity</code>，顾名思义，它们就是这个访问控制列表中的每一个访问控制项。</p>
+</div>
+<div class=paragraph>
 <p>一个 <code>Acl</code> 实例持有一个 <code>Sid</code> 对象，标识了这个 <code>Acl</code> 的 owner；owner 对这个 <code>Acl</code> 有完全的控制权。
 所谓完全的控制权，也就是指可以修改、删除其中的信息，甚至 <code>Acl</code> 本身。</p>
-<p>==== MutableAcl</p>
+</div>
+<div class=sect3>
+<h4 id=_mutableacl>MutableAcl</h4>
+<div class=paragraph>
 <p><code>MutableAcl</code> 是对 <code>Acl</code> 的扩展，提供了一些修改 <code>Acl</code> 的方法。</p>
+</div>
+<div class=paragraph>
 <p>考虑到 <code>Acl</code> 可能更多的被使用到一些不会修改访问权限的调用中，所以它只提供了一些只读方法。
 但有一些可能不太频繁的<strong>会修改访问权限</strong>的操作，比如创建、删除等，所以需要一些方法能够修改 <code>Acl</code> 实例。
 所以扩展出了 <code>MutableAcl</code> 类，用来进行修改访问权限的操作。</p>
-<p>=== ObjectIdentity</p>
+</div>
+</div>
+</div>
+<div class=sect2>
+<h3 id=_objectidentity>ObjectIdentity</h3>
+<div class=paragraph>
 <p>前面已经提到过 <code>ObjectIdentity</code> 的作用，是用来标识 Domain Object，
 就是一个脱离业务上下文后仍然唯一的 id。
 实际上是 ACL 上下文中对 Domain Object 的抽象</p>
+</div>
+<div class=paragraph>
 <p>能够做到这一点，是因为提供了两个方法：<code>getType</code> 和 <code>getIdentifier</code>。</p>
+</div>
+<div class=paragraph>
 <p><code>type</code> 用来标识 Domain Object 的类型，<code>identifier</code> 则是在 <code>type</code> 上下文中唯一的。
 不同的 <code>type</code> 下，可以出现相同的 <code>identifier</code>，但 <code>type</code> 却需要全局唯一。</p>
+</div>
+<div class=paragraph>
 <p>默认实现是使用 Domain Object 的 java 类全限定名作为 <code>type</code>。</p>
+</div>
+<div class=paragraph>
 <p><code>identifier</code> 则需要使用者自己实现。
 要求是能根据 Domain Object 找到这个 <code>identifier</code>，否则 <code>Acl</code> 和 Domain Object 就会失去联系。
 使用 Domain Object 的系统 id 会是一个不错的选择。</p>
-<p>=== Sid</p>
+</div>
+</div>
+<div class=sect2>
+<h3 id=_sid>Sid</h3>
+<div class=paragraph>
 <p><code>Sid</code> 是 Security Identity 的简称，是在 ACL 上下文中对 Security Object 的抽象。
 就像 <code>ObjectIdentity</code> 对 Domain Object 的抽象一样。</p>
-<hr>
+</div>
+<div class=quoteblock>
+<blockquote>
+<div class=paragraph>
 <p>为什么不能统一一下规范，叫 <code>SecurityIdentity</code> 呢 🙄️</p>
-<hr>
+</div>
+</blockquote>
+</div>
+<div class=paragraph>
 <p>在实现上，有 <code>PrincipalSid</code> 和 <code>GrantedAuthoritySid</code>。
 前者是对用户的抽象，后者是对角色、权限的抽象。</p>
-<p>=== AccessControlEntry</p>
+</div>
+</div>
+<div class=sect2>
+<h3 id=_accesscontrolentry>AccessControlEntry</h3>
+<div class=paragraph>
 <p><code>AccessControlEntry</code> 简称 ACE，组成了访问控制列表。
 每一个 ACE 标识了一个 <code>Sid</code> 的权限，权限由 <code>Permission</code> 表示。</p>
+</div>
+<div class=paragraph>
 <p>🌰：</p>
-<p>如果一种角色对 Domain Object 有可读权限::</p>
+</div>
+<div class=dlist>
+<dl>
+<dt class=hdlist1>如果一种角色对 Domain Object 有可读权限</dt>
+<dd>
+<div class=ulist>
 <ul>
-<li><code>Sid</code> 会是表示这个角色的 <code>GrantedAuthoritySid</code></li>
-<li><code>Permission</code> 会表示 READ 权限</li>
+<li>
+<p><code>Sid</code> 会是表示这个角色的 <code>GrantedAuthoritySid</code></p>
+</li>
+<li>
+<p><code>Permission</code> 会表示 READ 权限</p>
+</li>
 </ul>
-<p>如果一个用户对 Domain Object 有可读、可写、可邀请协作的权限::</p>
+</div>
+</dd>
+<dt class=hdlist1>如果一个用户对 Domain Object 有可读、可写、可邀请协作的权限</dt>
+<dd>
+<div class=ulist>
 <ul>
-<li>会有多个 ACE</li>
-<li>每个 ACE 的 <code>Sid</code> 都是指向这个用户的 <code>PrincipalSid</code></li>
-<li>每个 ACE 的 <code>Permission</code> 会不同，分别表示可读、可写、可邀请协作</li>
+<li>
+<p>会有多个 ACE</p>
+</li>
+<li>
+<p>每个 ACE 的 <code>Sid</code> 都是指向这个用户的 <code>PrincipalSid</code></p>
+</li>
+<li>
+<p>每个 ACE 的 <code>Permission</code> 会不同，分别表示可读、可写、可邀请协作</p>
+</li>
 </ul>
-<p>=== Permission</p>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+<div class=sect2>
+<h3 id=_permission>Permission</h3>
+<div class=paragraph>
 <p><code>Permission</code> 接口可能收到了 <code>Linux</code> 文件权限的启发，要求使用 32 位二进制数字来表示权限。</p>
-<p>所以我们可以针对一个 Domain Object 设计出 2^32^-1 种权限，应该足够使用了。</p>
-<p>=== 小结</p>
+</div>
+<div class=paragraph>
+<p>所以我们可以针对一个 Domain Object 设计出 2<sup>32</sup>-1 种权限，应该足够使用了。</p>
+</div>
+</div>
+<div class=sect2>
+<h3 id=_小结>小结</h3>
+<div class=paragraph>
 <p>ACL 的核心就是 <code>Acl</code> 类，它将 Domain Object 和 对应的 Security Object 以及权限关联了起来。
 其中，将 Security Object 和权限关联起来的类是 <code>AccessControlEntry</code>。</p>
-<p>== ACL 权限验证逻辑</p>
+</div>
+</div>
+</div>
+</div>
+<div class=sect1>
+<h2 id=_acl_权限验证逻辑>ACL 权限验证逻辑</h2>
+<div class=sectionbody>
+<div class=paragraph>
 <p>通过了解核心概念，我们知道了 ACL 的核心就是 <code>Acl</code> 类，那么进行权限验证的逻辑也就很明显了：</p>
-<p>. 根据要访问的对象，得到 <code>ObjectIdentity</code> 实例
-. 从 <code>Authentication</code> 中获取 <code>Sid</code>
-. 根据 <code>ObjectIdentity</code> 找到对应的 <code>Acl</code>
-. 判断 ACE 中是否有进行访问需要的 <code>Permission</code></p>
+</div>
+<div class="olist arabic">
+<ol class=arabic>
+<li>
+<p>根据要访问的对象，得到 <code>ObjectIdentity</code> 实例</p>
+</li>
+<li>
+<p>从 <code>Authentication</code> 中获取 <code>Sid</code></p>
+</li>
+<li>
+<p>根据 <code>ObjectIdentity</code> 找到对应的 <code>Acl</code></p>
+</li>
+<li>
+<p>判断 ACE 中是否有进行访问需要的 <code>Permission</code></p>
+</li>
+</ol>
+</div>
+<div class=paragraph>
 <p>当上面的这个逻辑验证通过时，才会被允许访问 Domain Object，否则就会出现 <code>AccessDeniedException</code>。</p>
-<p>=== 获取 ObjectIdentity 对象</p>
+</div>
+<div class=sect2>
+<h3 id=_获取_objectidentity_对象>获取 ObjectIdentity 对象</h3>
+<div class=paragraph>
 <p>我们先来看看第一步，获取 <code>ObjectIdentity</code> 对象。</p>
+</div>
+<div class=paragraph>
 <p>前面介绍 <code>ObjectIdentity</code> 的时候推荐过使用 Domain Object 的 class 和系统 id 来作为 <code>ObjectIdentity</code>。
 这样的好处就是我们可以根据 Domain Object 实例创建出 <code>ObjectIdentity</code> 来。</p>
+</div>
+<div class=paragraph>
 <p>这个逻辑被抽象成了接口 <code>ObjectIdentityRetrievalStrategy</code>。
-它只提供了一个 <code>getObjectIdentity</code> 方法：<code>Object -> ObjectIdentity</code>。</p>
-<p>=== 获取 Sid 对象</p>
+它只提供了一个 <code>getObjectIdentity</code> 方法：<code>Object → ObjectIdentity</code>。</p>
+</div>
+</div>
+<div class=sect2>
+<h3 id=_获取_sid_对象>获取 Sid 对象</h3>
+<div class=paragraph>
 <p>因为 <code>Sid</code> 代表的是用户和角色，而这些信息被保存在 <code>Authentication</code> 对象的 <code>Principal</code> 和 <code>GrantedAuthority[]</code> 中，
 所以我们可以通过 <code>Authentication</code> 对象来获取 <code>Sid</code>。</p>
+</div>
+<div class=paragraph>
 <p>这个逻辑同样被抽象成了接口 <code>SidRetrivalStrategy</code>。
-它只提供了一个 <code>getSids</code> 方法：<code>Authentication -> List&lt;Sid></code></p>
-<p>=== 获取 Acl 对象</p>
+它只提供了一个 <code>getSids</code> 方法：<code>Authentication → List&lt;Sid></code></p>
+</div>
+</div>
+<div class=sect2>
+<h3 id=_获取_acl_对象>获取 Acl 对象</h3>
+<div class=paragraph>
 <p>ACL 提供了一个接口 <code>AclService</code> 用来获取 <code>Acl</code> 对象。
 接口提供了多种方法，其中被这个逻辑使用到的是 <code>readAclById(ObjectIdentity, List&lt;Sid>)</code>。</p>
+</div>
+<div class=quoteblock>
 <blockquote>
+<div class=paragraph>
 <p>其实不提供 <code>List&lt;Sid></code> 也能查到对应的 <code>Acl</code>，但其中就会包含当前逻辑中不需要使用到的 ACE。</p>
+</div>
 </blockquote>
-<p>=== 判断权限</p>
+</div>
+</div>
+<div class=sect2>
+<h3 id=_判断权限>判断权限</h3>
+<div class=paragraph>
 <p><code>Acl</code> 提供了 <code>isGranted</code> 方法用来判断当前的 <code>List&lt;Sid></code> 是否有需要的权限。</p>
+</div>
+<div class=paragraph>
 <p>在默认实现 <code>AclImpl</code> 中，判断的逻辑交给了接口 <code>PermissionGrantingStrategy</code>，
 这样我们可以通过实现策略而不是 <code>Acl</code> 来达到重写验证逻辑的目的。</p>
-<p>== ACL 验证逻辑的入口</p>
+</div>
+</div>
+</div>
+</div>
+<div class=sect1>
+<h2 id=_acl_验证逻辑的入口>ACL 验证逻辑的入口</h2>
+<div class=sectionbody>
+<div class=paragraph>
 <p>前面描述的验证逻辑，被实现在了不同的类中。这些类是具体的 security 机制相关的类，每一个类都是针对具体 security 机制的 ACL 验证逻辑的实现。</p>
-<p>=== 针对 pre invocation</p>
-<p>在link:../spring-security-servlet-overview/#_accessdecisionvoter[前面的文章]中，
+</div>
+<div class=sect2>
+<h3 id=_针对_pre_invocation>针对 pre invocation</h3>
+<div class=paragraph>
+<p>在<a href=../spring-security-servlet-overview/#_accessdecisionvoter>前面的文章</a>中，
 我们了解过 <code>AccessDecisionVoter</code> 是在实际调用发生前进行权限验证的接口。</p>
+</div>
+<div class=paragraph>
 <p>ACL 中提供了实现 <code>AclEntryVoter</code> 来实现验证逻辑。</p>
-<p>=== 针对 post invocation</p>
-<p>在link:../spring-security-authorization/#_afterinvocationmanager[前面的另一篇文章]中，
+</div>
+</div>
+<div class=sect2>
+<h3 id=_针对_post_invocation>针对 post invocation</h3>
+<div class=paragraph>
+<p>在<a href=../spring-security-authorization/#_afterinvocationmanager>前面的另一篇文章</a>中，
 我们了解过 <code>AfterInvocationProvider</code> 是在实际调用发生后进行权限验证的接口。</p>
+</div>
+<div class=paragraph>
 <p>ACL 中提供了 <code>AbstractAclProvider</code> 来实现验证逻辑。
 它的两个子类则是针对不同的使用场景，分别实现权限验证和 collection filter 的逻辑。</p>
-<p>=== 针对 expression based access control</p>
+</div>
+</div>
+<div class=sect2>
+<h3 id=_针对_expression_based_access_control>针对 expression based access control</h3>
+<div class=paragraph>
 <p>对于使用表达式的地方，比如 <code>@PostAuthority("hasPermission(returnObject, 'READ')")</code>，
 ACL 提供了 <code>AclPermissionEvaluator</code> 实现验证逻辑。</p>
+</div>
+<div class=quoteblock>
 <blockquote>
+<div class=paragraph>
 <p>这个类实现了 <code>PermissionEvaluator</code> 接口。这是 Spring Security 中 <code>hasPermission</code> 表达式的解析接口。</p>
+</div>
 </blockquote>
+</div>
 <hr>
+<div class=paragraph>
 <p>了解完了这三个入口，我们就知道当需要在某个 security 机制中使用 ACL 时，需要创建出哪一个组件注入到 Spring 容器中。</p>
-<p>== 更新 Acl</p>
+</div>
+</div>
+</div>
+</div>
+<div class=sect1>
+<h2 id=_更新_acl>更新 Acl</h2>
+<div class=sectionbody>
+<div class=paragraph>
 <p>前面的验证逻辑是使用场景更多的逻辑，也是对 <code>Acl</code> 进行只读操作的逻辑。
 更新 <code>Acl</code> 并不是一个频繁的操作，但却是一个必要的操作。
 遗憾的是，Spring Security ACL 没有为我们默认实现更新 <code>Acl</code> 的逻辑，我们需要自己实现。</p>
+</div>
+<div class=paragraph>
 <p>好在为了支持更新操作，Spring Security ACL 给我们提供了 <code>MutableAcl</code> 和 <code>MutableAclService</code> 这两个接口，提供了更新 <code>Acl</code> 的方法。</p>
+</div>
+<div class=paragraph>
 <p>以创建 <code>Acl</code> 为例，我们来看看应该写出什么样的代码。（创建 <code>Acl</code> 的场景一般是创建了新的资源时）</p>
-<h2 id=sourcejava>[source,java]</h2>
-<h2 id=heading>public void createAcl(Object domainObject) {
-ObjectIdentity oid = new ObjectIdentityImpl(domainObject);
-Sid sid = new PrincipalSid(SecurityContextHolder.getSecurityContext().getAuthentication());
-Permission p = BasePermission.ADMINISTRATION;
-MutableAcl acl = aclService.createAcl(oid);
-acl.insertAce(acl.getEntries().size(), p, sid, true);
-aclService.updateAcl(acl);
-}</h2>
+</div>
+<div class=listingblock>
+<div class=content>
+<pre class=highlight><code class=language-java data-lang=java>public void createAcl(Object domainObject) {
+  ObjectIdentity oid = new ObjectIdentityImpl(domainObject);
+  Sid sid = new PrincipalSid(SecurityContextHolder.getSecurityContext().getAuthentication());
+  Permission p = BasePermission.ADMINISTRATION;
+  MutableAcl acl = aclService.createAcl(oid);
+  acl.insertAce(acl.getEntries().size(), p, sid, true);
+  aclService.updateAcl(acl);
+}</code></pre>
+</div>
+</div>
+<div class=paragraph>
 <p>对于更新 ACE、删除 <code>Acl</code> 等操作，<code>MutableAcl</code> 和 <code>MutableAclService</code> 都有相应的方法，只是和创建一样，都需要我们自己写代码调用。
 这些代码应该和业务代码分隔开，这样才能满足 ACL 的初衷，避免写出难以维护的代码。</p>
-<p>== 总结</p>
+</div>
+</div>
+</div>
+<div class=sect1>
+<h2 id=_总结>总结</h2>
+<div class=sectionbody>
+<div class=paragraph>
 <p>本文介绍了 Spring Security ACL 中的核心概念和它们之间的关系，那张概念图就是最好的总结。</p>
+</div>
+<div class=paragraph>
 <p>另外还介绍了使用 ACL 进行权限控制的逻辑和相关的组件，也就是那些 strategy 和 service 接口。</p>
+</div>
+<div class=paragraph>
 <p>最后简单介绍了更新 <code>Acl</code> 的方法，更详细的内容会在另外的博客里以 demo 的形式呈现。</p>
+</div>
+<div class=quoteblock>
 <blockquote>
-<p>查看系列文章： link:../../series/spring-security-servlet/[点这里]</p>
+<div class=paragraph>
+<p>查看系列文章： <a href=../../series/spring-security-servlet/>点这里</a></p>
+</div>
 </blockquote>
+</div>
+</div>
+</div>
 </div>
 <div class=article-footer>
 <blockquote class=mt-2x>

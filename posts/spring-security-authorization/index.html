@@ -14,25 +14,25 @@ Spring Security 的权限验证 - 无糖拿铁，谢谢
 <meta name=format-detection content="telephone=no,email=no,adress=no">
 <meta name=theme-color content="#000000">
 <meta http-equiv=window-target content="_top">
-<meta name=description content="在前面的文章里，我们对 Spring Security 进行权限验证的组件有了大致的了解，我们首先来回顾并探究一下细节。 image::spring-authorizati">
+<meta name=description content="在前面的文章里，我们对 Spring Security 进行权限验证的组件有了大致的了解，我们首先来回顾并探究一下细节。 Figure 1. 本文涉及到的组件 FilterSecurityInterceptor 这是 AbstractSecurityInterceptor 的一个子类，并且实现了">
 <meta name=generator content="Hugo 0.92.1 with theme pure">
 <title>Spring Security 的权限验证 - 无糖拿铁，谢谢</title>
 <link rel=stylesheet href=https://blog.gaoyuexiang.cn/css/style.min.e64d754037c0ee0ec4e20ab1d6f07740ace61729bc03850559b8caa21ae4a597.css>
 <link rel=stylesheet href=https://cdn.staticfile.org/highlight.js/9.15.10/styles/github.min.css async>
 <link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.css async>
 <meta property="og:title" content="Spring Security 的权限验证">
-<meta property="og:description" content="在前面的文章里，我们对 Spring Security 进行权限验证的组件有了大致的了解，我们首先来回顾并探究一下细节。 image::spring-authorizati">
+<meta property="og:description" content="在前面的文章里，我们对 Spring Security 进行权限验证的组件有了大致的了解，我们首先来回顾并探究一下细节。 Figure 1. 本文涉及到的组件 FilterSecurityInterceptor 这是 AbstractSecurityInterceptor 的一个子类，并且实现了">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://blog.gaoyuexiang.cn/posts/spring-security-authorization/"><meta property="article:section" content="posts">
 <meta property="article:published_time" content="2020-06-13T16:33:33+00:00">
 <meta property="article:modified_time" content="2020-06-13T16:33:33+00:00">
 <meta itemprop=name content="Spring Security 的权限验证">
-<meta itemprop=description content="在前面的文章里，我们对 Spring Security 进行权限验证的组件有了大致的了解，我们首先来回顾并探究一下细节。 image::spring-authorizati"><meta itemprop=datePublished content="2020-06-13T16:33:33+00:00">
+<meta itemprop=description content="在前面的文章里，我们对 Spring Security 进行权限验证的组件有了大致的了解，我们首先来回顾并探究一下细节。 Figure 1. 本文涉及到的组件 FilterSecurityInterceptor 这是 AbstractSecurityInterceptor 的一个子类，并且实现了"><meta itemprop=datePublished content="2020-06-13T16:33:33+00:00">
 <meta itemprop=dateModified content="2020-06-13T16:33:33+00:00">
-<meta itemprop=wordCount content="2626">
+<meta itemprop=wordCount content="2301">
 <meta itemprop=keywords content="Spring,Spring Security,"><meta name=twitter:card content="summary">
 <meta name=twitter:title content="Spring Security 的权限验证">
-<meta name=twitter:description content="在前面的文章里，我们对 Spring Security 进行权限验证的组件有了大致的了解，我们首先来回顾并探究一下细节。 image::spring-authorizati"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
+<meta name=twitter:description content="在前面的文章里，我们对 Spring Security 进行权限验证的组件有了大致的了解，我们首先来回顾并探究一下细节。 Figure 1. 本文涉及到的组件 FilterSecurityInterceptor 这是 AbstractSecurityInterceptor 的一个子类，并且实现了"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
 <script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]-->
 </head>
 <body class="main-center theme-blue" itemscope itemtype=http://schema.org/WebPage><header class=header itemscope itemtype=http://schema.org/WPHeader>
@@ -276,123 +276,300 @@ Spring Security 的权限验证 - 无糖拿铁，谢谢
 <span id=https://blog.gaoyuexiang.cn/posts/spring-security-authorization/ class=leancloud_visitors data-flag-title="Spring Security 的权限验证">0</span>
 </span>
 <span class=post-comment><i class="icon icon-comment"></i>&nbsp;<a href=/posts/spring-security-authorization/#comments class=article-comment-link>评论</a></span>
-<span class="post-wordcount hidden-xs" itemprop=wordCount>字数统计: 2626字</span>
-<span class="post-readcount hidden-xs" itemprop=timeRequired>阅读时长: 6分 </span>
+<span class="post-wordcount hidden-xs" itemprop=wordCount>字数统计: 2301字</span>
+<span class="post-readcount hidden-xs" itemprop=timeRequired>阅读时长: 5分 </span>
 </div>
 </div>
 <div class="article-entry marked-body js-toc-content" itemprop=articleBody>
+<div class=paragraph>
 <p>在前面的文章里，我们对 Spring Security 进行权限验证的组件有了大致的了解，我们首先来回顾并探究一下细节。</p>
-<p>image::spring-authorization.png[title=&ldquo;本文涉及到的组件&rdquo;,role=&ldquo;center&rdquo;]</p>
-<p>== FilterSecurityInterceptor</p>
+</div>
+<div class="imageblock center">
+<div class=content>
+<img src=spring-authorization.png alt="spring authorization">
+</div>
+<div class=title>Figure 1. 本文涉及到的组件</div>
+</div>
+<div class=sect1>
+<h2 id=_filtersecurityinterceptor>FilterSecurityInterceptor</h2>
+<div class=sectionbody>
+<div class=paragraph>
 <p>这是 <code>AbstractSecurityInterceptor</code> 的一个子类，并且实现了 <code>Filter</code> 接口，负责调用父类的 <code>beforeInvocation()</code>、<code>afterInvocatio()</code> 和 <code>finallyInvocation()</code> 方法以及一些 Servlet 相关的工作。
 真正处理权限验证的代码，其实在父类中。
 它存在的意义就是为了能在 <code>Filter</code> 中进行权限验证。</p>
+</div>
+<div class=paragraph>
 <p>这个 <code>Filter</code> 默认总是被安排在 <code>SecurityFilterChain</code> 的最后，因为需要保证它在所有的身份认证相关的 <code>Filter</code> 之后。</p>
-<p>=== AbstractSecurityInterceptor</p>
+</div>
+<div class=sect2>
+<h3 id=_abstractsecurityinterceptor>AbstractSecurityInterceptor</h3>
+<div class=paragraph>
 <p>这个类实现了真正的权限验证的逻辑，它有多个子类，是为了适配不同的技术而存在的，比如上面的 <code>FilterSecurityInterceptor</code> 就是为了适配 Servlet Filter 而存在的。</p>
+</div>
+<div class=paragraph>
 <p>我们可以关注一下上面提到的三个方法，这是每个子类都会调用的。</p>
+</div>
+<div class=paragraph>
 <p>子类的实现总是下面的套路：</p>
-<h2 id=sourcejava>[source,java]</h2>
-<h2 id=superafterinvocationtoken-returnedobject>InterceptorStatusToken token = super.beforeInvocation(secureObject); // &lt;1>
+</div>
+<div class=listingblock>
+<div class=content>
+<pre class=highlight><code class=language-java data-lang=java>InterceptorStatusToken token = super.beforeInvocation(secureObject); // <b class=conum>(1)</b>
 try {
-// call target method, eg, filterChain.doFilter()
-// may get a returnedObject
+  // call target method, eg, filterChain.doFilter()
+  // may get a returnedObject
 } final {
-super.finallyInvocation(token);
+  super.finallyInvocation(token);
 }
-super.afterInvocation(token, returnedObject);</h2>
-<p>&lt;1> <code>secureObject</code> 是一个方法调用，它的类型是 <code>Object</code>，但一般会看到 <code>MethodInvocation</code> 或者 <code>FilterInvocation</code> 这样的类型。</p>
-<p>==== beforeInfocation 方法</p>
+super.afterInvocation(token, returnedObject);</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p><code>secureObject</code> 是一个方法调用，它的类型是 <code>Object</code>，但一般会看到 <code>MethodInvocation</code> 或者 <code>FilterInvocation</code> 这样的类型。</p>
+</li>
+</ol>
+</div>
+<div class=sect3>
+<h4 id=_beforeinfocation_方法>beforeInfocation 方法</h4>
+<div class=paragraph>
 <p>这个方法的目标是调用 <code>AccessDecisionManager.decide()</code> 方法，完成 pre-invocation handling 操作。</p>
-<p>在前面的link:../spring-security-servlet-overview#_权限验证[概览]中介绍过，<code>AccessDecisionManager.decide()</code> 方法有三个参数。其中的 secureObject 已经被子类传进来了。
+</div>
+<div class=paragraph>
+<p>在前面的<a href=../spring-security-servlet-overview#_权限验证>概览</a>中介绍过，<code>AccessDecisionManager.decide()</code> 方法有三个参数。其中的 secureObject 已经被子类传进来了。
 那么在真正调用前，就会去获取 <code>Authentication</code> 对象和 <code>Collection&lt;ConfigAttribute></code> 集合，然后进行 pre-invocation handling 操作。</p>
+</div>
+<div class=quoteblock>
 <blockquote>
+<div class=paragraph>
 <p>后面会介绍 <code>ConfigAttribute</code></p>
+</div>
 </blockquote>
+</div>
+<div class=paragraph>
 <p>如果调用时出现 <code>AccessDecisionException</code>，那么他将会被 <code>ExceptionTranslationFilter</code> 处理。</p>
+</div>
+<div class=paragraph>
 <p>在通过权限验证之后，就会准备一个 <code>InterceptorStatusToken</code> 对象作为返回值。</p>
+</div>
+<div class=paragraph>
 <p>在创建 token 之前，会尝试使用 <code>RunAsManager</code> 创建一个 <code>Authentication</code> 对象，如果这个对象不为 <code>null</code>，那么就会把它放入一个 <code>SecurityContext</code>，替换掉 <code>SecurityContextHolder</code> 中原有的那个。</p>
+</div>
+<div class=paragraph>
 <p>原有的 <code>SecurityContext</code> 总是会被放到 token 中。</p>
+</div>
+<div class=quoteblock>
 <blockquote>
-<p>关于 <code>RunAsManager</code> ：这里的逻辑是替换掉 <code>SecurityContextHolder</code> 中的值，这样在目标方法中看到的 <code>Authentication</code> 对象就是这个 <code>RunAsManager</code> 创建的对象。在目标方法调用完成后，即 link:#_finallyinfocation_方法[finallyInvocation 方法] 中，会将原来的 <code>SecurityContext</code> 重新放回 <code>SecurityContextHolder</code> 中。</p>
+<div class=paragraph>
+<p>关于 <code>RunAsManager</code> ：这里的逻辑是替换掉 <code>SecurityContextHolder</code> 中的值，这样在目标方法中看到的 <code>Authentication</code> 对象就是这个 <code>RunAsManager</code> 创建的对象。在目标方法调用完成后，即 <a href=#_finallyinfocation_方法>finallyInvocation 方法</a> 中，会将原来的 <code>SecurityContext</code> 重新放回 <code>SecurityContextHolder</code> 中。</p>
+</div>
+<div class=paragraph>
 <p>这样的目的是为了将认证与鉴权流程中的 <code>Authentication</code> 对象与业务方法中的区分开来。</p>
+</div>
 </blockquote>
+</div>
+<div class=paragraph>
 <p>在上面的这些步骤中，还会发出一些 <code>ApplicationEvent</code>，包括: <code>PublicInvocationEvent</code>、<code>AuthorizationFailureEvent</code> 和 <code>AuthorizedEvent</code>。</p>
+</div>
+<div class=quoteblock>
 <blockquote>
+<div class=paragraph>
 <p><code>PublicInvocationEvent</code> 只在 <code>Collection&lt;ConfigAttribute></code> 为空的时候才会发生，而且这种时候不会调用 <code>AccessDecisionManager</code>。</p>
+</div>
 </blockquote>
-<p>==== afterInfocation 方法</p>
-<p><code>afterInvocation</code> 方法主要目的是为了根据 <code>returnedObject</code> 进行权限验证，这使用到了 <code>AfterInvocationManager</code> 这个接口，这是在link:../spring-security-servlet-overview#_权限验证[概览]里没有提到的，它被用来进行 after invocation handling。</p>
+</div>
+</div>
+<div class=sect3>
+<h4 id=_afterinfocation_方法>afterInfocation 方法</h4>
+<div class=paragraph>
+<p><code>afterInvocation</code> 方法主要目的是为了根据 <code>returnedObject</code> 进行权限验证，这使用到了 <code>AfterInvocationManager</code> 这个接口，这是在<a href=../spring-security-servlet-overview#_权限验证>概览</a>里没有提到的，它被用来进行 after invocation handling。</p>
+</div>
+<div class=paragraph>
 <p>在这个方法中，如果有必要的话，就会使用 <code>AfterInvocationManager.decide()</code> 方法来处理 <code>returnedObject</code>，得到一个新的结果作为 <code>returntedObject</code>。</p>
+</div>
+<div class=quoteblock>
 <blockquote>
+<div class=paragraph>
 <p>这里的有必要是指：</p>
-<p>. token != null
-. <code>afterInvocationManager</code> 字段不为空</p>
+</div>
+<div class="olist arabic">
+<ol class=arabic>
+<li>
+<p>token != null</p>
+</li>
+<li>
+<p><code>afterInvocationManager</code> 字段不为空</p>
+</li>
+</ol>
+</div>
 </blockquote>
-<p>==== finallyInfocation 方法</p>
+</div>
+</div>
+<div class=sect3>
+<h4 id=_finallyinfocation_方法>finallyInfocation 方法</h4>
+<div class=paragraph>
 <p>这个方法接收 <code>InterceptorStatusToken</code> 作为参数，只做一件事情：将 token 中的 <code>SecurityContext</code> 对象放回 <code>SecurityContextHolder</code> 中。</p>
+</div>
+<div class=paragraph>
 <p>这个操作有两个判断条件：</p>
+</div>
+<div class=ulist>
 <ul>
-<li>token 不为 null</li>
-<li>token 的 <code>contextHolderRefreshRequired</code> 为 <code>true</code>。当 <code>SecurityContextHolder</code> 中的值在 <code>beforeInvocation</code> 中被替换时，这个值才为 <code>true</code></li>
+<li>
+<p>token 不为 null</p>
+</li>
+<li>
+<p>token 的 <code>contextHolderRefreshRequired</code> 为 <code>true</code>。当 <code>SecurityContextHolder</code> 中的值在 <code>beforeInvocation</code> 中被替换时，这个值才为 <code>true</code></p>
+</li>
 </ul>
+</div>
 <hr>
+<div class=paragraph>
 <p>权限验证的入口 <code>FilterSecurityInterceptor</code> 的介绍就到这里，接下来我们来看看 pre-invocation handling 和 after invocation handling 的内容，也就是 <code>AccessDecisionManager</code> 与 <code>AfterInvocationManager</code>。</p>
-<p>== AccessDecisionManager</p>
-<p>这是在link:../spring-security-servlet-overview#_权限验证[概览]中介绍过的内容，这里可以快速的回顾一下。</p>
-<p>image::access-decision-voting.png[role=&ldquo;center&rdquo;]</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class=sect1>
+<h2 id=_accessdecisionmanager>AccessDecisionManager</h2>
+<div class=sectionbody>
+<div class=paragraph>
+<p>这是在<a href=../spring-security-servlet-overview#_权限验证>概览</a>中介绍过的内容，这里可以快速的回顾一下。</p>
+</div>
+<div class="imageblock center">
+<div class=content>
+<img src=access-decision-voting.png alt="access decision voting">
+</div>
+</div>
+<div class=paragraph>
 <p><code>AccessDecisionManager</code> 是 pre-invocation handling 的入口。
 它的三个具体实现会调用多个 <code>AccessDecisionVoter</code> 的实现，然后具体实现的策略来决定如何根据 voter 的结果来判断是否通过身份验证。
 每一个 voter 都会根据当前的 <code>Authentication</code> 对象、<code>secureObject</code> 和 <code>Collection&lt;ConfigAttribute></code> 来做出是否允许访问的选择。</p>
+</div>
+<div class=paragraph>
 <p><code>AccessDecisionManager</code> 的三个实现，其实就是三种根据 voter 结果来决定最终结果的策略，分别是 <code>AffirmativeBased</code>、<code>ConsensusBased</code> 和 <code>UnanimousBased</code>。策略顾名思义，就不解释了。</p>
-<h2 id=afterinvocationmanager>AfterInvocationManager</h2>
+</div>
+</div>
+</div>
+<div class=sect1>
+<h2 id=_afterinvocationmanager>AfterInvocationManager</h2>
+<div class=sectionbody>
+<div class=paragraph>
 <p>之前没有讲 after invocation handling 的部分，是觉得不重要，使用场景不多（其实是自己没遇到）。现在想讲一讲，是因为发现 <code>spring-security-acl</code> 使用到了 after invocation handling 的机制。那么我们就来看看 <code>AfterInvocationManager</code> 是怎么工作的。</p>
+</div>
+<div class=quoteblock>
 <blockquote>
+<div class=paragraph>
 <p><code>acl</code> 的部分涉及一些新的概念，准备单独写一篇。</p>
+</div>
 </blockquote>
-<p>image::after-invocation.png[role=&ldquo;center&rdquo;]</p>
+</div>
+<div class="imageblock center">
+<div class=content>
+<img src=after-invocation.png alt="after invocation">
+</div>
+</div>
+<div class=paragraph>
 <p>通过这个图，我们可以清楚的了解到，<code>AfterInvocationManager</code> 也只是一个接口。
 它的实现 <code>AfterInvocationProviderManager</code> 则是管理了“很多的” <code>AfterInvocationProvider</code> 来真正的执行权限验证的操作。</p>
+</div>
+<div class=quoteblock>
 <blockquote>
+<div class=paragraph>
 <p>这里“很多的” <code>AfterInvocationProvider</code> 其实也就只有四个个实现，其中三个都是 <code>acl</code>，包括图里的这两个。</p>
+</div>
 </blockquote>
+</div>
+<div class=paragraph>
 <p>剩下的那个 <code>PostInvocationAdviceProvider</code> 其实也没有真正进行 authorization 操作，而是代理给了 <code>PostInvocationAuthorizationAdvice</code> 处理。
 而这个 <code>PostInvocationAuthorizationAdvice</code> 也只有 <code>ExpressionBasedPostInvocationAdvice</code> 这一个实现，也就是基于 <code>SpEL</code> 表达式来进行 authorization 的实现。</p>
+</div>
+<div class=paragraph>
 <p>而上面提到的所有的 manager 和 provider，都提供了 <code>decide</code> 方法用来做权限验证。
 与 <code>AccessDecisionManager.decide()</code> 相比，这些方法多了一个 <code>returnedObject</code> 参数。
 这既是因为它需要作为判断条件参与到决策过程中，也是因为它可能会在决策过程中被处理，然后返回一个新的 <code>returnedObject</code> 作为处理后的结果。</p>
-<p>== ConfigAttribute</p>
+</div>
+</div>
+</div>
+<div class=sect1>
+<h2 id=_configattribute>ConfigAttribute</h2>
+<div class=sectionbody>
+<div class=paragraph>
 <p>这个类是用来存储我们的 Security 的配置的。</p>
+</div>
+<div class=paragraph>
 <p>举个例子，下面的代码就会生成相应的 <code>ConfigAttribute</code>：</p>
-<h2 id=sourcejava-1>[source,java]</h2>
-<h2 id=heading>@Override
+</div>
+<div class=listingblock>
+<div class=content>
+<pre class=highlight><code class=language-java data-lang=java>@Override
 protected void configure(HttpSecurity http) throws Exception {
-http.authorizeRequests()
-.mvcMatchers(&ldquo;hello&rdquo;)
-.hasAuthority(&ldquo;test&rdquo;)
-.anyRequest()
-.authenticated();
-}</h2>
+  http.authorizeRequests()
+      .mvcMatchers(&#34;hello&#34;)
+      .hasAuthority(&#34;test&#34;)
+      .anyRequest()
+      .authenticated();
+}</code></pre>
+</div>
+</div>
+<div class=paragraph>
 <p>上面的代码定义了：</p>
+</div>
+<div class=ulist>
 <ul>
-<li>访问 <code>/hello</code> 的请求需要具有 <code>test</code> 权限</li>
-<li>其他任意请求，需要通过身份验证（不允许匿名访问）</li>
+<li>
+<p>访问 <code>/hello</code> 的请求需要具有 <code>test</code> 权限</p>
+</li>
+<li>
+<p>其他任意请求，需要通过身份验证（不允许匿名访问）</p>
+</li>
 </ul>
+</div>
+<div class=paragraph>
 <p>这样我们就能得到这样的 <code>ConfigAttribute</code>：</p>
-<p>image::config-attribute.png[role=&ldquo;center&rdquo;]</p>
+</div>
+<div class="imageblock center">
+<div class=content>
+<img src=config-attribute.png alt="config attribute">
+</div>
+</div>
+<div class=paragraph>
 <p>这是 <code>FilterSecurityInterceptor</code> 的截图。
 其中的 <code>securityMetadataSource</code> 存储了很多的 <code>ConfigAttribute</code>。
 <code>AbstractSecurityInterceptor</code> 通过子类实现的 <code>obtainSecurityMetadataSource</code> 方法获取到它，然后通过它获取到本次使用的 <code>Collection&lt;ConfigAttribute></code>。</p>
+</div>
+<div class=paragraph>
 <p>截图中的 <code>requestMap</code> 保存了 <code>RequestMatcher</code> 与 <code>Collection&lt;ConfigAttribute></code> 的关系。</p>
+</div>
+<div class=paragraph>
 <p>当我们请求 <code>/hello</code> 时，就会得到第一个 <code>Collection&lt;ConfigAttribute></code>，也就是包含了 <code>hasAuthority('test')</code> 的那一个。
 当我们请求其他接口时，就会得到第二个。</p>
+</div>
+<div class=paragraph>
 <p>接着，这些被获取到的 <code>ConfigAttribute</code> 就可以被后续的验证逻辑使用到。</p>
-<h2 id=总结>总结</h2>
+</div>
+</div>
+</div>
+<div class=sect1>
+<h2 id=_总结>总结</h2>
+<div class=sectionbody>
+<div class=paragraph>
 <p>本文介绍了 Spring Security Authorization，并着重介绍了 <code>FilterSecurityInterceptor</code> 如何在 <code>SecurityFilterChain</code> 的最后使用 <code>AccessDecisionManager</code> 和 <code>AfterInvocationManager</code> 来实现 pre-invocation handling 和 after invocation handling。</p>
+</div>
+<div class=paragraph>
 <p>对于 <code>AccessDecisionManager</code> 和 <code>AfterInfocationManager</code>，则没有详细介绍内部的逻辑，而是介绍了它们如何利用子类和其他接口来完成权限验证的。其内部具体的细节逻辑，读者可以自己研究。</p>
+</div>
+<div class=quoteblock>
 <blockquote>
-<p>查看系列文章： link:../../series/spring-security-servlet/[点这里]</p>
+<div class=paragraph>
+<p>查看系列文章： <a href=../../series/spring-security-servlet/>点这里</a></p>
+</div>
 </blockquote>
+</div>
+</div>
+</div>
 </div>
 <div class=article-footer>
 <blockquote class=mt-2x>
