@@ -1,13 +1,16 @@
 # 
 
-一介码农。会不定时不定主题的更新博客。
-
-坐标成都，喜欢打篮球，有空约球 🏀 。
+记录一些想写的东西。
 
 GitHub: https://github.com/kbyyd24
 
-Email: melo@gaoyuexiang.cn
+Email: blog@gaoyuexiang.cn
+
+欢迎关注公众号：
+
+image::/images/wechat_channel_with_name.png[]
 
 ---
 
-在 ThoughtWorks 工作，有兴趣 👉 https://grnh.se/5bf8fb2a1
+在 /thoughtworks 工作，有兴趣找我内推
+
