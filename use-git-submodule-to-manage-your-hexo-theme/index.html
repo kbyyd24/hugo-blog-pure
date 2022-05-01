@@ -1,0 +1,284 @@
+<!doctype html><html lang=zh-cn>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=robots content="noodp">
+<meta http-equiv=x-ua-compatible content="IE=edge, chrome=1">
+<title>使用 git submodule 管理 Hexo 博客的主题 - 无糖拿铁，谢谢</title><meta name=Description content="学习、记录、分享"><meta property="og:title" content="使用 git submodule 管理 Hexo 博客的主题">
+<meta property="og:description" content="个人十分喜欢 Hexo 博客框架下的 NexT 主题，所以自己的博客也就选择的这个主题。然而最近换了电脑之后傻眼了，git clone 之后发现 themes/next 是个空目录，github 上">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://blog.gaoyuexiang.cn/use-git-submodule-to-manage-your-hexo-theme/"><meta property="og:image" content="https://blog.gaoyuexiang.cn/logo.png"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2018-12-20T01:26:17+00:00">
+<meta property="article:modified_time" content="2022-01-31T20:10:51+08:00">
+<meta name=twitter:card content="summary_large_image">
+<meta name=twitter:image content="https://blog.gaoyuexiang.cn/logo.png">
+<meta name=twitter:title content="使用 git submodule 管理 Hexo 博客的主题">
+<meta name=twitter:description content="个人十分喜欢 Hexo 博客框架下的 NexT 主题，所以自己的博客也就选择的这个主题。然而最近换了电脑之后傻眼了，git clone 之后发现 themes/next 是个空目录，github 上">
+<meta name=application-name content="LoveIt">
+<meta name=apple-mobile-web-app-title content="LoveIt"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel="shortcut icon" type=image/x-icon href=/favicon.ico>
+<link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
+<link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=https://blog.gaoyuexiang.cn/use-git-submodule-to-manage-your-hexo-theme/><link rel=prev href=https://blog.gaoyuexiang.cn/what-is-12-factors-app/><link rel=next href=https://blog.gaoyuexiang.cn/java-memory-collection-algorithms/><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css><link rel=stylesheet href=/css/style.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"使用 git submodule 管理 Hexo 博客的主题","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/blog.gaoyuexiang.cn\/use-git-submodule-to-manage-your-hexo-theme\/"},"image":["https:\/\/blog.gaoyuexiang.cn\/images\/Apple-Devices-Preview.png"],"genre":"posts","keywords":"hexo, git, submodule","wordcount":1402,"url":"https:\/\/blog.gaoyuexiang.cn\/use-git-submodule-to-manage-your-hexo-theme\/","datePublished":"2018-12-20T01:26:17+00:00","dateModified":"2022-01-31T20:10:51+08:00","license":"CC BY-NC 4.0 CN","publisher":{"@type":"Organization","name":"无糖拿铁","logo":"https:\/\/blog.gaoyuexiang.cn\/images\/avatar.png"},"author":{"@type":"Person","name":"无糖拿铁"},"description":""}</script></head>
+<body header-desktop=fixed header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem('theme')?localStorage.getItem('theme')==='dark':'auto'==='auto'?window.matchMedia('(prefers-color-scheme: dark)').matches:'auto'==='dark')&&document.body.setAttribute('theme','dark')</script>
+<div id=mask></div><div class=wrapper><header class=desktop id=header-desktop>
+<div class=header-wrapper>
+<div class=header-title>
+<a href=/ title=无糖拿铁，谢谢><span class=header-title-pre><i class="far fa-kiss-wink-heart fa-fw"></i></span>无糖拿铁，谢谢</a>
+</div>
+<div class=menu>
+<div class=menu-inner><a class=menu-item href=/posts/> 所有文章 </a><a class=menu-item href=/tags/> 标签 </a><a class=menu-item href=/categories/> 分类 </a><a class=menu-item href=/series-index/> 系列 </a><a class=menu-item href=/about/> 关于 </a><a class=menu-item href=https://github.com/kbyyd24/ title=GitHub rel="noopener noreffer" target=_blank><i class="fab fa-github fa-fw"></i> </a><span class="menu-item delimiter"></span><span class="menu-item search" id=search-desktop>
+<input type=text placeholder=搜索文章标题或内容... id=search-input-desktop>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-desktop title=搜索>
+<i class="fas fa-search fa-fw"></i>
+</a>
+<a href=javascript:void(0); class="search-button search-clear" id=search-clear-desktop title=清空>
+<i class="fas fa-times-circle fa-fw"></i>
+</a>
+<span class="search-button search-loading" id=search-loading-desktop>
+<i class="fas fa-spinner fa-fw fa-spin"></i>
+</span>
+</span><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
+<i class="fas fa-adjust fa-fw"></i>
+</a>
+</div>
+</div>
+</div>
+</header><header class=mobile id=header-mobile>
+<div class=header-container>
+<div class=header-wrapper>
+<div class=header-title>
+<a href=/ title=无糖拿铁，谢谢><span class=header-title-pre><i class="far fa-kiss-wink-heart fa-fw"></i></span>无糖拿铁，谢谢</a>
+</div>
+<div class=menu-toggle id=menu-toggle-mobile>
+<span></span><span></span><span></span>
+</div>
+</div>
+<div class=menu id=menu-mobile><div class=search-wrapper>
+<div class="search mobile" id=search-mobile>
+<input type=text placeholder=搜索文章标题或内容... id=search-input-mobile>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-mobile title=搜索>
+<i class="fas fa-search fa-fw"></i>
+</a>
+<a href=javascript:void(0); class="search-button search-clear" id=search-clear-mobile title=清空>
+<i class="fas fa-times-circle fa-fw"></i>
+</a>
+<span class="search-button search-loading" id=search-loading-mobile>
+<i class="fas fa-spinner fa-fw fa-spin"></i>
+</span>
+</div>
+<a href=javascript:void(0); class=search-cancel id=search-cancel-mobile>
+取消
+</a>
+</div><a class=menu-item href=/posts/ title>所有文章</a><a class=menu-item href=/tags/ title>标签</a><a class=menu-item href=/categories/ title>分类</a><a class=menu-item href=/series-index/ title>系列</a><a class=menu-item href=/about/ title>关于</a><a class=menu-item href=https://github.com/kbyyd24/ title=GitHub rel="noopener noreffer" target=_blank><i class="fab fa-github fa-fw"></i></a><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
+<i class="fas fa-adjust fa-fw"></i>
+</a></div>
+</div>
+</header>
+<div class="search-dropdown desktop">
+<div id=search-dropdown-desktop></div>
+</div>
+<div class="search-dropdown mobile">
+<div id=search-dropdown-mobile></div>
+</div>
+<main class=main>
+<div class=container><div class=toc id=toc-auto>
+<h2 class=toc-title>目录</h2>
+<div class=toc-content id=toc-content-auto></div>
+</div><article class="page single"><h1 class="single-title animated flipInX">使用 git submodule 管理 Hexo 博客的主题</h1><div class=post-meta>
+<div class=post-meta-line><span class=post-author><a href=https://blog.gaoyuexiang.cn/about title=Author target=_blank rel="noopener noreffer author" class=author><i class="fas fa-user-circle fa-fw"></i>无糖拿铁</a></span></div>
+<div class=post-meta-line><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime=2018-12-20>2018-12-20</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1402 字&nbsp;
+<i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 3 分钟&nbsp;<span id=/use-git-submodule-to-manage-your-hexo-theme/ class=leancloud_visitors data-flag-title="使用 git submodule 管理 Hexo 博客的主题">
+<i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
+</span>&nbsp;</div>
+</div><div class="details toc" id=toc-static kept>
+<div class="details-summary toc-title">
+<span>目录</span>
+<span><i class="details-icon fas fa-angle-right"></i></span>
+</div>
+<div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents></nav></div>
+</div><div class=content id=content><div class=paragraph>
+<p>个人十分喜欢 <code>Hexo</code> 博客框架下的 <code>NexT</code> 主题，所以自己的博客也就选择的这个主题。然而最近换了电脑之后傻眼了，<code>git clone</code> 之后发现 <code>themes/next</code> 是个空目录，<code>github</code> 上面也是同样的空目录，并且没有任何办法可以找回当时目录里的东西。回顾自己当时刚开始使用时的场景，一切要从 <code>NexT</code> 的官网说起。</p>
+</div>
+<div class=sect1>
+<h2 id=_next_官方推荐的安装方式>NexT 官方推荐的安装方式</h2>
+<div class=sectionbody>
+<div class=paragraph>
+<p><code>Hexo</code> 博客框架允许我们指定任何主题，被选定的主题需要在 <code>${root}/themes</code> 目录下具有一个与指定名称相同的目录。比如，我们指定使用的主题名字叫做 <code>next</code> ，那么我们就需要在 <code>${root}/themes</code> 目录下面存在一个叫做 <code>next</code> 的目录（本文不涉及此目录内容）。</p>
+</div>
+<div class=paragraph>
+<p>现在我们有了一个想要使用的目录，假设就是 <code>NexT</code> 吧，自然会想到去官方网站看看有没有什么推荐的使用方式。于是 <code>NexT</code> 官网让我们这样安装：</p>
+</div>
+<div class=listingblock>
+<div class=content>
+<pre class=highlight><code class=language-shell data-lang=shell>$ cd your-hexo-site
+$ git clone https://github.com/iissnan/hexo-theme-next themes/next</code></pre>
+</div>
+</div>
+<div class=paragraph>
+<p>不仅是 <code>NexT</code>，还有很多其他的主题都是推荐的这样的安装方式。而这样的安装方式却会带来 <code>git</code> 仓库嵌套的问题。我们会发现我们的 <code>Hexo</code> 仓库不能识别到 <code>${root}/themes/next</code> 仓库里面修改的内容，只能识别到它被修改了。这也就意味着，我们的 <code>Hexo</code> 仓库不知道 <code>${root}/themes/next</code> 仓库里的内容。所以我们在克隆这个仓库之后，不知道这个主题下的文件从哪里来，有什么内容。</p>
+</div>
+<div class=quoteblock>
+<blockquote>
+<div class=paragraph>
+<p>关于 <code>git</code> 嵌套仓库的问题，可以参考这里的讨论： <a href=https://github.com/swcarpentry/git-novice/issues/272 class=bare>https://github.com/swcarpentry/git-novice/issues/272</a></p>
+</div>
+</blockquote>
+</div>
+</div>
+</div>
+<div class=sect1>
+<h2 id=_正确的使用方式>正确的使用方式</h2>
+<div class=sectionbody>
+<div class=paragraph>
+<p>现在，我们已经知道使用嵌套的 <code>git</code> 仓库是一个 <code>anti-pattern</code>，并且会导致我们丢失文件。那么正确的做法应该是什么呢？</p>
+</div>
+<div class=sect2>
+<h3 id=_git_submodule_天降神兵>git submodule 天降神兵</h3>
+<div class=paragraph>
+<p>首先解决“从哪里来”的问题。</p>
+</div>
+<div class=paragraph>
+<p>因为我们需要使用到别人开发的主题，而且要做一些自定义修改，所以我们必须要拿到源码。这个时候我们就可以考虑使用 <code>git submodule</code> 了，这里正好满足使用 <code>submodule</code> 的情况。</p>
+</div>
+<div class=quoteblock>
+<blockquote>
+<div class=paragraph>
+<p><code>git submodule</code> 文档看这里： <a href=https://git-scm.com/book/en/v2/Git-Tools-Submodules class=bare>https://git-scm.com/book/en/v2/Git-Tools-Submodules</a></p>
+</div>
+</blockquote>
+</div>
+<div class=paragraph>
+<p>要使用 <code>git submodule</code> 我们就不能按照 <code>NexT</code> 这些主题官网提供的安装方式，而需要使用 <code>git submodule</code> 的方式：</p>
+</div>
+<div class=listingblock>
+<div class=content>
+<pre class=highlight><code class=language-shell data-lang=shell>$ git submodule add git@github.com:iissnan/hexo-theme-next themes/next
+Cloning into &#39;/I/wont/show/this/blog/themes/next&#39;...
+remote: Enumerating objects: 12036, done.
+remote: Total 12036 (delta 0), reused 0 (delta 0), pack-reused 12036
+Receiving objects: 100% (12036/12036), 12.95 MiB | 1.32 MiB/s, done.
+Resolving deltas: 100% (6967/6967), done.</code></pre>
+</div>
+</div>
+<div class=paragraph>
+<p>现在，我们的 <code>submodule</code> 已经克隆好了，并且在我们的 <code>Hexo</code> 目录下面会多一个 <code>.gitmodules</code> 文件，我们可以看看里面的内容：</p>
+</div>
+<div class=listingblock>
+<div class=content>
+<pre class=highlight><code class=language-shell data-lang=shell>$ cat .gitmodules
+[submodule &#34;themes/next&#34;]
+	path = themes/next
+	url = git@github.com:iissnan/hexo-theme-next</code></pre>
+</div>
+</div>
+<div class=paragraph>
+<p>这个文件描述了当前仓库的 <code>submodule</code> 的信息，并且它会被加入到仓库中。因为我们在使用 <code>git clone</code> 的时候， <code>git</code> 不会帮我们把 <code>submodule</code> 一起克隆。</p>
+</div>
+<div class=paragraph>
+<p>所以当其他人或我们在其他地方克隆这个仓库之后，就能够通过 <code>.gitmodules</code> 这个文件知道我们所需要的 <code>submodule</code> 能够从哪里获取到。</p>
+</div>
+<div class=paragraph>
+<p>我们可以通过 <code>git</code> 的命令来获取所有的 <code>submodule</code>：</p>
+</div>
+<div class=listingblock>
+<div class=content>
+<pre class=highlight><code class=language-shell data-lang=shell>$ git submodule update --init
+Submodule &#39;themes/next&#39; (git@github.com:iissnan/hexo-theme-next) registered for path &#39;themes/next&#39;
+Cloning into &#39;/I/wont/show/this/blog/themes/next&#39;...
+Submodule path &#39;themes/next&#39;: checked out &#39;64302633a60c8f26ebdbad6f3c220e6d8a69723c&#39;</code></pre>
+</div>
+</div>
+<div class=paragraph>
+<p>这样，我们的 <code>NexT</code> 主题又能够回到我们本地的文件中。</p>
+</div>
+</div>
+<div class=sect2>
+<h3 id=_要好好保存自己的修改>要好好保存自己的修改</h3>
+<div class=paragraph>
+<p>然后解决“有什么内容”的问题。</p>
+</div>
+<div class=paragraph>
+<p><code>submodule</code> 解决了“从哪里来”，但是我们对主题做的自定义修改又保存在哪里呢？</p>
+</div>
+<div class=paragraph>
+<p>如果我们真的按照上面的步骤来操作的话，我们会发现在新设备上的主题配置和我们自定义的配置是不一样的。这样以来，我们新的设备上如果提交，我们自定义的主题配置信息就会丢失了。除非我们重新配置一下主题文件。</p>
+</div>
+<div class=paragraph>
+<p><strong>但我们是程序员，会永远遵循 <code>DRY</code> 原则</strong>，一定是什么地方出了差错。</p>
+</div>
+<div class=paragraph>
+<p>前面的操作，我们把 <code>NexT</code> 官方仓库作为我们的 <code>submodule</code>，但因为我们不能把自定义的配置 <code>push</code> 到官方仓库中，所以我们对主题的自定义配置就只能留在本地。</p>
+</div>
+<div class=paragraph>
+<p>为了保存我们的修改，我们可以将官方仓库 <code>fork</code> 到我们自己的账号下面，获得完全的控制权，然后将这个 <code>fork</code> 的仓库作为博客的 <code>submodule</code>。当我们对主题进行了配置的时候，我们需要将这些更新 <code>push</code> 到 <code>fork</code> 的仓库中，这样在下一次拉取 <code>submodule</code> 的时候就能够拿到我们自己的修改，而不会遇到丢失自定义配置的尴尬了。</p>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div class=sect1>
+<h2 id=_总结>总结</h2>
+<div class=sectionbody>
+<div class=paragraph>
+<p>所以，在 <code>Hexo</code> 中对自定义主题进行版本管理的正确操作就是：</p>
+</div>
+<div class="olist arabic">
+<ol class=arabic>
+<li>
+<p>找到主题的 <code>Repo</code></p>
+</li>
+<li>
+<p><code>fork</code> 到自己的账号下</p>
+</li>
+<li>
+<p>将 <code>fork</code> 的仓库作为 <code>Hexo</code> 仓库的 <code>submodule</code></p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div><div class=post-footer id=post-footer>
+<div class=post-info>
+<div class=post-info-line>
+<div class=post-info-mod>
+<span>更新于 2022-01-31&nbsp;<a class=git-hash href=https://github.com/kbyyd24/LoveItAgain/commit/8309bc020e867fcafd813c9ce7a1508339eaedeb target=_blank title="commit by kbyyd24(melo@gaoyuexiang.cn) 8309bc020e867fcafd813c9ce7a1508339eaedeb: reorg posts">
+<i class="fas fa-hashtag fa-fw"></i>8309bc0</a></span>
+</div>
+<div class=post-info-license></div>
+</div>
+<div class=post-info-line>
+<div class=post-info-md><span>
+<a class=link-to-markdown href=/use-git-submodule-to-manage-your-hexo-theme/index.md target=_blank>阅读原始文档</a>
+</span></div>
+<div class=post-info-share>
+<span><a href=javascript:void(0); title="分享到 Twitter" data-sharer=twitter data-url=https://blog.gaoyuexiang.cn/use-git-submodule-to-manage-your-hexo-theme/ data-title="使用 git submodule 管理 Hexo 博客的主题" data-hashtags=hexo,git,submodule><i class="fab fa-twitter fa-fw"></i></a><a href=javascript:void(0); title="分享到 Facebook" data-sharer=facebook data-url=https://blog.gaoyuexiang.cn/use-git-submodule-to-manage-your-hexo-theme/ data-hashtag=hexo><i class="fab fa-facebook-square fa-fw"></i></a><a href=javascript:void(0); title="分享到 Hacker News" data-sharer=hackernews data-url=https://blog.gaoyuexiang.cn/use-git-submodule-to-manage-your-hexo-theme/ data-title="使用 git submodule 管理 Hexo 博客的主题"><i class="fab fa-hacker-news fa-fw"></i></a><a href=javascript:void(0); title="分享到 Line" data-sharer=line data-url=https://blog.gaoyuexiang.cn/use-git-submodule-to-manage-your-hexo-theme/ data-title="使用 git submodule 管理 Hexo 博客的主题"><i data-svg-src=https://cdn.jsdelivr.net/npm/simple-icons@2.14.0/icons/line.svg></i></a><a href=javascript:void(0); title="分享到 微博" data-sharer=weibo data-url=https://blog.gaoyuexiang.cn/use-git-submodule-to-manage-your-hexo-theme/ data-title="使用 git submodule 管理 Hexo 博客的主题"><i class="fab fa-weibo fa-fw"></i></a></span>
+</div>
+</div>
+</div>
+<div class=post-info-more>
+<section class=post-tags><i class="fas fa-tags fa-fw"></i>&nbsp;<a href=/tags/hexo/>hexo</a>,&nbsp;<a href=/tags/git/>git</a>,&nbsp;<a href=/tags/submodule/>submodule</a></section>
+<section>
+<span><a href=javascript:void(0); onclick=window.history.back()>返回</a></span>&nbsp;|&nbsp;<span><a href=/>主页</a></span>
+</section>
+</div>
+<div class=post-nav><a href=/what-is-12-factors-app/ class=prev rel=prev title="什么是 Twelve-Factor App"><i class="fas fa-angle-left fa-fw"></i>什么是 Twelve-Factor App</a>
+<a href=/java-memory-collection-algorithms/ class=next rel=next title=Java内存回收算法介绍>Java内存回收算法介绍<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+<div id=comments><div id=valine class=comment></div><noscript>
+Please enable JavaScript to view the comments powered by <a href=https://valine.js.org/>Valine</a>.
+</noscript></div></article></div>
+</main><footer class=footer>
+<div class=footer-container><div class=footer-line>由 <a href=https://gohugo.io/ target=_blank rel="noopener noreffer" title="Hugo 0.92.1">Hugo</a> 强力驱动 | 主题 - <a href=https://github.com/dillonzq/LoveIt target=_blank rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+</div><div class=footer-line><i class="far fa-copyright fa-fw"></i><span itemprop=copyrightYear>2016 - 2022</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=https://blog.gaoyuexiang.cn/about target=_blank>无糖拿铁</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span><span class=icp-splitter>&nbsp;|&nbsp;</span><br class=icp-br>
+<span class=icp><a href=https://beian.miit.gov.cn/ target=_blank>蜀ICP备15031888号-2</a></span></div>
+</div>
+</footer></div>
+<div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title=回到顶部>
+<i class="fas fa-arrow-up fa-fw"></i>
+</a><a href=# id=view-comments class=fixed-button title=查看评论>
+<i class="fas fa-comment fa-fw"></i>
+</a>
+</div>
+<link rel=stylesheet href=/lib/valine/valine.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.0/build/styles/atom-one-dark.min.css><script type=text/javascript src=https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/autocomplete.js@0.37.1/dist/autocomplete.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/algoliasearch@4.2.0/dist/algoliasearch-lite.umd.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/lazysizes@5.2.2/lazysizes.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/sharer.js@0.4.0/sharer.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.0/build/highlight.min.js></script><script type=text/javascript src=/js/highlight.min.js></script><script type=text/javascript>window.config={code:{copyTitle:"复制到剪贴板",maxShownLines:10},comment:{valine:{appId:"QGzwQXOqs5JOhN4RGPOkR2mR-MdYXbMMI",appKey:"WBmoGyJtbqUswvfLh6L8iEBr",avatar:"mp",el:"#valine",emojiCDN:"https://cdn.jsdelivr.net/npm/emoji-datasource-google@5.0.1/img/google/64/",emojiMaps:{100:"1f4af.png",alien:"1f47d.png",anger:"1f4a2.png",angry:"1f620.png",anguished:"1f627.png",astonished:"1f632.png",black_heart:"1f5a4.png",blue_heart:"1f499.png",blush:"1f60a.png",bomb:"1f4a3.png",boom:"1f4a5.png",broken_heart:"1f494.png",brown_heart:"1f90e.png",clown_face:"1f921.png",cold_face:"1f976.png",cold_sweat:"1f630.png",confounded:"1f616.png",confused:"1f615.png",cry:"1f622.png",crying_cat_face:"1f63f.png",cupid:"1f498.png",dash:"1f4a8.png",disappointed:"1f61e.png",disappointed_relieved:"1f625.png",dizzy:"1f4ab.png",dizzy_face:"1f635.png",drooling_face:"1f924.png",exploding_head:"1f92f.png",expressionless:"1f611.png",face_vomiting:"1f92e.png",face_with_cowboy_hat:"1f920.png",face_with_hand_over_mouth:"1f92d.png",face_with_head_bandage:"1f915.png",face_with_monocle:"1f9d0.png",face_with_raised_eyebrow:"1f928.png",face_with_rolling_eyes:"1f644.png",face_with_symbols_on_mouth:"1f92c.png",face_with_thermometer:"1f912.png",fearful:"1f628.png",flushed:"1f633.png",frowning:"1f626.png",ghost:"1f47b.png",gift_heart:"1f49d.png",green_heart:"1f49a.png",grimacing:"1f62c.png",grin:"1f601.png",grinning:"1f600.png",hankey:"1f4a9.png",hear_no_evil:"1f649.png",heart:"2764-fe0f.png",heart_decoration:"1f49f.png",heart_eyes:"1f60d.png",heart_eyes_cat:"1f63b.png",heartbeat:"1f493.png",heartpulse:"1f497.png",heavy_heart_exclamation_mark_ornament:"2763-fe0f.png",hole:"1f573-fe0f.png",hot_face:"1f975.png",hugging_face:"1f917.png",hushed:"1f62f.png",imp:"1f47f.png",innocent:"1f607.png",japanese_goblin:"1f47a.png",japanese_ogre:"1f479.png",joy:"1f602.png",joy_cat:"1f639.png",kiss:"1f48b.png",kissing:"1f617.png",kissing_cat:"1f63d.png",kissing_closed_eyes:"1f61a.png",kissing_heart:"1f618.png",kissing_smiling_eyes:"1f619.png",laughing:"1f606.png",left_speech_bubble:"1f5e8-fe0f.png",love_letter:"1f48c.png",lying_face:"1f925.png",mask:"1f637.png",money_mouth_face:"1f911.png",nauseated_face:"1f922.png",nerd_face:"1f913.png",neutral_face:"1f610.png",no_mouth:"1f636.png",open_mouth:"1f62e.png",orange_heart:"1f9e1.png",partying_face:"1f973.png",pensive:"1f614.png",persevere:"1f623.png",pleading_face:"1f97a.png",pouting_cat:"1f63e.png",purple_heart:"1f49c.png",rage:"1f621.png",relaxed:"263a-fe0f.png",relieved:"1f60c.png",revolving_hearts:"1f49e.png",right_anger_bubble:"1f5ef-fe0f.png",robot_face:"1f916.png",rolling_on_the_floor_laughing:"1f923.png",scream:"1f631.png",scream_cat:"1f640.png",see_no_evil:"1f648.png",shushing_face:"1f92b.png",skull:"1f480.png",skull_and_crossbones:"2620-fe0f.png",sleeping:"1f634.png",sleepy:"1f62a.png",slightly_frowning_face:"1f641.png",slightly_smiling_face:"1f642.png",smile:"1f604.png",smile_cat:"1f638.png",smiley:"1f603.png",smiley_cat:"1f63a.png",smiling_face_with_3_hearts:"1f970.png",smiling_imp:"1f608.png",smirk:"1f60f.png",smirk_cat:"1f63c.png",sneezing_face:"1f927.png",sob:"1f62d.png",space_invader:"1f47e.png",sparkling_heart:"1f496.png",speak_no_evil:"1f64a.png",speech_balloon:"1f4ac.png","star-struck":"1f929.png",stuck_out_tongue:"1f61b.png",stuck_out_tongue_closed_eyes:"1f61d.png",stuck_out_tongue_winking_eye:"1f61c.png",sunglasses:"1f60e.png",sweat:"1f613.png",sweat_drops:"1f4a6.png",sweat_smile:"1f605.png",thinking_face:"1f914.png",thought_balloon:"1f4ad.png",tired_face:"1f62b.png",triumph:"1f624.png",two_hearts:"1f495.png",unamused:"1f612.png",upside_down_face:"1f643.png",weary:"1f629.png",white_frowning_face:"2639-fe0f.png",white_heart:"1f90d.png",wink:"1f609.png",woozy_face:"1f974.png",worried:"1f61f.png",yawning_face:"1f971.png",yellow_heart:"1f49b.png",yum:"1f60b.png",zany_face:"1f92a.png",zipper_mouth_face:"1f910.png",zzz:"1f4a4.png"},enableQQ:!1,highlight:!0,lang:"zh-cn",pageSize:10,placeholder:"你的评论 ...",recordIP:!0,serverURLs:"https://leancloud.hugoloveit.com",visitor:!0}},search:{algoliaAppID:"PASDMWALPK",algoliaIndex:"index.zh-cn",algoliaSearchKey:"b42948e51daaa93df92381c8e2ac0f93",highlightTag:"em",maxResultLength:10,noResultsFound:"没有找到结果",snippetLength:50,type:"algolia"}}</script><script type=text/javascript src=/js/theme.min.js></script>
+<script>let headerToLi=b=>{let a=document.createElement('a');a.innerText=b.innerText,a.setAttribute('href','#'+b.id);let c=document.createElement('li');return c.appendChild(a),c},headerToLiWithChild=(d,a)=>{let b=headerToLi(d),c=document.createElement('ul');return a.length!=0&&(b.appendChild(c),a.forEach(a=>{c.appendChild(a)})),b},toc=document.createElement('ul');Array.from(document.getElementById('content').getElementsByTagName('h2')).map(a=>headerToLiWithChild(a,Array.from(a.parentElement.getElementsByTagName('h3')).map(a=>headerToLiWithChild(a,Array.from(a.parentElement.getElementsByTagName('h4')).map(a=>headerToLi(a)))))).forEach(a=>toc.appendChild(a)),document.getElementById('TableOfContents').appendChild(toc)</script>
+</body>
+</html>

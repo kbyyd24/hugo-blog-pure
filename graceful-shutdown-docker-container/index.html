@@ -1,0 +1,672 @@
+<!doctype html><html lang=zh-cn>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=robots content="noodp">
+<meta http-equiv=x-ua-compatible content="IE=edge, chrome=1">
+<title>你的 docker stop，它优雅吗？ - 无糖拿铁，谢谢</title><meta name=Description content="如何优雅的关闭 Docker container"><meta property="og:title" content="你的 docker stop，它优雅吗？">
+<meta property="og:description" content="如何优雅的关闭 Docker container">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://blog.gaoyuexiang.cn/graceful-shutdown-docker-container/"><meta property="og:image" content="https://blog.gaoyuexiang.cn/logo.png"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2020-06-18T22:46:13+00:00">
+<meta property="article:modified_time" content="2022-02-13T22:07:38+08:00">
+<meta name=twitter:card content="summary_large_image">
+<meta name=twitter:image content="https://blog.gaoyuexiang.cn/logo.png">
+<meta name=twitter:title content="你的 docker stop，它优雅吗？">
+<meta name=twitter:description content="如何优雅的关闭 Docker container">
+<meta name=application-name content="LoveIt">
+<meta name=apple-mobile-web-app-title content="LoveIt"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel="shortcut icon" type=image/x-icon href=/favicon.ico>
+<link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
+<link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=https://blog.gaoyuexiang.cn/graceful-shutdown-docker-container/><link rel=prev href=https://blog.gaoyuexiang.cn/spring-security-authorization/><link rel=next href=https://blog.gaoyuexiang.cn/spring-security-acl-conception-and-component/><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css><link rel=stylesheet href=/css/style.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"你的 docker stop，它优雅吗？","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/blog.gaoyuexiang.cn\/graceful-shutdown-docker-container\/"},"image":["https:\/\/blog.gaoyuexiang.cn\/images\/Apple-Devices-Preview.png"],"genre":"posts","keywords":"docker, linux, exec, trap, wait","wordcount":3094,"url":"https:\/\/blog.gaoyuexiang.cn\/graceful-shutdown-docker-container\/","datePublished":"2020-06-18T22:46:13+00:00","dateModified":"2022-02-13T22:07:38+08:00","license":"CC BY-NC 4.0 CN","publisher":{"@type":"Organization","name":"无糖拿铁","logo":"https:\/\/blog.gaoyuexiang.cn\/images\/avatar.png"},"author":{"@type":"Person","name":"无糖拿铁"},"description":"如何优雅的关闭 Docker container"}</script></head>
+<body header-desktop=fixed header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem('theme')?localStorage.getItem('theme')==='dark':'auto'==='auto'?window.matchMedia('(prefers-color-scheme: dark)').matches:'auto'==='dark')&&document.body.setAttribute('theme','dark')</script>
+<div id=mask></div><div class=wrapper><header class=desktop id=header-desktop>
+<div class=header-wrapper>
+<div class=header-title>
+<a href=/ title=无糖拿铁，谢谢><span class=header-title-pre><i class="far fa-kiss-wink-heart fa-fw"></i></span>无糖拿铁，谢谢</a>
+</div>
+<div class=menu>
+<div class=menu-inner><a class=menu-item href=/posts/> 所有文章 </a><a class=menu-item href=/tags/> 标签 </a><a class=menu-item href=/categories/> 分类 </a><a class=menu-item href=/series-index/> 系列 </a><a class=menu-item href=/about/> 关于 </a><a class=menu-item href=https://github.com/kbyyd24/ title=GitHub rel="noopener noreffer" target=_blank><i class="fab fa-github fa-fw"></i> </a><span class="menu-item delimiter"></span><span class="menu-item search" id=search-desktop>
+<input type=text placeholder=搜索文章标题或内容... id=search-input-desktop>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-desktop title=搜索>
+<i class="fas fa-search fa-fw"></i>
+</a>
+<a href=javascript:void(0); class="search-button search-clear" id=search-clear-desktop title=清空>
+<i class="fas fa-times-circle fa-fw"></i>
+</a>
+<span class="search-button search-loading" id=search-loading-desktop>
+<i class="fas fa-spinner fa-fw fa-spin"></i>
+</span>
+</span><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
+<i class="fas fa-adjust fa-fw"></i>
+</a>
+</div>
+</div>
+</div>
+</header><header class=mobile id=header-mobile>
+<div class=header-container>
+<div class=header-wrapper>
+<div class=header-title>
+<a href=/ title=无糖拿铁，谢谢><span class=header-title-pre><i class="far fa-kiss-wink-heart fa-fw"></i></span>无糖拿铁，谢谢</a>
+</div>
+<div class=menu-toggle id=menu-toggle-mobile>
+<span></span><span></span><span></span>
+</div>
+</div>
+<div class=menu id=menu-mobile><div class=search-wrapper>
+<div class="search mobile" id=search-mobile>
+<input type=text placeholder=搜索文章标题或内容... id=search-input-mobile>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-mobile title=搜索>
+<i class="fas fa-search fa-fw"></i>
+</a>
+<a href=javascript:void(0); class="search-button search-clear" id=search-clear-mobile title=清空>
+<i class="fas fa-times-circle fa-fw"></i>
+</a>
+<span class="search-button search-loading" id=search-loading-mobile>
+<i class="fas fa-spinner fa-fw fa-spin"></i>
+</span>
+</div>
+<a href=javascript:void(0); class=search-cancel id=search-cancel-mobile>
+取消
+</a>
+</div><a class=menu-item href=/posts/ title>所有文章</a><a class=menu-item href=/tags/ title>标签</a><a class=menu-item href=/categories/ title>分类</a><a class=menu-item href=/series-index/ title>系列</a><a class=menu-item href=/about/ title>关于</a><a class=menu-item href=https://github.com/kbyyd24/ title=GitHub rel="noopener noreffer" target=_blank><i class="fab fa-github fa-fw"></i></a><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
+<i class="fas fa-adjust fa-fw"></i>
+</a></div>
+</div>
+</header>
+<div class="search-dropdown desktop">
+<div id=search-dropdown-desktop></div>
+</div>
+<div class="search-dropdown mobile">
+<div id=search-dropdown-mobile></div>
+</div>
+<main class=main>
+<div class=container><div class=toc id=toc-auto>
+<h2 class=toc-title>目录</h2>
+<div class=toc-content id=toc-content-auto></div>
+</div><article class="page single"><h1 class="single-title animated flipInX">你的 docker stop，它优雅吗？</h1><div class=post-meta>
+<div class=post-meta-line><span class=post-author><a href=https://blog.gaoyuexiang.cn/about title=Author target=_blank rel="noopener noreffer author" class=author><i class="fas fa-user-circle fa-fw"></i>无糖拿铁</a></span></div>
+<div class=post-meta-line><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime=2020-06-18>2020-06-18</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 3094 字&nbsp;
+<i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 7 分钟&nbsp;<span id=/graceful-shutdown-docker-container/ class=leancloud_visitors data-flag-title="你的 docker stop，它优雅吗？">
+<i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
+</span>&nbsp;</div>
+</div><div class="details toc" id=toc-static kept>
+<div class="details-summary toc-title">
+<span>目录</span>
+<span><i class="details-icon fas fa-angle-right"></i></span>
+</div>
+<div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents></nav></div>
+</div><div class=content id=content><div class=paragraph>
+<p>我们平时在使用 <code>Docker</code> 的时候，一般会使用 <code>ctrl+c</code> 或者 <code>docker stop</code> 的方式关闭容器。
+但有时候我们可能会遇到 <code>ctrl+c</code> 不生效，或者 <code>docker stop</code> 之后要等待 10s 的情况，就像这样：</p>
+</div>
+<div class=imageblock>
+<div class=content>
+<img src=docker-stop-10s.png alt="docker stop 10s">
+</div>
+</div>
+<div class=paragraph>
+<p>也许你会觉得 10s 是一个可以忍受的时间，
+但这样的问题真的只有 10s 这么简单吗？
+为什么有的时候不能立即关闭容器呢？</p>
+</div>
+<div class=sect1>
+<h2 id=_docker_stop_怎么关闭容器>docker stop 怎么关闭容器</h2>
+<div class=sectionbody>
+<div class=paragraph>
+<p>首先我们来看一下这两个命令做了什么。</p>
+</div>
+<div class=sect2>
+<h3 id=_ctrlc_到底做了什么><code>ctrl+c</code> 到底做了什么</h3>
+<div class=paragraph>
+<p>我们能够使用 <code>ctrl+c</code> 的场景，是我们在使用 <code>foreground</code> 模式运行容器的时候。
+这时我们按下 <code>ctrl+c</code> 就像在普通的 <code>shell</code> 中按下这个组合键一样，发送一个 <code>SIGINT</code> 信号给当前的进程，通知它终止运行。</p>
+</div>
+</div>
+<div class=sect2>
+<h3 id=_docker_stop_做了什么>docker stop 做了什么</h3>
+<div class=paragraph>
+<p><code>docker stop</code> 命令是在对 <code>detached</code> 模式运行的容器发出停止命令时使用的，从发送信号上来讲，它将发送 <code>SIGTERM</code> 信号给容器，通知其结束运行。</p>
+</div>
+<div class=quoteblock>
+<blockquote>
+<div class=paragraph>
+<p><code>SIGINT</code> 一般用于关闭前台进程，<code>SIGTERM</code> 会要求进程自己正常退出。</p>
+</div>
+</blockquote>
+</div>
+<div class=paragraph>
+<p>当我们在 <code>shell</code> 中给进程发送 <code>SIGTERM</code> 和 <code>SIGINT</code> 信号的时候，这些进程往往都能正确的处理。
+但是在 <code>docker</code> 中却不灵了。
+这是因为在 <code>docker</code> 中，只会将 <code>SIGTERM</code> 等所有的 <code>signal</code> 信号发送给 PID 为 1 的进程，当我们 <code>docker</code> 中运行的进程的进程号不是 1 时，就不会收到这样的信号。</p>
+</div>
+<div class=quoteblock>
+<blockquote>
+<div class=paragraph>
+<p>根据<a href=https://mp.weixin.qq.com/s/vaIBGHmdUT0bHP2O722AQQ>这篇文章</a>的说法，只有 <code>alpine</code> 会出现这个问题，但从我搜到的资料和实验来看，并不是这样，而是所有的镜像都会有这个问题。</p>
+</div>
+</blockquote>
+</div>
+</div>
+<div class=sect2>
+<h3 id=_为什么是_10s>为什么是 10s</h3>
+<div class=paragraph>
+<p>其实这只是 <code>docker</code> 的默认设置，如果你愿意，等十年都可以。
+文档链接：<a href=https://docs.docker.com/engine/reference/commandline/stop/ class=bare>https://docs.docker.com/engine/reference/commandline/stop/</a></p>
+</div>
+<div class=paragraph>
+<p>如果达到上面的时间限制，<code>docker</code> 将会通过给内核发送 <code>SIGKILL</code> 从而强制结束容器。</p>
+</div>
+</div>
+<div class=sect2>
+<h3 id=_验证上面的回答>验证上面的回答</h3>
+<div class=paragraph>
+<p>为了验证上面查到的这些结果，我写了一点 demo。
+在 demo 的场景里，我们会在 <code>ENTRYPOINT</code> 配置运行一个 <code>shell</code> 脚本，在脚本中做一些准备工作后启动进程。</p>
+</div>
+<div class=listingblock>
+<div class=content>
+<pre class=highlight><code class=language-Dockerfile data-lang=Dockerfile>FROM openjdk:8-jre-alpine
+COPY ./build/libs/app.jar /app/app.jar
+COPY ./docker/entrypoint.sh /app/entrypoint.sh
+WORKDIR /app
+EXPOSE 8080
+ENTRYPOINT [&#34;./entrypoint.sh&#34;]</code></pre>
+</div>
+</div>
+<div class=listingblock>
+<div class=title>entrypoint.sh</div>
+<div class=content>
+<pre class=highlight><code class=language-bash data-lang=bash>#!/bin/sh
+echo &#39;Do something&#39;
+java -jar app.jar</code></pre>
+</div>
+</div>
+<div class=quoteblock>
+<blockquote>
+<div class=paragraph>
+<p>后面还会用到这个例子</p>
+</div>
+</blockquote>
+</div>
+<div class=paragraph>
+<p>我们可以观察一下 <code>docker stop</code> 之后，<code>shell</code> 给我们的返回值</p>
+</div>
+<div class=imageblock>
+<div class=content>
+<img src=docker-stop-10s-kill.png alt="docker stop 10s kill">
+</div>
+<div class=title>Figure 1. 注意红色方框</div>
+</div>
+<div class=paragraph>
+<p>根据这张图，我们可以看到:</p>
+</div>
+<div class="olist arabic">
+<ol class=arabic>
+<li>
+<p><code>docker stop</code> 命令等待了 10s 才结束</p>
+</li>
+<li>
+<p>结束的 docker container 返回了 <code>137</code>，表示进程是因为内核接收到了 <code>SIGKILL</code> 而结束的（<code>zsh</code> 给美化成了 KILL）</p>
+</li>
+</ol>
+</div>
+</div>
+<div class=sect2>
+<h3 id=_kill_导致的问题>Kill 导致的问题</h3>
+<div class=paragraph>
+<p>现在我们已经了解了 <code>ctrl+c</code> 为什么不生效和 <code>docker stop</code> 等待 10s 的原因了。
+我们再来看看另一个问题：
+<strong>强制关闭容器，真的就没问题吗？</strong></p>
+</div>
+<div class=paragraph>
+<p>或许你能想到，很多进程在结束阶段会做一些清理工作：比如删除临时目录、执行 shutdown hook 等。
+但是当进程被强制关闭时，这些任务就不会被执行，那么我们就可能得到一些并不期望的结果。</p>
+</div>
+<div class=paragraph>
+<p>以 <code>Eureka</code> 为例。
+<code>Eureka client</code> 在结束进程时，需要向 <code>Eureka server</code> 发送 shutdown 信号，以注销 <code>client</code>。
+这本来没什么问题，因为 <code>Eureka server</code> 即使没有收到这样的信息，也会定期清理 <code>client</code> 信息。
+但是 <code>Eureka server</code> 还有一个 <code>self preservation</code> 模式，以防止意外的网络事件导致大量的 <code>client</code> 下线。
+这就有可能导致 <code>Eureka</code> 集群的注册表中出现大量的 <code>client</code> 信息，但它们其实已经关闭了。</p>
+</div>
+</div>
+</div>
+</div>
+<div class=sect1>
+<h2 id=_如何优雅的关闭容器>如何优雅的关闭容器</h2>
+<div class=sectionbody>
+<div class=paragraph>
+<p>通过前面的内容，我们已经了解了容器没有被优雅关闭的原因和可能导致的问题，接下来，我们来看看如何解决。</p>
+</div>
+<div class=quoteblock>
+<blockquote>
+<div class=paragraph>
+<p>前面提到的那篇文章中提到可以使用 <code>tini</code> 来解决，但我没有成功过。<code>tini</code> 的确做到了立即关闭进程，但是进程并没有执行 shutdown hook。</p>
+</div>
+</blockquote>
+</div>
+<div class=sect2>
+<h3 id=_使目标进程成为_pid_1>使目标进程成为 PID 1</h3>
+<div class=paragraph>
+<p>既然 <code>docker</code> 只会将 <code>sigal</code> 发送给 PID 1 的进程，那就让我们的进程成为 PID 1 的进程就好了。</p>
+</div>
+<div class=sect3>
+<h4 id=_docker_的_exec_与_shell_模式>docker 的 exec 与 shell 模式</h4>
+<div class=paragraph>
+<p><code>Dockerfile</code> 的 <code>ENTRYPOINT</code> 有两种写法，即 <code>exec</code> 和 <code>shell</code>：</p>
+</div>
+<div class=listingblock>
+<div class=content>
+<pre class=highlight><code class=language-Dockerfile data-lang=Dockerfile># exec form
+ENTRYPOINT [&#34;command&#34;, &#34;param&#34;]
+# shell form
+ENTRYPOINT command param</code></pre>
+</div>
+</div>
+<div class=paragraph>
+<p>两者的区别在于：</p>
+</div>
+<div class=ulist>
+<ul>
+<li>
+<p><code>exec</code> 形式的命令会使用 PID 1 的进程</p>
+</li>
+<li>
+<p><code>shell</code> 形式的命令会被执行为 <code>/bin/sh -c &lt;command></code>，不会执行在 PID 1 上，也就不会收到 <code>signal</code></p>
+</li>
+</ul>
+</div>
+<div class=paragraph>
+<p>所以，我们应该选择 <code>exec</code> 模式，让我们的程序成为 PID 1 进程。</p>
+</div>
+<div class=listingblock>
+<div class=content>
+<pre class=highlight><code class=language-Dockerfile data-lang=Dockerfile>ENTRYPOINT [&#34;java&#34;, &#34;-jar&#34;, &#34;app.jar&#34;]</code></pre>
+</div>
+</div>
+<div class=quoteblock>
+<blockquote>
+<div class=paragraph>
+<p>更详细的信息，可以查看<a href=https://docs.docker.com/engine/reference/builder/#entrypoint>官方文档</a>。</p>
+</div>
+</blockquote>
+</div>
+</div>
+<div class=sect3>
+<h4 id=_exec_命令>exec 命令</h4>
+<div class=paragraph>
+<p><code>exec</code> 形式的 <code>ENTRYPOINT</code> 只能解决 <em>无需任何准备工作就启动进程</em> 的场景，而不能解决一些需要准备工作的复杂场景。</p>
+</div>
+<div class=paragraph>
+<p>在这样的场景中，我们的 <code>ENTRYPOINT</code> 往往需要执行一个 <code>shell</code> 脚本：</p>
+</div>
+<div class=listingblock>
+<div class=content>
+<pre class=highlight><code class=language-Dockerfile data-lang=Dockerfile>ENTRYPOINT [&#34;./entrypoint.sh&#34;]</code></pre>
+</div>
+</div>
+<div class=paragraph>
+<p>然后在这个脚本中执行我们的准备工作，完成后再启动真正的进程。
+比如上面的例子，做完准备后，启动 <code>java</code> 进程。
+这时候，我们的 <code>java</code> 进程就无法成为 PID 1 进程。</p>
+</div>
+<div class=imageblock>
+<div class=content>
+<img src=docker-exec-ps-not-pid-1.png alt="docker exec ps not pid 1">
+</div>
+</div>
+<div class=paragraph>
+<p>我们可以看到，<code>java</code> 进程的 PID 是 7，也就无法优雅退出了。</p>
+</div>
+<div class=paragraph>
+<p>为了解决这个问题，我们可以使用 <code>exec</code> 命令来解决。这个命令的作用就是<strong>使用新的进程替代原有的进程，并保持 PID 不变</strong>。
+这就意味着我们可以在执行 <code>java</code> 命令的时候使用它，从而替换掉 PID 1 的 shell 脚本：</p>
+</div>
+<div class=listingblock>
+<div class=title>entrypoint.sh</div>
+<div class=content>
+<pre class=highlight><code class=language-bash data-lang=bash>#!/bin/sh
+echo &#34;Do something&#34;
+exec java -jar app.jar</code></pre>
+</div>
+</div>
+<div class=paragraph>
+<p>我们再来看一下容器中的进程：</p>
+</div>
+<div class=imageblock>
+<div class=content>
+<img src=docker-exec-ps-pid-1.png alt="docker exec ps pid 1">
+</div>
+</div>
+<div class=paragraph>
+<p>使用 <code>exec</code> 命令之后，我们无论是使用 <code>ctrl+c</code> 还是 <code>docker stop</code> 都能让进程接收到信号，执行相应的操作后退出：</p>
+</div>
+<div class=imageblock>
+<div class=content>
+<img src=docker-stop-success-by-exec.png alt="docker stop success by exec">
+</div>
+</div>
+<div class=paragraph>
+<p>这张图我们可以看到很多信息：</p>
+</div>
+<div class="olist arabic">
+<ol class=arabic>
+<li>
+<p><code>docker stop</code> 命令很快结束，没有等待十秒</p>
+</li>
+<li>
+<p>容器退出收到的信号是 <code>SIGTERM</code>，不是 <code>SIGKILL</code></p>
+</li>
+<li>
+<p><code>Spring</code> 进程的最后一行日志是 shutdown hook 的日志</p>
+</li>
+</ol>
+</div>
+<div class=paragraph>
+<p>这些信息表明，<code>java</code> 进程收到了 <code>docker stop</code> 发送的 <code>SIGTERM</code> 信号，并且正确的触发了相关操作，最后退出程序。</p>
+</div>
+</div>
+</div>
+<div class=sect2>
+<h3 id=_使用_trap>使用 trap</h3>
+<div class=paragraph>
+<p><code>exec</code> 命令在这样的场景下算是一个比较完美的方案。
+但如果你还想探索一下其他方式，或者你的容器中需要运行多个进程，那我们可以接着来看看 <code>trap</code> 命令。</p>
+</div>
+<div class=paragraph>
+<p><code>trap</code> 是用来设置陷阱、监听 <code>signal</code> 的 <code>shell</code> 命令，一般用来处理脚本收到的 <code>signal</code>，完成一些操作。</p>
+</div>
+<div class=listingblock>
+<div class=content>
+<pre class=highlight><code class=language-bash data-lang=bash>trap [-lp] [[arg] sigspec ...]</code></pre>
+</div>
+</div>
+<div class=quoteblock>
+<blockquote>
+<div class=paragraph>
+<p>本文不介绍 <code>lp</code> 参数的含义</p>
+</div>
+</blockquote>
+</div>
+<div class=ulist>
+<ul>
+<li>
+<p><code>arg</code> 代表接收到某个信号后要执行的操作，是一个 <code>shell</code> 命令</p>
+</li>
+<li>
+<p><code>sigspec</code> 表示监听的信号，可以是多个</p>
+</li>
+</ul>
+</div>
+<div class=paragraph>
+<p>举个🌰：</p>
+</div>
+<div class=listingblock>
+<div class=content>
+<pre class=highlight><code class=language-bash data-lang=bash>trap &#39;echo &#34;Shutting Down&#34;&#39; TERM #<b class=conum>(1)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p>表示在接收到 <code>SIGTERM</code> 信号时输出 "Shutting Down"</p>
+</li>
+</ol>
+</div>
+<div class=sect3>
+<h4 id=_添加_trap>添加 trap</h4>
+<div class=paragraph>
+<p>简单了解了 <code>trap</code> 命令后，我们就可以来改造一下 <code>entrypoint.sh</code>：</p>
+</div>
+<div class=listingblock>
+<div class=title>entrypoint.sh</div>
+<div class=content>
+<pre class=highlight><code class=language-bash data-lang=bash>#!/bin/sh
+echo &#39;Do something&#39;
+
+kill_jar() {
+  echo &#39;Received TERM&#39;
+  kill &#34;$(ps -ef | grep java | grep app | awk &#39;{print $1}&#39;)&#34; #<b class=conum>(1)</b>
+}
+
+trap &#39;kill_jar&#39; TERM INT #<b class=conum>(2)</b>
+
+java -jar app.jar</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p>找到执行的进程，使用 <code>kill</code> 命令向其发送 <code>SIGTERM</code></p>
+</li>
+<li>
+<p>在脚本中监听 <code>SIGTERM</code> 和 <code>SIGINT</code> 信号，然后执行 <code>kill_jar</code> 函数</p>
+</li>
+</ol>
+</div>
+<div class=paragraph>
+<p>上面的脚本看起来可以正常工作，但实际上不能。</p>
+</div>
+<div class=paragraph>
+<p>这是因为在 <code>bash</code> 中，即使 <code>trap</code> 收到了信号，如果这个时候 <code>bash</code> 在等待一个命令结束的话，
+那么 <code>trap</code> 就会等到这个命令结束才会被执行。</p>
+</div>
+<div class=quoteblock>
+<blockquote>
+<div class=paragraph>
+<p>If Bash is waiting for a command to complete and receives a signal for which a trap has been set, the trap will not be executed until the command completes.</p>
+</div>
+</blockquote>
+<div class=attribution>
+— https://www.gnu.org/software/bash/manual/html_node/Signals.html#Signals
+</div>
+</div>
+<div class=paragraph>
+<p>在我们的场景中，<code>bash</code> 就在等待 <code>java</code> 进程结束，才能执行 <code>trap</code> 中的命令。
+但是 <code>java</code> 进程又需要 <code>trap</code> 来关闭才能结束，所以程序陷入了循环依赖，只能 <code>docker stop</code> 等待 10s。</p>
+</div>
+</div>
+<div class=sect3>
+<h4 id=_后台运行_java>后台运行 java</h4>
+<div class=paragraph>
+<p>既然前面的问题是 <code>bash</code> 在等待 <code>java</code> 进程结束，那么我们就让它不等待就好了——后台执行 <code>java</code>：</p>
+</div>
+<div class=listingblock>
+<div class=title>entrypoint.sh</div>
+<div class=content>
+<pre class=highlight><code class=language-bash data-lang=bash>#!/bin/sh
+echo &#39;Do something&#39;
+
+kill_jar() {
+  echo &#39;Received TERM&#39;
+  kill &#34;$(ps -ef | grep java | grep app | awk &#39;{print $1}&#39;)&#34;
+  echo &#39;Process finished&#39;
+}
+
+trap &#39;kill_jar&#39; TERM INT
+
+java -jar app.jar &amp; #<b class=conum>(1)</b>
+
+wait $! #<b class=conum>(2)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p>后台执行 <code>java</code></p>
+</li>
+<li>
+<p>使用 <code>wait</code> 命令等待 <code>java</code> 进程结束，避免 <code>entrypoint.sh</code> 执行完成后容器直接退出</p>
+</li>
+</ol>
+</div>
+<div class=paragraph>
+<p>是不是觉得这样就 OK 了？
+Naive，上面的这个脚本能够帮助我们立即结束容器，但并不会等待进程自己正常退出：</p>
+</div>
+<div class=imageblock>
+<div class=content>
+<img src=docker-stop-without-shutdown.png alt="docker stop without shutdown">
+</div>
+</div>
+<div class=paragraph>
+<p>我们可以看到，<code>kill_jar</code> 方法中的 <code>echo</code> 被成功执行，但是却没有看到 <code>Spring</code> 的 shutdown hook 日志输出。
+这说明容器没有等待程序正常退出就被关闭了。</p>
+</div>
+<div class=paragraph>
+<p>这里其实有两个问题。</p>
+</div>
+<div class=dlist>
+<dl>
+<dt class=hdlist1><code>kill</code> 的问题</dt>
+<dd>
+<p>第一个是 <code>kill</code> 命令并不会等待进程结束，它只负责向进程发送 <code>SIG</code> 信号。
+至于程序如何处理、什么时候处理，则与它无瓜。</p>
+</dd>
+<dt class=hdlist1><code>wait</code> 的问题</dt>
+<dd>
+<p>第二个问题则是 <code>wait</code> 命令，在上面 <code>bash</code> 对 <code>trap</code> 的解释后面，还有一句话：</p>
+</dd>
+</dl>
+</div>
+<div class=quoteblock>
+<blockquote>
+<div class=paragraph>
+<p>When Bash is waiting for an asynchronous command via the wait builtin, the reception of a signal for which a trap has been set will cause the wait builtin to return immediately with an exit status greater than 128, immediately after which the trap is executed.</p>
+</div>
+</blockquote>
+<div class=attribution>
+— https://www.gnu.org/software/bash/manual/html_node/Signals.html#Signals
+</div>
+</div>
+<div class=paragraph>
+<p>也就是说，虽然 <code>bash</code> 在等待 <code>wait</code> 结束，但是 <code>wait</code> 又被特殊处理了
+——<code>trap</code> 收到任何大于 128 的信号都会让 <code>wait</code> 命令结束，以执行 <code>trap</code> 中的方法。</p>
+</div>
+<div class=paragraph>
+<p>综合以上两点，我们会发现 <code>trap</code> 在执行 <code>kill_jar</code> 时，<code>entrypoint.sh</code> 中的 <code>wait</code> 已经结束，不再等待 <code>java</code> 进程结束。
+<code>kill_jar</code> 仅仅发送了 <code>SIGTERM</code> 信号，也不会等待 <code>java</code> 进程结束。</p>
+</div>
+<div class=paragraph>
+<p>由此，我们就可以对脚本进行改进：</p>
+</div>
+<div class=listingblock>
+<div class=title>entrypoint.sh</div>
+<div class=content>
+<pre class=highlight><code class=language-bash data-lang=bash>#!/bin/sh
+
+echo &#39;Do something&#39;
+
+kill_jar() {
+  echo &#39;Received TERM&#39;
+  kill &#34;$(ps -ef | grep java | grep app | awk &#39;{print $1}&#39;)&#34;
+  wait $! #<b class=conum>(1)</b>
+  echo &#39;Process finished&#39;
+}
+
+trap &#39;kill_jar&#39; TERM INT
+
+java -jar app.jar &amp;
+
+wait $!</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p>在 <code>kill</code> 后加了一行 <code>wait</code>，因为 <code>kill</code> 会返回进程号，所以这里也可以使用 <code>$!</code>。</p>
+</li>
+</ol>
+</div>
+<div class=paragraph>
+<p>这样，我们的 <code>kill_jar</code> 就会等到 <code>java</code> 进程完全退出后才会结束：</p>
+</div>
+<div class=imageblock>
+<div class=content>
+<img src=docker-stop-success-by-trap.png alt="docker stop success by trap">
+</div>
+</div>
+<div class=paragraph>
+<p>我们可以看到，<code>Spring</code> 的 shutdown hook 在 "Process finished" 之前输出，证明新加的 <code>wait</code> 命令发挥了作用。</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class=sect1>
+<h2 id=_总结>总结</h2>
+<div class=sectionbody>
+<div class="olist arabic">
+<ol class=arabic>
+<li>
+<p><code>ctrl+c</code> 与 <code>docker stop</code> 都只会向容器中 PID 1 进程发送信号</p>
+</li>
+<li>
+<p><code>docker stop</code> 默认等待 10s 没有关闭容器后，会向内核发送 <code>SIGKILL</code> 以强制关闭容器</p>
+</li>
+<li>
+<p>解决方案：</p>
+<div class="olist loweralpha">
+<ol class=loweralpha type=a>
+<li>
+<p>直接启动进程时，使用 <code>ENTRYPOINT</code> 的 <code>exec form</code></p>
+</li>
+<li>
+<p>启动单一进程，并且需要一点准备工作时，使用 <code>exec</code> 命令</p>
+</li>
+<li>
+<p>启动多个进程时，组合使用 <code>trap</code>、<code>wait</code>、<code>kill</code> 命令</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div><div class=post-footer id=post-footer>
+<div class=post-info>
+<div class=post-info-line>
+<div class=post-info-mod>
+<span>更新于 2022-02-13&nbsp;<a class=git-hash href=https://github.com/kbyyd24/LoveItAgain/commit/f025842399e5cb12ba8b023c6ea29b293b052621 target=_blank title="commit by kbyyd24(melo@gaoyuexiang.cn) f025842399e5cb12ba8b023c6ea29b293b052621: fix extension">
+<i class="fas fa-hashtag fa-fw"></i>f025842</a></span>
+</div>
+<div class=post-info-license></div>
+</div>
+<div class=post-info-line>
+<div class=post-info-md><span>
+<a class=link-to-markdown href=/graceful-shutdown-docker-container/index.md target=_blank>阅读原始文档</a>
+</span></div>
+<div class=post-info-share>
+<span><a href=javascript:void(0); title="分享到 Twitter" data-sharer=twitter data-url=https://blog.gaoyuexiang.cn/graceful-shutdown-docker-container/ data-title="你的 docker stop，它优雅吗？" data-hashtags=docker,linux,exec,trap,wait><i class="fab fa-twitter fa-fw"></i></a><a href=javascript:void(0); title="分享到 Facebook" data-sharer=facebook data-url=https://blog.gaoyuexiang.cn/graceful-shutdown-docker-container/ data-hashtag=docker><i class="fab fa-facebook-square fa-fw"></i></a><a href=javascript:void(0); title="分享到 Hacker News" data-sharer=hackernews data-url=https://blog.gaoyuexiang.cn/graceful-shutdown-docker-container/ data-title="你的 docker stop，它优雅吗？"><i class="fab fa-hacker-news fa-fw"></i></a><a href=javascript:void(0); title="分享到 Line" data-sharer=line data-url=https://blog.gaoyuexiang.cn/graceful-shutdown-docker-container/ data-title="你的 docker stop，它优雅吗？"><i data-svg-src=https://cdn.jsdelivr.net/npm/simple-icons@2.14.0/icons/line.svg></i></a><a href=javascript:void(0); title="分享到 微博" data-sharer=weibo data-url=https://blog.gaoyuexiang.cn/graceful-shutdown-docker-container/ data-title="你的 docker stop，它优雅吗？"><i class="fab fa-weibo fa-fw"></i></a></span>
+</div>
+</div>
+</div>
+<div class=post-info-more>
+<section class=post-tags><i class="fas fa-tags fa-fw"></i>&nbsp;<a href=/tags/docker/>docker</a>,&nbsp;<a href=/tags/linux/>linux</a>,&nbsp;<a href=/tags/exec/>exec</a>,&nbsp;<a href=/tags/trap/>trap</a>,&nbsp;<a href=/tags/wait/>wait</a></section>
+<section>
+<span><a href=javascript:void(0); onclick=window.history.back()>返回</a></span>&nbsp;|&nbsp;<span><a href=/>主页</a></span>
+</section>
+</div>
+<div class=post-nav><a href=/spring-security-authorization/ class=prev rel=prev title="Spring Security 的权限验证"><i class="fas fa-angle-left fa-fw"></i>Spring Security 的权限验证</a>
+<a href=/spring-security-acl-conception-and-component/ class=next rel=next title="Spring Security ACL 核心概念和组件">Spring Security ACL 核心概念和组件<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+<div id=comments><div id=valine class=comment></div><noscript>
+Please enable JavaScript to view the comments powered by <a href=https://valine.js.org/>Valine</a>.
+</noscript></div></article></div>
+</main><footer class=footer>
+<div class=footer-container><div class=footer-line>由 <a href=https://gohugo.io/ target=_blank rel="noopener noreffer" title="Hugo 0.92.1">Hugo</a> 强力驱动 | 主题 - <a href=https://github.com/dillonzq/LoveIt target=_blank rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+</div><div class=footer-line><i class="far fa-copyright fa-fw"></i><span itemprop=copyrightYear>2016 - 2022</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=https://blog.gaoyuexiang.cn/about target=_blank>无糖拿铁</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span><span class=icp-splitter>&nbsp;|&nbsp;</span><br class=icp-br>
+<span class=icp><a href=https://beian.miit.gov.cn/ target=_blank>蜀ICP备15031888号-2</a></span></div>
+</div>
+</footer></div>
+<div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title=回到顶部>
+<i class="fas fa-arrow-up fa-fw"></i>
+</a><a href=# id=view-comments class=fixed-button title=查看评论>
+<i class="fas fa-comment fa-fw"></i>
+</a>
+</div>
+<link rel=stylesheet href=/lib/valine/valine.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.0/build/styles/atom-one-dark.min.css><script type=text/javascript src=https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/autocomplete.js@0.37.1/dist/autocomplete.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/algoliasearch@4.2.0/dist/algoliasearch-lite.umd.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/lazysizes@5.2.2/lazysizes.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/sharer.js@0.4.0/sharer.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.0/build/highlight.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.0/build/languages/dockerfile.min.js></script><script type=text/javascript src=/js/highlight.min.js></script><script type=text/javascript>window.config={code:{copyTitle:"复制到剪贴板",maxShownLines:10},comment:{valine:{appId:"QGzwQXOqs5JOhN4RGPOkR2mR-MdYXbMMI",appKey:"WBmoGyJtbqUswvfLh6L8iEBr",avatar:"mp",el:"#valine",emojiCDN:"https://cdn.jsdelivr.net/npm/emoji-datasource-google@5.0.1/img/google/64/",emojiMaps:{100:"1f4af.png",alien:"1f47d.png",anger:"1f4a2.png",angry:"1f620.png",anguished:"1f627.png",astonished:"1f632.png",black_heart:"1f5a4.png",blue_heart:"1f499.png",blush:"1f60a.png",bomb:"1f4a3.png",boom:"1f4a5.png",broken_heart:"1f494.png",brown_heart:"1f90e.png",clown_face:"1f921.png",cold_face:"1f976.png",cold_sweat:"1f630.png",confounded:"1f616.png",confused:"1f615.png",cry:"1f622.png",crying_cat_face:"1f63f.png",cupid:"1f498.png",dash:"1f4a8.png",disappointed:"1f61e.png",disappointed_relieved:"1f625.png",dizzy:"1f4ab.png",dizzy_face:"1f635.png",drooling_face:"1f924.png",exploding_head:"1f92f.png",expressionless:"1f611.png",face_vomiting:"1f92e.png",face_with_cowboy_hat:"1f920.png",face_with_hand_over_mouth:"1f92d.png",face_with_head_bandage:"1f915.png",face_with_monocle:"1f9d0.png",face_with_raised_eyebrow:"1f928.png",face_with_rolling_eyes:"1f644.png",face_with_symbols_on_mouth:"1f92c.png",face_with_thermometer:"1f912.png",fearful:"1f628.png",flushed:"1f633.png",frowning:"1f626.png",ghost:"1f47b.png",gift_heart:"1f49d.png",green_heart:"1f49a.png",grimacing:"1f62c.png",grin:"1f601.png",grinning:"1f600.png",hankey:"1f4a9.png",hear_no_evil:"1f649.png",heart:"2764-fe0f.png",heart_decoration:"1f49f.png",heart_eyes:"1f60d.png",heart_eyes_cat:"1f63b.png",heartbeat:"1f493.png",heartpulse:"1f497.png",heavy_heart_exclamation_mark_ornament:"2763-fe0f.png",hole:"1f573-fe0f.png",hot_face:"1f975.png",hugging_face:"1f917.png",hushed:"1f62f.png",imp:"1f47f.png",innocent:"1f607.png",japanese_goblin:"1f47a.png",japanese_ogre:"1f479.png",joy:"1f602.png",joy_cat:"1f639.png",kiss:"1f48b.png",kissing:"1f617.png",kissing_cat:"1f63d.png",kissing_closed_eyes:"1f61a.png",kissing_heart:"1f618.png",kissing_smiling_eyes:"1f619.png",laughing:"1f606.png",left_speech_bubble:"1f5e8-fe0f.png",love_letter:"1f48c.png",lying_face:"1f925.png",mask:"1f637.png",money_mouth_face:"1f911.png",nauseated_face:"1f922.png",nerd_face:"1f913.png",neutral_face:"1f610.png",no_mouth:"1f636.png",open_mouth:"1f62e.png",orange_heart:"1f9e1.png",partying_face:"1f973.png",pensive:"1f614.png",persevere:"1f623.png",pleading_face:"1f97a.png",pouting_cat:"1f63e.png",purple_heart:"1f49c.png",rage:"1f621.png",relaxed:"263a-fe0f.png",relieved:"1f60c.png",revolving_hearts:"1f49e.png",right_anger_bubble:"1f5ef-fe0f.png",robot_face:"1f916.png",rolling_on_the_floor_laughing:"1f923.png",scream:"1f631.png",scream_cat:"1f640.png",see_no_evil:"1f648.png",shushing_face:"1f92b.png",skull:"1f480.png",skull_and_crossbones:"2620-fe0f.png",sleeping:"1f634.png",sleepy:"1f62a.png",slightly_frowning_face:"1f641.png",slightly_smiling_face:"1f642.png",smile:"1f604.png",smile_cat:"1f638.png",smiley:"1f603.png",smiley_cat:"1f63a.png",smiling_face_with_3_hearts:"1f970.png",smiling_imp:"1f608.png",smirk:"1f60f.png",smirk_cat:"1f63c.png",sneezing_face:"1f927.png",sob:"1f62d.png",space_invader:"1f47e.png",sparkling_heart:"1f496.png",speak_no_evil:"1f64a.png",speech_balloon:"1f4ac.png","star-struck":"1f929.png",stuck_out_tongue:"1f61b.png",stuck_out_tongue_closed_eyes:"1f61d.png",stuck_out_tongue_winking_eye:"1f61c.png",sunglasses:"1f60e.png",sweat:"1f613.png",sweat_drops:"1f4a6.png",sweat_smile:"1f605.png",thinking_face:"1f914.png",thought_balloon:"1f4ad.png",tired_face:"1f62b.png",triumph:"1f624.png",two_hearts:"1f495.png",unamused:"1f612.png",upside_down_face:"1f643.png",weary:"1f629.png",white_frowning_face:"2639-fe0f.png",white_heart:"1f90d.png",wink:"1f609.png",woozy_face:"1f974.png",worried:"1f61f.png",yawning_face:"1f971.png",yellow_heart:"1f49b.png",yum:"1f60b.png",zany_face:"1f92a.png",zipper_mouth_face:"1f910.png",zzz:"1f4a4.png"},enableQQ:!1,highlight:!0,lang:"zh-cn",pageSize:10,placeholder:"你的评论 ...",recordIP:!0,serverURLs:"https://leancloud.hugoloveit.com",visitor:!0}},search:{algoliaAppID:"PASDMWALPK",algoliaIndex:"index.zh-cn",algoliaSearchKey:"b42948e51daaa93df92381c8e2ac0f93",highlightTag:"em",maxResultLength:10,noResultsFound:"没有找到结果",snippetLength:50,type:"algolia"}}</script><script type=text/javascript src=/js/theme.min.js></script>
+<script>let headerToLi=b=>{let a=document.createElement('a');a.innerText=b.innerText,a.setAttribute('href','#'+b.id);let c=document.createElement('li');return c.appendChild(a),c},headerToLiWithChild=(d,a)=>{let b=headerToLi(d),c=document.createElement('ul');return a.length!=0&&(b.appendChild(c),a.forEach(a=>{c.appendChild(a)})),b},toc=document.createElement('ul');Array.from(document.getElementById('content').getElementsByTagName('h2')).map(a=>headerToLiWithChild(a,Array.from(a.parentElement.getElementsByTagName('h3')).map(a=>headerToLiWithChild(a,Array.from(a.parentElement.getElementsByTagName('h4')).map(a=>headerToLi(a)))))).forEach(a=>toc.appendChild(a)),document.getElementById('TableOfContents').appendChild(toc)</script>
+</body>
+</html>

@@ -1,0 +1,410 @@
+<!doctype html><html lang=zh-cn>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=robots content="noodp">
+<meta http-equiv=x-ua-compatible content="IE=edge, chrome=1">
+<title>创建自己的 Spring auto-configuration - 无糖拿铁，谢谢</title><meta name=Description content="学习、记录、分享"><meta property="og:title" content="创建自己的 Spring auto-configuration">
+<meta property="og:description" content="Spring Boot 为我们带来了自动配置的舒适体验，极大的提高了开发效率。当我们需要使用第三方库，而这些库没有实现 Spring Boot Auto-Configururation 时，我们为了避免在不同项目中的重复配">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://blog.gaoyuexiang.cn/create-your-own-spring-auto-configuration/"><meta property="og:image" content="https://blog.gaoyuexiang.cn/logo.png"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2018-08-21T11:19:05+00:00">
+<meta property="article:modified_time" content="2022-01-31T20:10:51+08:00">
+<meta name=twitter:card content="summary_large_image">
+<meta name=twitter:image content="https://blog.gaoyuexiang.cn/logo.png">
+<meta name=twitter:title content="创建自己的 Spring auto-configuration">
+<meta name=twitter:description content="Spring Boot 为我们带来了自动配置的舒适体验，极大的提高了开发效率。当我们需要使用第三方库，而这些库没有实现 Spring Boot Auto-Configururation 时，我们为了避免在不同项目中的重复配">
+<meta name=application-name content="LoveIt">
+<meta name=apple-mobile-web-app-title content="LoveIt"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel="shortcut icon" type=image/x-icon href=/favicon.ico>
+<link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
+<link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=https://blog.gaoyuexiang.cn/create-your-own-spring-auto-configuration/><link rel=prev href=https://blog.gaoyuexiang.cn/biref-summary-of-one-year-of-work/><link rel=next href=https://blog.gaoyuexiang.cn/what-is-12-factors-app/><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css><link rel=stylesheet href=/css/style.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"创建自己的 Spring auto-configuration","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/blog.gaoyuexiang.cn\/create-your-own-spring-auto-configuration\/"},"image":["https:\/\/blog.gaoyuexiang.cn\/images\/Apple-Devices-Preview.png"],"genre":"posts","keywords":"spring, spring boot, auto configure","wordcount":1677,"url":"https:\/\/blog.gaoyuexiang.cn\/create-your-own-spring-auto-configuration\/","datePublished":"2018-08-21T11:19:05+00:00","dateModified":"2022-01-31T20:10:51+08:00","license":"CC BY-NC 4.0 CN","publisher":{"@type":"Organization","name":"无糖拿铁","logo":"https:\/\/blog.gaoyuexiang.cn\/images\/avatar.png"},"author":{"@type":"Person","name":"无糖拿铁"},"description":""}</script></head>
+<body header-desktop=fixed header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem('theme')?localStorage.getItem('theme')==='dark':'auto'==='auto'?window.matchMedia('(prefers-color-scheme: dark)').matches:'auto'==='dark')&&document.body.setAttribute('theme','dark')</script>
+<div id=mask></div><div class=wrapper><header class=desktop id=header-desktop>
+<div class=header-wrapper>
+<div class=header-title>
+<a href=/ title=无糖拿铁，谢谢><span class=header-title-pre><i class="far fa-kiss-wink-heart fa-fw"></i></span>无糖拿铁，谢谢</a>
+</div>
+<div class=menu>
+<div class=menu-inner><a class=menu-item href=/posts/> 所有文章 </a><a class=menu-item href=/tags/> 标签 </a><a class=menu-item href=/categories/> 分类 </a><a class=menu-item href=/series-index/> 系列 </a><a class=menu-item href=/about/> 关于 </a><a class=menu-item href=https://github.com/kbyyd24/ title=GitHub rel="noopener noreffer" target=_blank><i class="fab fa-github fa-fw"></i> </a><span class="menu-item delimiter"></span><span class="menu-item search" id=search-desktop>
+<input type=text placeholder=搜索文章标题或内容... id=search-input-desktop>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-desktop title=搜索>
+<i class="fas fa-search fa-fw"></i>
+</a>
+<a href=javascript:void(0); class="search-button search-clear" id=search-clear-desktop title=清空>
+<i class="fas fa-times-circle fa-fw"></i>
+</a>
+<span class="search-button search-loading" id=search-loading-desktop>
+<i class="fas fa-spinner fa-fw fa-spin"></i>
+</span>
+</span><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
+<i class="fas fa-adjust fa-fw"></i>
+</a>
+</div>
+</div>
+</div>
+</header><header class=mobile id=header-mobile>
+<div class=header-container>
+<div class=header-wrapper>
+<div class=header-title>
+<a href=/ title=无糖拿铁，谢谢><span class=header-title-pre><i class="far fa-kiss-wink-heart fa-fw"></i></span>无糖拿铁，谢谢</a>
+</div>
+<div class=menu-toggle id=menu-toggle-mobile>
+<span></span><span></span><span></span>
+</div>
+</div>
+<div class=menu id=menu-mobile><div class=search-wrapper>
+<div class="search mobile" id=search-mobile>
+<input type=text placeholder=搜索文章标题或内容... id=search-input-mobile>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-mobile title=搜索>
+<i class="fas fa-search fa-fw"></i>
+</a>
+<a href=javascript:void(0); class="search-button search-clear" id=search-clear-mobile title=清空>
+<i class="fas fa-times-circle fa-fw"></i>
+</a>
+<span class="search-button search-loading" id=search-loading-mobile>
+<i class="fas fa-spinner fa-fw fa-spin"></i>
+</span>
+</div>
+<a href=javascript:void(0); class=search-cancel id=search-cancel-mobile>
+取消
+</a>
+</div><a class=menu-item href=/posts/ title>所有文章</a><a class=menu-item href=/tags/ title>标签</a><a class=menu-item href=/categories/ title>分类</a><a class=menu-item href=/series-index/ title>系列</a><a class=menu-item href=/about/ title>关于</a><a class=menu-item href=https://github.com/kbyyd24/ title=GitHub rel="noopener noreffer" target=_blank><i class="fab fa-github fa-fw"></i></a><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
+<i class="fas fa-adjust fa-fw"></i>
+</a></div>
+</div>
+</header>
+<div class="search-dropdown desktop">
+<div id=search-dropdown-desktop></div>
+</div>
+<div class="search-dropdown mobile">
+<div id=search-dropdown-mobile></div>
+</div>
+<main class=main>
+<div class=container><div class=toc id=toc-auto>
+<h2 class=toc-title>目录</h2>
+<div class=toc-content id=toc-content-auto></div>
+</div><article class="page single"><h1 class="single-title animated flipInX">创建自己的 Spring auto-configuration</h1><div class=post-meta>
+<div class=post-meta-line><span class=post-author><a href=https://blog.gaoyuexiang.cn/about title=Author target=_blank rel="noopener noreffer author" class=author><i class="fas fa-user-circle fa-fw"></i>无糖拿铁</a></span></div>
+<div class=post-meta-line><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime=2018-08-21>2018-08-21</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1677 字&nbsp;
+<i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 4 分钟&nbsp;<span id=/create-your-own-spring-auto-configuration/ class=leancloud_visitors data-flag-title="创建自己的 Spring auto-configuration">
+<i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
+</span>&nbsp;</div>
+</div><div class="details toc" id=toc-static kept>
+<div class="details-summary toc-title">
+<span>目录</span>
+<span><i class="details-icon fas fa-angle-right"></i></span>
+</div>
+<div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents></nav></div>
+</div><div class=content id=content><div class=paragraph>
+<p><code>Spring Boot</code> 为我们带来了自动配置的舒适体验，极大的提高了开发效率。当我们需要使用第三方库，而这些库没有实现 <code>Spring Boot Auto-Configururation</code> 时，我们为了避免在不同项目中的重复配置，可能需要为这些库提供 <code>Auto-Configuration</code>。</p>
+</div>
+<div class=paragraph>
+<p><code>Spring Boot</code> 为我们提供了自定义 <code>auto-configuration</code> 的方法，可以让我们方便的定义自己的 <code>bean</code> 如何注入容器，这样，我们可以将和 <code>Spring</code> 集成的代码集中起来，减少不必要的重复配置。</p>
+</div>
+<div class=sect1>
+<h2 id=_spring_如何实现自动配置>Spring 如何实现自动配置</h2>
+<div class=sectionbody>
+<div class=paragraph>
+<p><a href=https://www.jianshu.com/p/346cac67bfcc>简书上的这篇文章</a> 对 <code>Spring Boot</code> 如何实现自动配置做了比较详细的介绍。</p>
+</div>
+<div class=paragraph>
+<p>简单来说，<code>Spring Boot</code> 提供了 <code>spring-boot-autoconfigure</code> 来实现自动配置，利用 <code>@Conditional</code> 注解判断需要配置的内容。<code>Spring core</code> 中的 <code>SpringFactoriesLoader</code> 类则会扫描 <code>classpath</code> 下所有的 JAR 包中 <code>META-INF/spring.factories</code> 里的内容。这个文件里包含了很多 <code>Spring</code> 里需要的内容，比如 <code>ApplicationContextInitializer</code> 、<code>ApplicationListener</code> 等类的子类信息，<code>Spring</code> 将会根据各自在生命周期中需要加载的时间进行加载。</p>
+</div>
+<div class=listingblock>
+<div class=title>spring boot autoconfigure 中的 spring.factories 部分内容</div>
+<div class=content>
+<pre class=highlight><code class=language-properties data-lang=properties># Initializers
+org.springframework.context.ApplicationContextInitializer=\
+org.springframework.boot.autoconfigure.SharedMetadataReaderFactoryContextInitializer,\
+org.springframework.boot.autoconfigure.logging.ConditionEvaluationReportLoggingListener
+
+# Application Listeners
+org.springframework.context.ApplicationListener=\
+org.springframework.boot.autoconfigure.BackgroundPreinitializer
+
+# Auto Configuration Import Listeners
+org.springframework.boot.autoconfigure.AutoConfigurationImportListener=\
+org.springframework.boot.autoconfigure.condition.ConditionEvaluationReportAutoConfigurationImportListener
+
+# Auto Configuration Import Filters
+org.springframework.boot.autoconfigure.AutoConfigurationImportFilter=\
+org.springframework.boot.autoconfigure.condition.OnClassCondition
+
+# Auto Configure
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+org.springframework.boot.autoconfigure.admin.SpringApplicationAdminJmxAutoConfiguration,\
+org.springframework.boot.autoconfigure.aop.AopAutoConfiguration,\
+org.springframework.boot.autoconfigure.webservices.WebServicesAutoConfiguration
+
+# Failure analyzers
+org.springframework.boot.diagnostics.FailureAnalyzer=\
+org.springframework.boot.autoconfigure.diagnostics.analyzer.NoSuchBeanDefinitionFailureAnalyzer,\
+org.springframework.boot.autoconfigure.jdbc.DataSourceBeanCreationFailureAnalyzer,\
+org.springframework.boot.autoconfigure.jdbc.HikariDriverConfigurationFailureAnalyzer,\
+org.springframework.boot.autoconfigure.session.NonUniqueSessionRepositoryFailureAnalyzer
+
+# Template availability providers
+org.springframework.boot.autoconfigure.template.TemplateAvailabilityProvider=\
+org.springframework.boot.autoconfigure.freemarker.FreeMarkerTemplateAvailabilityProvider,\\
+org.springframework.boot.autoconfigure.thymeleaf.ThymeleafTemplateAvailabilityProvider,\
+org.springframework.boot.autoconfigure.web.servlet.JspTemplateAvailabilityProvider</code></pre>
+</div>
+</div>
+<div class=paragraph>
+<p>在 <code>Spring Boot autoconfigure</code> 中，提供了 <code>AutoConfigurationImportSelector</code> 类用来读取 <code>spring.factories</code> 中的 <code>org.springframework.boot.autoconfigure.EnableAutoConfiguration</code> 的值，然后 <code>Spring</code> 会加载这里读到的所有的 <code>Configuration</code>。这些被读取到的 <code>Configuration</code> 一定要是 <code>Auto-configuration class</code>，在 <code>Spring</code> 中，被 <code>@Configuration</code> 注解的类就符合这个条件。</p>
+</div>
+</div>
+</div>
+<div class=sect1>
+<h2 id=_实现自己的_auto_configuration>实现自己的 auto configuration</h2>
+<div class=sectionbody>
+<div class=paragraph>
+<p>根据前面的理解，我们很容易想到如何来实现自己的 auto configuration。</p>
+</div>
+<div class="olist arabic">
+<ol class=arabic>
+<li>
+<p>编写自定义的配置类，并加上 <code>@Configuration</code> 注解</p>
+</li>
+<li>
+<p>在 <code>resources</code> 目录下创建 <code>META-INF/spring.factories</code></p>
+</li>
+</ol>
+</div>
+<div class=paragraph>
+<p>在 <code>Spring</code> 官网，也详细的讲述了如何实现自己的自动配置：https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-developing-auto-configuration.html</p>
+</div>
+<div class=paragraph>
+<p>我们来看一个实际的例子。<code>github</code> 上面有一个项目叫做 <a href=https://github.com/vorburger/MariaDB4j>MariaDB4j</a>。它可以为我们的 Java 项目提供一个 <code>embedded mariaDB</code>。然而在与 <code>Spring Boot</code> 集成的时候发现，如果要将 <code>mariaDB4j</code> 作为一个 <code>bean</code> 注入到我们的 <code>Spring Context</code> 里，我们需要确保在 <code>mariaDB</code> 启动之后，<code>Spring</code> 才会去加载 <code>dataSource</code>。我们不得不重写一个 <code>dataSource</code> 来注入 <code>Spring</code>。</p>
+</div>
+<div class=listingblock>
+<div class=content>
+<pre class=highlight><code class=language-java data-lang=java>@Bean
+@DependsOn(&#34;mariaDB4j&#34;) #<b class=conum>(1)</b>
+public DataSource dataSource(DataSourceProperties dataSourceProperties) {
+    return DataSourceBuilder.create()
+            .driverClassName(dataSourceProperties.getDriverClassName())
+            .url(dataSourceProperties.getUrl())
+            .username(dataSourceProperties.getUsername())
+            .password(dataSourceProperties.getPassword())
+            .build();
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p><code>dataSource</code> 需要等待 <code>mariaDB4j</code> 加载完成才能被加载</p>
+</li>
+</ol>
+</div>
+<div class=paragraph>
+<p>显然，我们不想在每次使用的时候都要写一份这样的代码，如果能够单纯的把 <code>mariaDB4j</code> 引入到我们的 <code>classpath</code> 中就能使用，那才是我们期望的用法。所以我选择了为它添加 <code>auto-configuration</code> 的方式。</p>
+</div>
+<div class=sect2>
+<h3 id=_创建_mariadb4jspringconfiguration>创建 MariaDB4jSpringConfiguration</h3>
+<div class=paragraph>
+<p>将 <code>MariaDB4j</code> 源码拉下来之后，新建了一个名为 <code>mariaDB4j-springboot</code> 的 <code>sub module</code>。然后加上我们需要的依赖。</p>
+</div>
+<div class=listingblock>
+<div class=content>
+<pre class=highlight><code class=language-xml data-lang=xml>&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;${project.groupId}&lt;/groupId&gt;
+        &lt;artifactId&gt;mariaDB4j&lt;/artifactId&gt;
+        &lt;version&gt;${project.version}&lt;/version&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-autoconfigure-processor&lt;/artifactId&gt;
+        &lt;optional&gt;true&lt;/optional&gt;
+    &lt;/dependency&gt;
+
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-test&lt;/artifactId&gt;
+        &lt;scope&gt;test&lt;/scope&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;</code></pre>
+</div>
+</div>
+<div class=paragraph>
+<p>然后，添加我们的 <code>Auto-configuration class</code></p>
+</div>
+<div class=listingblock>
+<div class=content>
+<pre class=highlight><code class=language-java data-lang=java>@Configuration
+public class MariaDB4jSpringConfiguration {
+    @Bean
+    public MariaDB4jSpringService mariaDB4j() {
+        return new MariaDB4jSpringService();
+    }
+}</code></pre>
+</div>
+</div>
+<div class=paragraph>
+<p>接下来，我们需要测试这个配置类能够被成功的加载。这里的测试我还没有理解到，仅仅是按照官网的例子来写了一个测试：</p>
+</div>
+<div class=listingblock>
+<div class=content>
+<pre class=highlight><code class=language-java data-lang=java>public class MariaDB4JSpringConfigurationTest {
+
+    private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
+            .withConfiguration(AutoConfigurations.of(MariaDB4jSpringConfiguration.class));
+
+    @Test
+    public void shouldAutoConfigureEmbeddedMariaDB() {
+        this.contextRunner.withUserConfiguration(MariaDB4jSpringConfiguration.class)
+                .run(context -&gt; {
+                    assertThat(context).hasSingleBean(MariaDB4jSpringService.class);
+                    assertThat(context.getBean(MariaDB4jSpringService.class))
+                            .isSameAs(context.getBean(MariaDB4jSpringConfiguration.class).mariaDB4j());
+                });
+    }
+
+}</code></pre>
+</div>
+</div>
+<div class=paragraph>
+<p>这里的不理解在于，创建的这个 <code>ApplicationContextRunner</code> 类不能自动的去扫描 <code>bean</code> 而要让我们手动的去加载它。这样一来，就不能通过这个测试来验证这个类会被自动配置。</p>
+</div>
+</div>
+<div class=sect2>
+<h3 id=_创建_datasource_bean>创建 dataSource bean</h3>
+<div class=paragraph>
+<p>在 <code>mariaDB4j</code> 启动完成后，我们就能创建 <code>dataSource</code> 了。因为 <code>Spring</code> 在 <code>dataSource</code> 创建后会尝试连接，所以一定要保证 <code>mariaDB4j</code> 先创建。</p>
+</div>
+<div class=listingblock>
+<div class=content>
+<pre class=highlight><code class=language-java data-lang=java>@Bean
+@DependsOn(&#34;mariaDB4j&#34;) #<b class=conum>(1)</b>
+public DataSource dataSource(DataSourceProperties dataSourceProperties) {
+    return DataSourceBuilder.create()
+            .driverClassName(dataSourceProperties.getDriverClassName())
+            .url(dataSourceProperties.getUrl())
+            .username(dataSourceProperties.getUsername())
+            .password(dataSourceProperties.getPassword())
+            .build();
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p>通过 <code>bean</code> 的名称来判断需要依赖哪个 <code>bean</code></p>
+</li>
+</ol>
+</div>
+</div>
+<div class=sect2>
+<h3 id=_添加_spring_factories>添加 spring.factories</h3>
+<div class=paragraph>
+<p>有了这些，<code>Spring</code> 还不能自动配置我们的配置类，我们还需要在 <code>src/main/resources/META-INF</code> 下添加 <code>spring.factories</code> 文件，让 <code>Spring</code> 扫描这个文件后知道哪些类可以自动配置。</p>
+</div>
+<div class=listingblock>
+<div class=content>
+<pre class=highlight><code class=language-properties data-lang=properties>org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  ch.vorburger.mariadb4j.springboot.autoconfigure.MariaDB4jSpringConfiguration,\
+  ch.vorburger.mariadb4j.springboot.autoconfigure.DataSourceAutoConfiguration</code></pre>
+</div>
+</div>
+<div class=paragraph>
+<p>这里添加的类名一定是包含 <code>package</code> 的全名，否则 <code>Spring</code> 找不到指定的类。</p>
+</div>
+<hr>
+<div class=paragraph>
+<p>现在，我们已经完成了自动配置的工作，打包好后就能使用了：</p>
+</div>
+<div class=listingblock>
+<div class=title>打包</div>
+<div class=content>
+<pre class=highlight><code class=language-bash data-lang=bash>mvn clean install</code></pre>
+</div>
+</div>
+<div class=paragraph>
+<p>然后我们能够在本地 <code>maven</code> 仓库看到 <code>ch/vorburger/mariaDB4j</code> 目录下多了一个 <code>mariaDB4j-springboot</code>， 接下来就能使用了。</p>
+</div>
+<div class=listingblock>
+<div class=content>
+<pre class=highlight><code class=language-gradle data-lang=gradle>dependencies {
+  testCompile(&#34;ch.vorburger.mariaDB4j:mariaDB4j-springboot:2.3.1-SNAPSHOT&#34;)
+}</code></pre>
+</div>
+</div>
+<div class=paragraph>
+<p>这次的实践提了一个 <code>PR</code> 到 <a href=https://github.com/vorburger/MariaDB4j/pull/153/(mariaDB4j)，也算是通过实践来学习了。 class=bare>https://github.com/vorburger/MariaDB4j/pull/153/(mariaDB4j)，也算是通过实践来学习了。</a></p>
+</div>
+</div>
+</div>
+</div>
+<div class=sect1>
+<h2 id=_总结>总结</h2>
+<div class=sectionbody>
+<div class=paragraph>
+<p>要实现自己的 <code>auto-configuration</code> 还算简单，只需要两步：</p>
+</div>
+<div class="olist arabic">
+<ol class=arabic>
+<li>
+<p>添加自己的 <code>Configuration</code> 类</p>
+</li>
+<li>
+<p>将自己添加的配置类写到 <code>META-INF/spring.factories</code> 里</p>
+</li>
+</ol>
+</div>
+<div class=paragraph>
+<p>但是，这背后的实现却有些复杂，值得深入研究。这里会涉及到 <code>Spring</code> 的大量知识，包括各种包的依赖、<code>spring.factories</code> 的读取、<code>@Conditional</code> 注解等等，每一个都可以研究一下写一篇博客出来🐶🐶。</p>
+</div>
+</div>
+</div>
+</div><div class=post-footer id=post-footer>
+<div class=post-info>
+<div class=post-info-line>
+<div class=post-info-mod>
+<span>更新于 2022-01-31&nbsp;<a class=git-hash href=https://github.com/kbyyd24/LoveItAgain/commit/8309bc020e867fcafd813c9ce7a1508339eaedeb target=_blank title="commit by kbyyd24(melo@gaoyuexiang.cn) 8309bc020e867fcafd813c9ce7a1508339eaedeb: reorg posts">
+<i class="fas fa-hashtag fa-fw"></i>8309bc0</a></span>
+</div>
+<div class=post-info-license></div>
+</div>
+<div class=post-info-line>
+<div class=post-info-md><span>
+<a class=link-to-markdown href=/create-your-own-spring-auto-configuration/index.md target=_blank>阅读原始文档</a>
+</span></div>
+<div class=post-info-share>
+<span><a href=javascript:void(0); title="分享到 Twitter" data-sharer=twitter data-url=https://blog.gaoyuexiang.cn/create-your-own-spring-auto-configuration/ data-title="创建自己的 Spring auto-configuration" data-hashtags="spring,spring boot,auto configure"><i class="fab fa-twitter fa-fw"></i></a><a href=javascript:void(0); title="分享到 Facebook" data-sharer=facebook data-url=https://blog.gaoyuexiang.cn/create-your-own-spring-auto-configuration/ data-hashtag=spring><i class="fab fa-facebook-square fa-fw"></i></a><a href=javascript:void(0); title="分享到 Hacker News" data-sharer=hackernews data-url=https://blog.gaoyuexiang.cn/create-your-own-spring-auto-configuration/ data-title="创建自己的 Spring auto-configuration"><i class="fab fa-hacker-news fa-fw"></i></a><a href=javascript:void(0); title="分享到 Line" data-sharer=line data-url=https://blog.gaoyuexiang.cn/create-your-own-spring-auto-configuration/ data-title="创建自己的 Spring auto-configuration"><i data-svg-src=https://cdn.jsdelivr.net/npm/simple-icons@2.14.0/icons/line.svg></i></a><a href=javascript:void(0); title="分享到 微博" data-sharer=weibo data-url=https://blog.gaoyuexiang.cn/create-your-own-spring-auto-configuration/ data-title="创建自己的 Spring auto-configuration"><i class="fab fa-weibo fa-fw"></i></a></span>
+</div>
+</div>
+</div>
+<div class=post-info-more>
+<section class=post-tags><i class="fas fa-tags fa-fw"></i>&nbsp;<a href=/tags/spring/>spring</a>,&nbsp;<a href=/tags/spring-boot/>spring boot</a>,&nbsp;<a href=/tags/auto-configure/>auto configure</a></section>
+<section>
+<span><a href=javascript:void(0); onclick=window.history.back()>返回</a></span>&nbsp;|&nbsp;<span><a href=/>主页</a></span>
+</section>
+</div>
+<div class=post-nav><a href=/biref-summary-of-one-year-of-work/ class=prev rel=prev title=码农一年小结><i class="fas fa-angle-left fa-fw"></i>码农一年小结</a>
+<a href=/what-is-12-factors-app/ class=next rel=next title="什么是 Twelve-Factor App">什么是 Twelve-Factor App<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+<div id=comments><div id=valine class=comment></div><noscript>
+Please enable JavaScript to view the comments powered by <a href=https://valine.js.org/>Valine</a>.
+</noscript></div></article></div>
+</main><footer class=footer>
+<div class=footer-container><div class=footer-line>由 <a href=https://gohugo.io/ target=_blank rel="noopener noreffer" title="Hugo 0.92.1">Hugo</a> 强力驱动 | 主题 - <a href=https://github.com/dillonzq/LoveIt target=_blank rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+</div><div class=footer-line><i class="far fa-copyright fa-fw"></i><span itemprop=copyrightYear>2016 - 2022</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=https://blog.gaoyuexiang.cn/about target=_blank>无糖拿铁</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span><span class=icp-splitter>&nbsp;|&nbsp;</span><br class=icp-br>
+<span class=icp><a href=https://beian.miit.gov.cn/ target=_blank>蜀ICP备15031888号-2</a></span></div>
+</div>
+</footer></div>
+<div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title=回到顶部>
+<i class="fas fa-arrow-up fa-fw"></i>
+</a><a href=# id=view-comments class=fixed-button title=查看评论>
+<i class="fas fa-comment fa-fw"></i>
+</a>
+</div>
+<link rel=stylesheet href=/lib/valine/valine.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.0/build/styles/atom-one-dark.min.css><script type=text/javascript src=https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/autocomplete.js@0.37.1/dist/autocomplete.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/algoliasearch@4.2.0/dist/algoliasearch-lite.umd.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/lazysizes@5.2.2/lazysizes.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/sharer.js@0.4.0/sharer.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.0/build/highlight.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.0/build/languages/properties.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.0/build/languages/gradle.min.js></script><script type=text/javascript src=/js/highlight.min.js></script><script type=text/javascript>window.config={code:{copyTitle:"复制到剪贴板",maxShownLines:10},comment:{valine:{appId:"QGzwQXOqs5JOhN4RGPOkR2mR-MdYXbMMI",appKey:"WBmoGyJtbqUswvfLh6L8iEBr",avatar:"mp",el:"#valine",emojiCDN:"https://cdn.jsdelivr.net/npm/emoji-datasource-google@5.0.1/img/google/64/",emojiMaps:{100:"1f4af.png",alien:"1f47d.png",anger:"1f4a2.png",angry:"1f620.png",anguished:"1f627.png",astonished:"1f632.png",black_heart:"1f5a4.png",blue_heart:"1f499.png",blush:"1f60a.png",bomb:"1f4a3.png",boom:"1f4a5.png",broken_heart:"1f494.png",brown_heart:"1f90e.png",clown_face:"1f921.png",cold_face:"1f976.png",cold_sweat:"1f630.png",confounded:"1f616.png",confused:"1f615.png",cry:"1f622.png",crying_cat_face:"1f63f.png",cupid:"1f498.png",dash:"1f4a8.png",disappointed:"1f61e.png",disappointed_relieved:"1f625.png",dizzy:"1f4ab.png",dizzy_face:"1f635.png",drooling_face:"1f924.png",exploding_head:"1f92f.png",expressionless:"1f611.png",face_vomiting:"1f92e.png",face_with_cowboy_hat:"1f920.png",face_with_hand_over_mouth:"1f92d.png",face_with_head_bandage:"1f915.png",face_with_monocle:"1f9d0.png",face_with_raised_eyebrow:"1f928.png",face_with_rolling_eyes:"1f644.png",face_with_symbols_on_mouth:"1f92c.png",face_with_thermometer:"1f912.png",fearful:"1f628.png",flushed:"1f633.png",frowning:"1f626.png",ghost:"1f47b.png",gift_heart:"1f49d.png",green_heart:"1f49a.png",grimacing:"1f62c.png",grin:"1f601.png",grinning:"1f600.png",hankey:"1f4a9.png",hear_no_evil:"1f649.png",heart:"2764-fe0f.png",heart_decoration:"1f49f.png",heart_eyes:"1f60d.png",heart_eyes_cat:"1f63b.png",heartbeat:"1f493.png",heartpulse:"1f497.png",heavy_heart_exclamation_mark_ornament:"2763-fe0f.png",hole:"1f573-fe0f.png",hot_face:"1f975.png",hugging_face:"1f917.png",hushed:"1f62f.png",imp:"1f47f.png",innocent:"1f607.png",japanese_goblin:"1f47a.png",japanese_ogre:"1f479.png",joy:"1f602.png",joy_cat:"1f639.png",kiss:"1f48b.png",kissing:"1f617.png",kissing_cat:"1f63d.png",kissing_closed_eyes:"1f61a.png",kissing_heart:"1f618.png",kissing_smiling_eyes:"1f619.png",laughing:"1f606.png",left_speech_bubble:"1f5e8-fe0f.png",love_letter:"1f48c.png",lying_face:"1f925.png",mask:"1f637.png",money_mouth_face:"1f911.png",nauseated_face:"1f922.png",nerd_face:"1f913.png",neutral_face:"1f610.png",no_mouth:"1f636.png",open_mouth:"1f62e.png",orange_heart:"1f9e1.png",partying_face:"1f973.png",pensive:"1f614.png",persevere:"1f623.png",pleading_face:"1f97a.png",pouting_cat:"1f63e.png",purple_heart:"1f49c.png",rage:"1f621.png",relaxed:"263a-fe0f.png",relieved:"1f60c.png",revolving_hearts:"1f49e.png",right_anger_bubble:"1f5ef-fe0f.png",robot_face:"1f916.png",rolling_on_the_floor_laughing:"1f923.png",scream:"1f631.png",scream_cat:"1f640.png",see_no_evil:"1f648.png",shushing_face:"1f92b.png",skull:"1f480.png",skull_and_crossbones:"2620-fe0f.png",sleeping:"1f634.png",sleepy:"1f62a.png",slightly_frowning_face:"1f641.png",slightly_smiling_face:"1f642.png",smile:"1f604.png",smile_cat:"1f638.png",smiley:"1f603.png",smiley_cat:"1f63a.png",smiling_face_with_3_hearts:"1f970.png",smiling_imp:"1f608.png",smirk:"1f60f.png",smirk_cat:"1f63c.png",sneezing_face:"1f927.png",sob:"1f62d.png",space_invader:"1f47e.png",sparkling_heart:"1f496.png",speak_no_evil:"1f64a.png",speech_balloon:"1f4ac.png","star-struck":"1f929.png",stuck_out_tongue:"1f61b.png",stuck_out_tongue_closed_eyes:"1f61d.png",stuck_out_tongue_winking_eye:"1f61c.png",sunglasses:"1f60e.png",sweat:"1f613.png",sweat_drops:"1f4a6.png",sweat_smile:"1f605.png",thinking_face:"1f914.png",thought_balloon:"1f4ad.png",tired_face:"1f62b.png",triumph:"1f624.png",two_hearts:"1f495.png",unamused:"1f612.png",upside_down_face:"1f643.png",weary:"1f629.png",white_frowning_face:"2639-fe0f.png",white_heart:"1f90d.png",wink:"1f609.png",woozy_face:"1f974.png",worried:"1f61f.png",yawning_face:"1f971.png",yellow_heart:"1f49b.png",yum:"1f60b.png",zany_face:"1f92a.png",zipper_mouth_face:"1f910.png",zzz:"1f4a4.png"},enableQQ:!1,highlight:!0,lang:"zh-cn",pageSize:10,placeholder:"你的评论 ...",recordIP:!0,serverURLs:"https://leancloud.hugoloveit.com",visitor:!0}},search:{algoliaAppID:"PASDMWALPK",algoliaIndex:"index.zh-cn",algoliaSearchKey:"b42948e51daaa93df92381c8e2ac0f93",highlightTag:"em",maxResultLength:10,noResultsFound:"没有找到结果",snippetLength:50,type:"algolia"}}</script><script type=text/javascript src=/js/theme.min.js></script>
+<script>let headerToLi=b=>{let a=document.createElement('a');a.innerText=b.innerText,a.setAttribute('href','#'+b.id);let c=document.createElement('li');return c.appendChild(a),c},headerToLiWithChild=(d,a)=>{let b=headerToLi(d),c=document.createElement('ul');return a.length!=0&&(b.appendChild(c),a.forEach(a=>{c.appendChild(a)})),b},toc=document.createElement('ul');Array.from(document.getElementById('content').getElementsByTagName('h2')).map(a=>headerToLiWithChild(a,Array.from(a.parentElement.getElementsByTagName('h3')).map(a=>headerToLiWithChild(a,Array.from(a.parentElement.getElementsByTagName('h4')).map(a=>headerToLi(a)))))).forEach(a=>toc.appendChild(a)),document.getElementById('TableOfContents').appendChild(toc)</script>
+</body>
+</html>

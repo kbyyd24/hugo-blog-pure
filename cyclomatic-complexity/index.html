@@ -1,0 +1,306 @@
+<!doctype html><html lang=zh-cn>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=robots content="noodp">
+<meta http-equiv=x-ua-compatible content="IE=edge, chrome=1">
+<title>圈复杂度 - 无糖拿铁，谢谢</title><meta name=Description content="学习、记录、分享"><meta property="og:title" content="圈复杂度">
+<meta property="og:description" content="过去我知道有圈复杂度这个概念，它代表了代码的复杂程度。但是却没有了解过它是怎么算出来的，哪些代码会影响它的结果。 今天我们就来看一下，圈复杂度">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://blog.gaoyuexiang.cn/cyclomatic-complexity/"><meta property="og:image" content="https://blog.gaoyuexiang.cn/logo.png"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2020-08-15T16:56:16+00:00">
+<meta property="article:modified_time" content="2022-02-16T08:51:07+08:00">
+<meta name=twitter:card content="summary_large_image">
+<meta name=twitter:image content="https://blog.gaoyuexiang.cn/logo.png">
+<meta name=twitter:title content="圈复杂度">
+<meta name=twitter:description content="过去我知道有圈复杂度这个概念，它代表了代码的复杂程度。但是却没有了解过它是怎么算出来的，哪些代码会影响它的结果。 今天我们就来看一下，圈复杂度">
+<meta name=application-name content="LoveIt">
+<meta name=apple-mobile-web-app-title content="LoveIt"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel="shortcut icon" type=image/x-icon href=/favicon.ico>
+<link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
+<link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=https://blog.gaoyuexiang.cn/cyclomatic-complexity/><link rel=prev href=https://blog.gaoyuexiang.cn/eureka-self-preservation-mode/><link rel=next href=https://blog.gaoyuexiang.cn/jackson-inheritance/><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css><link rel=stylesheet href=/css/style.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"圈复杂度","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/blog.gaoyuexiang.cn\/cyclomatic-complexity\/"},"image":["https:\/\/blog.gaoyuexiang.cn\/images\/Apple-Devices-Preview.png"],"genre":"posts","wordcount":1389,"url":"https:\/\/blog.gaoyuexiang.cn\/cyclomatic-complexity\/","datePublished":"2020-08-15T16:56:16+00:00","dateModified":"2022-02-16T08:51:07+08:00","license":"CC BY-NC 4.0 CN","publisher":{"@type":"Organization","name":"无糖拿铁","logo":"https:\/\/blog.gaoyuexiang.cn\/images\/avatar.png"},"author":{"@type":"Person","name":"无糖拿铁"},"description":""}</script></head>
+<body header-desktop=fixed header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem('theme')?localStorage.getItem('theme')==='dark':'auto'==='auto'?window.matchMedia('(prefers-color-scheme: dark)').matches:'auto'==='dark')&&document.body.setAttribute('theme','dark')</script>
+<div id=mask></div><div class=wrapper><header class=desktop id=header-desktop>
+<div class=header-wrapper>
+<div class=header-title>
+<a href=/ title=无糖拿铁，谢谢><span class=header-title-pre><i class="far fa-kiss-wink-heart fa-fw"></i></span>无糖拿铁，谢谢</a>
+</div>
+<div class=menu>
+<div class=menu-inner><a class=menu-item href=/posts/> 所有文章 </a><a class=menu-item href=/tags/> 标签 </a><a class=menu-item href=/categories/> 分类 </a><a class=menu-item href=/series-index/> 系列 </a><a class=menu-item href=/about/> 关于 </a><a class=menu-item href=https://github.com/kbyyd24/ title=GitHub rel="noopener noreffer" target=_blank><i class="fab fa-github fa-fw"></i> </a><span class="menu-item delimiter"></span><span class="menu-item search" id=search-desktop>
+<input type=text placeholder=搜索文章标题或内容... id=search-input-desktop>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-desktop title=搜索>
+<i class="fas fa-search fa-fw"></i>
+</a>
+<a href=javascript:void(0); class="search-button search-clear" id=search-clear-desktop title=清空>
+<i class="fas fa-times-circle fa-fw"></i>
+</a>
+<span class="search-button search-loading" id=search-loading-desktop>
+<i class="fas fa-spinner fa-fw fa-spin"></i>
+</span>
+</span><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
+<i class="fas fa-adjust fa-fw"></i>
+</a>
+</div>
+</div>
+</div>
+</header><header class=mobile id=header-mobile>
+<div class=header-container>
+<div class=header-wrapper>
+<div class=header-title>
+<a href=/ title=无糖拿铁，谢谢><span class=header-title-pre><i class="far fa-kiss-wink-heart fa-fw"></i></span>无糖拿铁，谢谢</a>
+</div>
+<div class=menu-toggle id=menu-toggle-mobile>
+<span></span><span></span><span></span>
+</div>
+</div>
+<div class=menu id=menu-mobile><div class=search-wrapper>
+<div class="search mobile" id=search-mobile>
+<input type=text placeholder=搜索文章标题或内容... id=search-input-mobile>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-mobile title=搜索>
+<i class="fas fa-search fa-fw"></i>
+</a>
+<a href=javascript:void(0); class="search-button search-clear" id=search-clear-mobile title=清空>
+<i class="fas fa-times-circle fa-fw"></i>
+</a>
+<span class="search-button search-loading" id=search-loading-mobile>
+<i class="fas fa-spinner fa-fw fa-spin"></i>
+</span>
+</div>
+<a href=javascript:void(0); class=search-cancel id=search-cancel-mobile>
+取消
+</a>
+</div><a class=menu-item href=/posts/ title>所有文章</a><a class=menu-item href=/tags/ title>标签</a><a class=menu-item href=/categories/ title>分类</a><a class=menu-item href=/series-index/ title>系列</a><a class=menu-item href=/about/ title>关于</a><a class=menu-item href=https://github.com/kbyyd24/ title=GitHub rel="noopener noreffer" target=_blank><i class="fab fa-github fa-fw"></i></a><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
+<i class="fas fa-adjust fa-fw"></i>
+</a></div>
+</div>
+</header>
+<div class="search-dropdown desktop">
+<div id=search-dropdown-desktop></div>
+</div>
+<div class="search-dropdown mobile">
+<div id=search-dropdown-mobile></div>
+</div>
+<main class=main>
+<div class=container><div class=toc id=toc-auto>
+<h2 class=toc-title>目录</h2>
+<div class=toc-content id=toc-content-auto></div>
+</div><article class="page single"><h1 class="single-title animated flipInX">圈复杂度</h1><div class=post-meta>
+<div class=post-meta-line><span class=post-author><a href=https://blog.gaoyuexiang.cn/about title=Author target=_blank rel="noopener noreffer author" class=author><i class="fas fa-user-circle fa-fw"></i>无糖拿铁</a></span></div>
+<div class=post-meta-line><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime=2020-08-15>2020-08-15</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1389 字&nbsp;
+<i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 3 分钟&nbsp;<span id=/cyclomatic-complexity/ class=leancloud_visitors data-flag-title=圈复杂度>
+<i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
+</span>&nbsp;</div>
+</div><div class="details toc" id=toc-static kept>
+<div class="details-summary toc-title">
+<span>目录</span>
+<span><i class="details-icon fas fa-angle-right"></i></span>
+</div>
+<div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents></nav></div>
+</div><div class=content id=content><div class=paragraph>
+<p>过去我知道有圈复杂度这个概念，它代表了代码的复杂程度。但是却没有了解过它是怎么算出来的，哪些代码会影响它的结果。
+今天我们就来看一下，圈复杂度这个概念。</p>
+</div>
+<div class=sect1>
+<h2 id=_什么是圈复杂度>什么是圈复杂度</h2>
+<div class=sectionbody>
+<div class=paragraph>
+<p>圈复杂度这个概念在 1976 年就已经被提出来了，比很多编程语言还要古老。
+它的英文名是 Cyclomatic complexity，中文是圈复杂度、循环复杂度或者条件复杂度。
+显然圈复杂度并不是一个好的翻译，因为第一次看到的时候，其实不知道它是个什么东西。但是另外两个名字也只能表示它的部分内容。</p>
+</div>
+<div class=paragraph>
+<p>圈复杂度被用来判断程序的复杂程度，圈复杂度越高，则代表程序越复杂。
+它的数值代表的是程序的<strong>线性独立路径</strong>的数量。</p>
+</div>
+<div class=quoteblock>
+<blockquote>
+<div class=paragraph>
+<p>线性独立路径，又被称作线性无关路径，是一条至少包含一条在其他任何线性独立路径中从未有过的边的路径。</p>
+</div>
+</blockquote>
+</div>
+</div>
+</div>
+<div class=sect1>
+<h2 id=_如何计算圈复杂度>如何计算圈复杂度</h2>
+<div class=sectionbody>
+<div class=sect2>
+<h3 id=_单结束点>单结束点</h3>
+<div class=paragraph>
+<p>对于单结束点的程序，圈复杂度的计算公式很简单，我们需要先画出程序的控制流图，用 M 代表圈复杂度：</p>
+</div>
+<div class=listingblock>
+<div class=content>
+<pre class=highlight><code class=language-text data-lang=text>M = E - N + 2P</code></pre>
+</div>
+</div>
+<div class=paragraph>
+<p>上面的：</p>
+</div>
+<div class=ulist>
+<ul>
+<li>
+<p>E：图中的边的数量</p>
+</li>
+<li>
+<p>N：图中的节点数量</p>
+</li>
+<li>
+<p>P：图中 <code>connected component</code> 的数量</p>
+</li>
+</ul>
+</div>
+<div class=quoteblock>
+<blockquote>
+<div class=paragraph>
+<p><code>connected component</code> 是来自图论的概念，叫做元件，它是一个无向子图，上面的所有节点都不能到达子图以外的节点。
+在程序设计的上下文里，这个值永远是 1。</p>
+</div>
+</blockquote>
+</div>
+<div class=paragraph>
+<p>我们可以看一下这个例子：</p>
+</div>
+<div class=imageblock>
+<div class=content>
+<img src=flow.jpg alt=flow>
+</div>
+</div>
+<div class=paragraph>
+<p>在这个图中，我们有 10 条边、9 个节点、1 个元件，所以 M = 10 - 9 + 2 = 3。</p>
+</div>
+<div class=paragraph>
+<p>对于程序而言，因为只有一个进入点，所以上面的公式可以再做一步简化：</p>
+</div>
+<div class=listingblock>
+<div class=content>
+<pre class=highlight><code class=language-text data-lang=text>M = π + 1</code></pre>
+</div>
+</div>
+<div class=paragraph>
+<p>其中，π 代表程序中的决策点。</p>
+</div>
+</div>
+<div class=sect2>
+<h3 id=_多结束点>多结束点</h3>
+<div class=paragraph>
+<p>对于多个结束点（比如多个 return 语句）的程序，上面的公式就不太适用了，而需要一个新的公式：</p>
+</div>
+<div class=listingblock>
+<div class=content>
+<pre class=highlight><code class=language-text data-lang=text>M = π - s + 2</code></pre>
+</div>
+</div>
+<div class=paragraph>
+<p>其中 s 代表结束点的数量。我们可以发现这个公式同样适用于单结束点的程序。</p>
+</div>
+</div>
+</div>
+</div>
+<div class=sect1>
+<h2 id=_影响圈复杂度的因素>影响圈复杂度的因素</h2>
+<div class=sectionbody>
+<div class=paragraph>
+<p>既然知道了计算圈复杂度的公式，那么我们就知道了影响它的因素：决策点和结束点。</p>
+</div>
+<div class=paragraph>
+<p>对应到代码里，结束点就是 return 语句和 throw exception。</p>
+</div>
+<div class=paragraph>
+<p>而决策点就很多了，不仅包括 if、case、for 等语句，三元表达式和 catch 语句同样也是决策点。</p>
+</div>
+<div class=quoteblock>
+<blockquote>
+<div class=paragraph>
+<p>这也是为什么说循环复杂度和条件复杂度这两个翻译不够好的原因，因为决策点包含了循环和条件控制这两个内容。</p>
+</div>
+</blockquote>
+</div>
+<div class=paragraph>
+<p>想要降低圈复杂度，我们可以选择增加 return 语句，比如提前 return 或者 throw exception。
+我们也可以选择减少 if 等语句的使用，通过抽方法、合并条件等重构手段达到这个目的。</p>
+</div>
+</div>
+</div>
+<div class=sect1>
+<h2 id=_圈复杂度与代码质量>圈复杂度与代码质量</h2>
+<div class=sectionbody>
+<div class=paragraph>
+<p>圈复杂度与代码质量息息相关。</p>
+</div>
+<div class=paragraph>
+<p>因为越复杂的代码，越难以维护，一点小小的改动就可能造成程序运行失败。
+所以在一些代码扫描工具中，比如 sonarqube，就要求方法的圈复杂度不能高于 10。</p>
+</div>
+<div class=paragraph>
+<p>另外，越复杂的代码，意味着越难以测试。因为我们需要让测试覆盖到尽可能多的情况，圈复杂度越高，意味着需要覆盖的情况越多，测试也就越难写。
+这可能就导致这段代码没有被完整的覆盖到，再加上较高的圈复杂度导致代码阅读的困难，就难以保证对它的修改不会破坏掉它的功能。</p>
+</div>
+<div class=paragraph>
+<p>所以，为了增加代码质量，我们应该尽可能的减少圈复杂度。</p>
+</div>
+</div>
+</div>
+<div class=sect1>
+<h2 id=_总结>总结</h2>
+<div class=sectionbody>
+<div class=paragraph>
+<p>我们了解了圈复杂度代表的是程序的控制流图的线性独立路径的数量，代表了程序的复杂程度。增加结束点和减少决策点都能减少圈复杂度。</p>
+</div>
+</div>
+</div>
+<div class=sect1>
+<h2 id=_思考>思考</h2>
+<div class=sectionbody>
+<div class=paragraph>
+<p>尽管程序员可以修改代码降低各个程序函数的圈复杂度，但是整个程序的圈复杂度却不会改变，因为这是由业务决定的，而不是可以通过修改代码而改变的。
+而且在程序设计中引用圈复杂度，本来就是为了能在函数级别降低复杂度，而不是为了降低业务复杂度（本来也做不到）。
+所以不必纠结“方法的复杂度是下降了，但是整体的复杂度却没有”这种事情。</p>
+</div>
+</div>
+</div>
+</div><div class=post-footer id=post-footer>
+<div class=post-info>
+<div class=post-info-line>
+<div class=post-info-mod>
+<span>更新于 2022-02-16&nbsp;<a class=git-hash href=https://github.com/kbyyd24/LoveItAgain/commit/ac5b3b4319504675585a87ebc7a12af444abbfdd target=_blank title="commit by kbyyd24(melo@gaoyuexiang.cn) ac5b3b4319504675585a87ebc7a12af444abbfdd: fix extension">
+<i class="fas fa-hashtag fa-fw"></i>ac5b3b4</a></span>
+</div>
+<div class=post-info-license></div>
+</div>
+<div class=post-info-line>
+<div class=post-info-md><span>
+<a class=link-to-markdown href=/cyclomatic-complexity/index.md target=_blank>阅读原始文档</a>
+</span></div>
+<div class=post-info-share>
+<span><a href=javascript:void(0); title="分享到 Twitter" data-sharer=twitter data-url=https://blog.gaoyuexiang.cn/cyclomatic-complexity/ data-title=圈复杂度><i class="fab fa-twitter fa-fw"></i></a><a href=javascript:void(0); title="分享到 Facebook" data-sharer=facebook data-url=https://blog.gaoyuexiang.cn/cyclomatic-complexity/><i class="fab fa-facebook-square fa-fw"></i></a><a href=javascript:void(0); title="分享到 Hacker News" data-sharer=hackernews data-url=https://blog.gaoyuexiang.cn/cyclomatic-complexity/ data-title=圈复杂度><i class="fab fa-hacker-news fa-fw"></i></a><a href=javascript:void(0); title="分享到 Line" data-sharer=line data-url=https://blog.gaoyuexiang.cn/cyclomatic-complexity/ data-title=圈复杂度><i data-svg-src=https://cdn.jsdelivr.net/npm/simple-icons@2.14.0/icons/line.svg></i></a><a href=javascript:void(0); title="分享到 微博" data-sharer=weibo data-url=https://blog.gaoyuexiang.cn/cyclomatic-complexity/ data-title=圈复杂度><i class="fab fa-weibo fa-fw"></i></a></span>
+</div>
+</div>
+</div>
+<div class=post-info-more>
+<section class=post-tags></section>
+<section>
+<span><a href=javascript:void(0); onclick=window.history.back()>返回</a></span>&nbsp;|&nbsp;<span><a href=/>主页</a></span>
+</section>
+</div>
+<div class=post-nav><a href=/eureka-self-preservation-mode/ class=prev rel=prev title="Eureka 中的幽灵 —— Self Preservation 导致的幽灵服务"><i class="fas fa-angle-left fa-fw"></i>Eureka 中的幽灵 —— Self Preservation 导致的幽灵服务</a>
+<a href=/jackson-inheritance/ class=next rel=next title="使用 Jackson 处理抽象类的序列化和反序列化">使用 Jackson 处理抽象类的序列化和反序列化<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+<div id=comments><div id=valine class=comment></div><noscript>
+Please enable JavaScript to view the comments powered by <a href=https://valine.js.org/>Valine</a>.
+</noscript></div></article></div>
+</main><footer class=footer>
+<div class=footer-container><div class=footer-line>由 <a href=https://gohugo.io/ target=_blank rel="noopener noreffer" title="Hugo 0.92.1">Hugo</a> 强力驱动 | 主题 - <a href=https://github.com/dillonzq/LoveIt target=_blank rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+</div><div class=footer-line><i class="far fa-copyright fa-fw"></i><span itemprop=copyrightYear>2016 - 2022</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=https://blog.gaoyuexiang.cn/about target=_blank>无糖拿铁</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span><span class=icp-splitter>&nbsp;|&nbsp;</span><br class=icp-br>
+<span class=icp><a href=https://beian.miit.gov.cn/ target=_blank>蜀ICP备15031888号-2</a></span></div>
+</div>
+</footer></div>
+<div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title=回到顶部>
+<i class="fas fa-arrow-up fa-fw"></i>
+</a><a href=# id=view-comments class=fixed-button title=查看评论>
+<i class="fas fa-comment fa-fw"></i>
+</a>
+</div>
+<link rel=stylesheet href=/lib/valine/valine.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.0/build/styles/atom-one-dark.min.css><script type=text/javascript src=https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/autocomplete.js@0.37.1/dist/autocomplete.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/algoliasearch@4.2.0/dist/algoliasearch-lite.umd.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/lazysizes@5.2.2/lazysizes.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/sharer.js@0.4.0/sharer.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.0/build/highlight.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.0/build/languages/text.min.js></script><script type=text/javascript src=/js/highlight.min.js></script><script type=text/javascript>window.config={code:{copyTitle:"复制到剪贴板",maxShownLines:10},comment:{valine:{appId:"QGzwQXOqs5JOhN4RGPOkR2mR-MdYXbMMI",appKey:"WBmoGyJtbqUswvfLh6L8iEBr",avatar:"mp",el:"#valine",emojiCDN:"https://cdn.jsdelivr.net/npm/emoji-datasource-google@5.0.1/img/google/64/",emojiMaps:{100:"1f4af.png",alien:"1f47d.png",anger:"1f4a2.png",angry:"1f620.png",anguished:"1f627.png",astonished:"1f632.png",black_heart:"1f5a4.png",blue_heart:"1f499.png",blush:"1f60a.png",bomb:"1f4a3.png",boom:"1f4a5.png",broken_heart:"1f494.png",brown_heart:"1f90e.png",clown_face:"1f921.png",cold_face:"1f976.png",cold_sweat:"1f630.png",confounded:"1f616.png",confused:"1f615.png",cry:"1f622.png",crying_cat_face:"1f63f.png",cupid:"1f498.png",dash:"1f4a8.png",disappointed:"1f61e.png",disappointed_relieved:"1f625.png",dizzy:"1f4ab.png",dizzy_face:"1f635.png",drooling_face:"1f924.png",exploding_head:"1f92f.png",expressionless:"1f611.png",face_vomiting:"1f92e.png",face_with_cowboy_hat:"1f920.png",face_with_hand_over_mouth:"1f92d.png",face_with_head_bandage:"1f915.png",face_with_monocle:"1f9d0.png",face_with_raised_eyebrow:"1f928.png",face_with_rolling_eyes:"1f644.png",face_with_symbols_on_mouth:"1f92c.png",face_with_thermometer:"1f912.png",fearful:"1f628.png",flushed:"1f633.png",frowning:"1f626.png",ghost:"1f47b.png",gift_heart:"1f49d.png",green_heart:"1f49a.png",grimacing:"1f62c.png",grin:"1f601.png",grinning:"1f600.png",hankey:"1f4a9.png",hear_no_evil:"1f649.png",heart:"2764-fe0f.png",heart_decoration:"1f49f.png",heart_eyes:"1f60d.png",heart_eyes_cat:"1f63b.png",heartbeat:"1f493.png",heartpulse:"1f497.png",heavy_heart_exclamation_mark_ornament:"2763-fe0f.png",hole:"1f573-fe0f.png",hot_face:"1f975.png",hugging_face:"1f917.png",hushed:"1f62f.png",imp:"1f47f.png",innocent:"1f607.png",japanese_goblin:"1f47a.png",japanese_ogre:"1f479.png",joy:"1f602.png",joy_cat:"1f639.png",kiss:"1f48b.png",kissing:"1f617.png",kissing_cat:"1f63d.png",kissing_closed_eyes:"1f61a.png",kissing_heart:"1f618.png",kissing_smiling_eyes:"1f619.png",laughing:"1f606.png",left_speech_bubble:"1f5e8-fe0f.png",love_letter:"1f48c.png",lying_face:"1f925.png",mask:"1f637.png",money_mouth_face:"1f911.png",nauseated_face:"1f922.png",nerd_face:"1f913.png",neutral_face:"1f610.png",no_mouth:"1f636.png",open_mouth:"1f62e.png",orange_heart:"1f9e1.png",partying_face:"1f973.png",pensive:"1f614.png",persevere:"1f623.png",pleading_face:"1f97a.png",pouting_cat:"1f63e.png",purple_heart:"1f49c.png",rage:"1f621.png",relaxed:"263a-fe0f.png",relieved:"1f60c.png",revolving_hearts:"1f49e.png",right_anger_bubble:"1f5ef-fe0f.png",robot_face:"1f916.png",rolling_on_the_floor_laughing:"1f923.png",scream:"1f631.png",scream_cat:"1f640.png",see_no_evil:"1f648.png",shushing_face:"1f92b.png",skull:"1f480.png",skull_and_crossbones:"2620-fe0f.png",sleeping:"1f634.png",sleepy:"1f62a.png",slightly_frowning_face:"1f641.png",slightly_smiling_face:"1f642.png",smile:"1f604.png",smile_cat:"1f638.png",smiley:"1f603.png",smiley_cat:"1f63a.png",smiling_face_with_3_hearts:"1f970.png",smiling_imp:"1f608.png",smirk:"1f60f.png",smirk_cat:"1f63c.png",sneezing_face:"1f927.png",sob:"1f62d.png",space_invader:"1f47e.png",sparkling_heart:"1f496.png",speak_no_evil:"1f64a.png",speech_balloon:"1f4ac.png","star-struck":"1f929.png",stuck_out_tongue:"1f61b.png",stuck_out_tongue_closed_eyes:"1f61d.png",stuck_out_tongue_winking_eye:"1f61c.png",sunglasses:"1f60e.png",sweat:"1f613.png",sweat_drops:"1f4a6.png",sweat_smile:"1f605.png",thinking_face:"1f914.png",thought_balloon:"1f4ad.png",tired_face:"1f62b.png",triumph:"1f624.png",two_hearts:"1f495.png",unamused:"1f612.png",upside_down_face:"1f643.png",weary:"1f629.png",white_frowning_face:"2639-fe0f.png",white_heart:"1f90d.png",wink:"1f609.png",woozy_face:"1f974.png",worried:"1f61f.png",yawning_face:"1f971.png",yellow_heart:"1f49b.png",yum:"1f60b.png",zany_face:"1f92a.png",zipper_mouth_face:"1f910.png",zzz:"1f4a4.png"},enableQQ:!1,highlight:!0,lang:"zh-cn",pageSize:10,placeholder:"你的评论 ...",recordIP:!0,serverURLs:"https://leancloud.hugoloveit.com",visitor:!0}},search:{algoliaAppID:"PASDMWALPK",algoliaIndex:"index.zh-cn",algoliaSearchKey:"b42948e51daaa93df92381c8e2ac0f93",highlightTag:"em",maxResultLength:10,noResultsFound:"没有找到结果",snippetLength:50,type:"algolia"}}</script><script type=text/javascript src=/js/theme.min.js></script>
+<script>let headerToLi=b=>{let a=document.createElement('a');a.innerText=b.innerText,a.setAttribute('href','#'+b.id);let c=document.createElement('li');return c.appendChild(a),c},headerToLiWithChild=(d,a)=>{let b=headerToLi(d),c=document.createElement('ul');return a.length!=0&&(b.appendChild(c),a.forEach(a=>{c.appendChild(a)})),b},toc=document.createElement('ul');Array.from(document.getElementById('content').getElementsByTagName('h2')).map(a=>headerToLiWithChild(a,Array.from(a.parentElement.getElementsByTagName('h3')).map(a=>headerToLiWithChild(a,Array.from(a.parentElement.getElementsByTagName('h4')).map(a=>headerToLi(a)))))).forEach(a=>toc.appendChild(a)),document.getElementById('TableOfContents').appendChild(toc)</script>
+</body>
+</html>
