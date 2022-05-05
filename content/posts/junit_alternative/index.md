@@ -13,30 +13,30 @@ tags:
 
 但是在开发过程中，我发现 JUnit 并不总是那么好用。它在一些情况下需要耗费挺多精力才能编写出让人满意的测试。
 
-# JUnit 不擅长的事情
+## JUnit 不擅长的事情
 
 一个让人满意的测试，应该能够清晰的体现被测试的目标、测试的目的以及测试的输入输出，并且应遵循 `DRY` 原则，尽可能的减少测试中的重复内容。
 
 JUnit 可以通过设计测试方法名和组织方法内的代码的方式清晰的表达意图，也可以通过参数化测试来减少相同测试目的的测试代码重复。但是它在这些地方都做的不够好。
 
-## 清晰表达测试的目的
+### 清晰表达测试的目的
 
 在使用 JUnit 时，清晰的表达测试意图并不是总能做到的事情。这主要体现在两个方面。
 
-### 如何命名测试方法
+#### 如何命名测试方法
 
 第一个体现就是在使用 Java 编写测试时，采用什么样的命名风格来命名测试。是为了代码风格的统一而选择驼峰？还是为了更高的可读性选择下划线？这个问题在不同的项目中有不同的实践，看起来是没有一个统一的认识。
 
 而这个问题的根源是 JUnit 的测试名称是 Java 的方法名，而 Java 的方法名又不能在其中插入空格。所以除了下面要介绍的两种测试工具外，采用 [Kotlin](https://kotlinlang.org/docs/coding-conventions.html#names-for-test-methods) 来编写 JUnit 也是一种方式。
 
-### 如何组织方法内的代码
+#### 如何组织方法内的代码
 
 第二个体现就是 JUnit 对测试方法内部如何编写没有强制的规定。这就意味着我可以在测试里面任意地组织代码，比如在一个测试方法里面对一个方法调用多次并验证每一次的结果，或者把调用测试目录的逻辑和准备数据的逻辑以及验证逻辑混合到一起。
 总之这样的结果就是测试方法内的代码组织方式千奇百怪，每当阅读别人编写的测试的时候，总是要花上好几分钟才能知道这些代码到底在干什么。
 
 对于这个问题，我个人会选择使用注释来标注一下 `given` 、 `when` 、 `then`，并且给 IDEA 设置了 live template 方便插入它们。
 
-## 又不是不能用的参数化测试
+### 又不是不能用的参数化测试
 
 如果说不能清晰地表达测试意图这个问题还有一些 workaround 可以绕过去的话，JUnit 那仅仅是能用的参数化测试功能就没有什么好办法可以绕过去了。
 
@@ -60,13 +60,13 @@ JUnit 提供了各种 `Source` 注解来为参数化测试提供数据，但是�
 
 那么有没有什么工具可以作为 JUnit 的替代呢？当然是有的。下面我将按照我接触的顺序来介绍两种种测试框架。可以在 GitHub 上找到下面例子的[完整代码](https://github.com/kbyyd24/java-test-framework-demo)。
 
-# 使用 Spock 作为测试框架
+## 使用 Spock 作为测试框架
 
 [Spock](https://spockframework.org/)是一个用 `Groovy` 编写的测试框架，按照 `given/when/then` 的结构定义 dsl，能够让测试更加的语义化。它的一大特点是 [Data Driven Test](https://spockframework.org/spock/docs/2.0/all_in_one.html#data-driven-testing)，可以方便的编写参数化测试。
 
 我曾在两个项目上尝试过使用 `Spock` 作为测试框架，几乎没有遇到过无法解决的问题。
 
-## 如何使用 Spock
+### 如何使用 Spock
 
 由于 `Spock` 是使用 `Groovy` 来编写测试的，所以我们要使用它时，除了要引用它本身，还需要添加对 `Groovy` 的支持。以 `gradle` 为例：
 
@@ -159,9 +159,9 @@ class MarsRoverServiceSpockTest extends Specification {
 2. 为 mock 对象的方法调用设置返回值
 3. 验证 mock 对象的方法被调用的次数和参数
 
-## 特点
+### 特点
 
-#### 语义化的结构
+##### 语义化的结构
 
 在前面的例子中，我们看到了 block 的概念。它可以帮助我们更好的组织代码结构，写出更加便于阅读的代码。其实在每一个 block 声明之后，我们还可以在添加一个字符串，达到注释的作用。比如：
 
@@ -171,12 +171,12 @@ given: "a mars rover at position 1,2 and direction is north"
 
 除了上面的例子里看到的，`Spock` 还提供了 `cleanup` 、 `expect` 、 `where` 这三个 block。详细信息可以看看它的[文档](https://spockframework.org/spock/docs/2.0/all_in_one.html#_blocks)
 
-#### 简洁的断言
+##### 简洁的断言
 
 在上面的例子中，我们看到 `Spock` 的断言十分简洁，不需要像使用 `assertj` 一样写很长的 `assertThat(xxx).isEqualTo(yyy)`，只需要一个返回 boolean 的表达式就可以了。
 甚至可以把多行断言提取到一个方法中，返回他们与运算的结果。
 
-#### 使用 data table 构造参数化测试
+##### 使用 data table 构造参数化测试
 
 对于参数化测试，我们再来看一个例子。
 
@@ -212,7 +212,7 @@ def "should move mars rover from position 1,2 forward to #movedPosition.x,#moved
 
 ![](spock-data-driven-test-output.png)
 
-#### 使用 Groovy 编写测试
+##### 使用 Groovy 编写测试
 
 使用 `Groovy` 来编写测试，可以说既是优点，也是缺点。
 
@@ -220,19 +220,19 @@ def "should move mars rover from position 1,2 forward to #movedPosition.x,#moved
 
 缺点在于这是一个相对小众的语言。如果不是因为 Gradle，或许不会有多少人熟悉它的语法。这也会导致人们在选择它时会变得更加谨慎。
 
-#### 与 IDE 的完美集成
+##### 与 IDE 的完美集成
 
 我一直使用的 IDEA 是能够完美适配它的。除了前面提到的 format data table ，最主要的是 IDEA 能像执行 JUnit 一样执行它，并且不需要任何的配置。
 
-## 缺点
+### 缺点
 
 我在第一个项目里面使用 `Spock` 时，几乎没有发现它有什么缺点，以至于在后来的项目中总是在问 TL 能不能把它加到项目里来 🤪
 
 但是后来在一个 Kotlin 项目中尝试使用它时，却遇到一些问题。
 
-#### 与 Kotlin 的集成问题
+##### 与 Kotlin 的集成问题
 
-##### 无法识别 Kotlin 的语法糖
+###### 无法识别 Kotlin 的语法糖
 
 `Groovy` 不能直接识别到 `Kotlin` 代码中的各种语法糖，这就让测试写起来有那么一点点不舒服。
 
@@ -258,7 +258,7 @@ class MarsRoverFixture {
 
 其他的一些语法问题也基本都能绕过，本质思路就是把要测试的代码想象成编译后的 `Java`，这样就能找到绕过的办法。
 
-##### 没有对 final class 的 mock 支持
+###### 没有对 final class 的 mock 支持
 
 这是一个基本绕不过去的问题。`Kotlin` 里面的类型默认都是 `final`，不能再被继承。但是 `Spock` 的 mock 却需要为要 mock 的对象的类型创建一个子类。这就导致我们不能去 mock 那些类型。其实这个问题不是 `Spock` 特有的，`Mockito` 也有这个问题。只不过在使用 JUnit 时我们会选择用 `MockK` 作为 `Kotlin` 项目的 mock 工具，而不是 `Mockito`。
 
@@ -269,21 +269,21 @@ class MarsRoverFixture {
 
 在写这篇文章的时候，发现一个很久没有更新的仓库 [kotlin-test-runner](https://github.com/dpreussler/kotlin-testrunner)，也许可以借鉴一下这里的思路来解决这个问题。
 
-##### 与 JUnit 的兼容问题
+###### 与 JUnit 的兼容问题
 
 对于上一个问题，我们当时还有一个 workaround，那就是使用 `JUnit5` + `MockK` 来编写那些需要 mock 的测试。但是那个时候的 `Kotlin` 版本还比较低，没有遇到和 JUnit 的兼容问题。
 
 兼容问题是 JUnit 在编写 Spring 集成测试的时候，如果有 mock bean 的需求，需要使用 [springmock](https://github.com/Ninja-Squad/springmockk) 里面的 `@MockkBean` 注解。但是从 kotlin 1.5.30 开始，这个库就不能和 Spock 编写的 Spring 集成测试兼容，会出现 NPE 问题。这个问题在使用 `Kotlin` 对 `Specification` 子类进行反射时会出现。如果对这个问题感兴趣，可以看看这个 [issue](https://github.com/Ninja-Squad/springmockk/issues/67) 。
 
-#### Groovy 语言的学习成本
+##### Groovy 语言的学习成本
 
 就像前面提到过的，使用 `Groovy` 还是有一些学习成本的。如果团队里没有熟悉它的人，可能会走一点弯路。
 
-# 使用 Kotest 作为测试框架
+## 使用 Kotest 作为测试框架
 
 `Kotest` 是在无意中发现的测试框架，还没有在实际的项目中实践过。所以这里只能分享一下如何使用，没有什么经验分享。
 
-## 如何使用 Kotest
+### 如何使用 Kotest
 
 `Kotest` 的测试目标是 `Kotlin` 代码，所以它除了支持 `Java` 以外，还支持用 `Kotlin` 编译的 JS。不过这里，我们就只试试 JVM 平台就好。
 
@@ -358,29 +358,29 @@ class MarsRoverServiceKotestTest(
 
 在这个例子中，除了 `override fun extensions()` 那一行以外，其他部分的代码和 JUnit 的集成测试几乎没有区别。而这一行就好像 JUnit 中的 `@ExtendWith(SpringExtension)` 一样。我们甚至可以抽出所有的集成测试代码到单独的 `sourceSet` 中对 extensions 进行全局配置。[Spring | Kotest](https://kotest.io/docs/extensions/spring.html) 
 
-## 特点
+### 特点
 
-#### 丰富的测试风格支持
+##### 丰富的测试风格支持
 
 除了上面的例子，我们还有很多的测试风格可以选择，这在它的文档中有介绍：[Testing Styles | Kotest](https://kotest.io/docs/framework/testing-styles.html)
 
-#### 简洁的断言
+##### 简洁的断言
 
 在上面的例子里面我们看到，`Kotest` 提供了自己的断言库，不需要再写冗长的 `assertThat()` 之类的语句
 
-#### 使用 Kotlin 编写，能与 Kotlin 项目完美结合
+##### 使用 Kotlin 编写，能与 Kotlin 项目完美结合
 
 使用 `Kotlin` 来编写测试，可以使用到 `Kotlin` 里面的各种语法糖。这样就不用像 `Spock` 一样在语法切换中挣扎。
 
-#### 支持 MockK
+##### 支持 MockK
 
 同样的，因为 `Kotest` 的测试使用 `Kotlin` 编写，自然是支持 `MockK` 的。这样就能利用 `MockK` 的特性，支持对 final class 的 mock。
 
-#### 与 JUnit 兼容
+##### 与 JUnit 兼容
 
 因为 `Kotest` 是基于 JUnit 平台的，所以是能和 JUnit 兼容的，不会出现上面的 `Spock` 那样的问题。
 
-#### 对 data driven test 的支持
+##### 对 data driven test 的支持
 
 `Kotest` 提供了扩展来支持 data driven test。当然，不使用这个扩展也可以进行，比如用 list 构造好数据之后 foreach 创建测试。不过这里的例子我们还是使用这个扩展来演示。（需要添加依赖 `io.kotest:kotest-framework-datatest` ）
 
@@ -410,11 +410,11 @@ class MarsRoverKotestTest : FunSpec({
 
 虽然这个 data driven test 相对于 `Spock` 的 data table 来讲没有那么直观，但是对比 JUnit 的话，能够方便的自定义测试方法名，并且测试数据与测试代码放在一起，已经算是一个巨大的进步了。
 
-## 缺点
+### 缺点
 
 因为没有在实际的项目中实践过，所以目前没有发现很多的缺点。
 
-#### 与 IDEA 和 Gradle 的集成不够完美
+##### 与 IDEA 和 Gradle 的集成不够完美
 
 这个问题的表现是在 IDEA 里面无法执行单个测试方法。但是细究后发现，实际上是和 gradle 的集成不够好。
 
@@ -422,7 +422,7 @@ class MarsRoverKotestTest : FunSpec({
 
 在把 IDEA 的配置更新成使用 IDEA 来运行测试后，在 mac 上能够正常执行一个测试方法。但是在 Windows + WSL 的环境上却会出错。（看起来像是 IDEA 的问题，因为它尝试把 WSL 里面的 java 当作 Windows 的程序执行）
 
-# 不要使用 Spek
+## 不要使用 Spek
 
 前面介绍了两种值得一试的测试框架，这里再介绍一种不建议使用的框架。
 
@@ -437,7 +437,7 @@ class MarsRoverKotestTest : FunSpec({
 
 ---
 
-# 总结
+## 总结
 
 现在我们有了两个 JUnit 以外的测试框架选择。当然它们也不是完美的，JUnit 仍然是那个最稳定、风险最低的那一个。但如果你想尝试一下这两个框架的话，可以考虑一下这些方面：
 
