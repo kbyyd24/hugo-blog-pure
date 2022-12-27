@@ -1,1 +1,11 @@
-{}
+{
+  "obsidian-task-collector:task-collector-mark": [
+    {
+      "modifiers": [
+        "Mod",
+        "Shift"
+      ],
+      "key": "Enter"
+    }
+  ]
+}

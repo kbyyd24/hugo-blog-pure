@@ -2,5 +2,6 @@
   "readableLineLength": false,
   "strictLineBreaks": true,
   "showFrontmatter": true,
-  "showLineNumber": true
+  "showLineNumber": true,
+  "vimMode": true
 }

@@ -6,5 +6,8 @@
   "markdown-prettifier",
   "easy-typing-obsidian",
   "emoji-shortcodes",
-  "obsidian-codemirror-options"
+  "obsidian-codemirror-options",
+  "obsidian-better-command-palette",
+  "obsidian-task-collector",
+  "obsidian-vimrc-support"
 ]
