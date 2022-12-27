@@ -82,6 +82,11 @@
 <main class=main>
 <div class=container><div class="page home" posts><div class=home-profile><div class=home-avatar><a href=/posts/ title=所有文章><img class=lazyload src=/svg/loading.min.svg data-src="https://www.gravatar.com/avatar/8613a75479af50c38344107afb4e9a1f?s=240&d=mp" data-srcset="https://www.gravatar.com/avatar/8613a75479af50c38344107afb4e9a1f?s=240&d=mp, https://www.gravatar.com/avatar/8613a75479af50c38344107afb4e9a1f?s=240&d=mp 1.5x, https://www.gravatar.com/avatar/8613a75479af50c38344107afb4e9a1f?s=240&d=mp 2x" data-sizes=auto alt="https://www.gravatar.com/avatar/8613a75479af50c38344107afb4e9a1f?s=240&d=mp" title="https://www.gravatar.com/avatar/8613a75479af50c38344107afb4e9a1f?s=240&d=mp"></a></div><h1 class=home-title>无糖拿铁</h1><div class=links><a href=https://github.com/kbyyd24 title=GitHub target=_blank rel="noopener noreffer me"><i class="fab fa-github-alt fa-fw"></i></a><a href=mailto:blog@gaoyuexiang.cn title=Email rel=me><i class="far fa-envelope fa-fw"></i></a><a href=/index.xml title=RSS target=_blank rel="noopener noreffer me"><i class="fas fa-rss fa-fw"></i></a></div></div>
 <article class="single summary" itemscope itemtype=http://schema.org/Article><h1 class=single-title itemprop="name headline">
+<a href=/jackson-inheritance/>使用 Jackson 处理抽象类的序列化和反序列化</a>
+</h1><div class=post-meta><span class=post-author><a href=https://blog.gaoyuexiang.cn/about title=Author target=_blank rel="noopener noreffer author" class=author><i class="fas fa-user-circle fa-fw"></i>无糖拿铁</a></span>&nbsp;<span class=post-publish>发布于 <time datetime=2020-10-02>2020-10-02</time></span></div><div class=content>Json 的序列化和反序列化是我们常见的操作，很多库都提供了这样的能力帮助我们完成这样的操作。 但业务有时可能变得稍微有些复杂，需要将一个抽象类的子类</div><div class=post-footer>
+<a href=/jackson-inheritance/>阅读全文</a><div class=post-tags>
+<i class="fas fa-tags fa-fw"></i>&nbsp;<a href=/tags/jackson/>Jackson</a>,&nbsp;<a href=/tags/json/>Json</a>,&nbsp;<a href=/tags/%E5%BA%8F%E5%88%97%E5%8C%96/>序列化</a>,&nbsp;<a href=/tags/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/>反序列化</a></div></div>
+</article><article class="single summary" itemscope itemtype=http://schema.org/Article><h1 class=single-title itemprop="name headline">
 <a href=/cyclomatic-complexity/>圈复杂度</a>
 </h1><div class=post-meta><span class=post-author><a href=https://blog.gaoyuexiang.cn/about title=Author target=_blank rel="noopener noreffer author" class=author><i class="fas fa-user-circle fa-fw"></i>无糖拿铁</a></span>&nbsp;<span class=post-publish>发布于 <time datetime=2020-08-15>2020-08-15</time></span></div><div class=content>过去我知道有圈复杂度这个概念，它代表了代码的复杂程度。但是却没有了解过它是怎么算出来的，哪些代码会影响它的结果。 今天我们就来看一下，圈复杂度</div><div class=post-footer>
 <a href=/cyclomatic-complexity/>阅读全文</a></div>
@@ -105,11 +110,6 @@
 </h1><div class=post-meta><span class=post-author><a href=https://blog.gaoyuexiang.cn/about title=Author target=_blank rel="noopener noreffer author" class=author><i class="fas fa-user-circle fa-fw"></i>无糖拿铁</a></span>&nbsp;<span class=post-publish>发布于 <time datetime=2020-06-18>2020-06-18</time></span></div><div class=content>我们平时在使用 Docker 的时候，一般会使用 ctrl+c 或者 docker stop 的方式关闭容器。 但有时候我们可能会遇到 ctrl+c 不生效，或者 docker stop 之后要等待 10s 的情况，就像这样： 也许你会觉</div><div class=post-footer>
 <a href=/graceful-shutdown-docker-container/>阅读全文</a><div class=post-tags>
 <i class="fas fa-tags fa-fw"></i>&nbsp;<a href=/tags/docker/>docker</a>,&nbsp;<a href=/tags/linux/>linux</a>,&nbsp;<a href=/tags/exec/>exec</a>,&nbsp;<a href=/tags/trap/>trap</a>,&nbsp;<a href=/tags/wait/>wait</a></div></div>
-</article><article class="single summary" itemscope itemtype=http://schema.org/Article><h1 class=single-title itemprop="name headline">
-<a href=/spring-security-authorization/>Spring Security 的权限验证</a>
-</h1><div class=post-meta><span class=post-author><a href=https://blog.gaoyuexiang.cn/about title=Author target=_blank rel="noopener noreffer author" class=author><i class="fas fa-user-circle fa-fw"></i>无糖拿铁</a></span>&nbsp;<span class=post-publish>发布于 <time datetime=2020-06-13>2020-06-13</time></span></div><div class=content>在前面的文章里，我们对 Spring Security 进行权限验证的组件有了大致的了解，我们首先来回顾并探究一下细节。 Figure 1. 本文涉及到的组件 FilterSecurityInterceptor 这是 AbstractSecurityInterceptor 的一个子类，并且实现了</div><div class=post-footer>
-<a href=/spring-security-authorization/>阅读全文</a><div class=post-tags>
-<i class="fas fa-tags fa-fw"></i>&nbsp;<a href=/tags/spring/>spring</a>,&nbsp;<a href=/tags/spring-security/>Spring Security</a></div></div>
 </article><ul class=pagination><li class=page-item>
 <span class=page-link>
 <a href=/>1</a>
@@ -130,7 +130,7 @@
 <span class=page-link aria-hidden=true>&mldr;</span>
 </li><li class=page-item>
 <span class=page-link>
-<a href=/page/7/>7</a>
+<a href=/page/8/>8</a>
 </span>
 </li></ul></div></div>
 </main><footer class=footer>
