@@ -65,7 +65,7 @@ image::onion-arch.png[]
 
 我在之前的文章中介绍过link:/posts/hexagonal-architecture/[六边形架构]。它的特点是把与外部技术实现相关的代码隔离到适配器中，在应用核心代码中声明端口，这些适配器去实现端口，从而把与核心业务无关的技术实现从核心代码中解耦出来。
 
-image::/posts/hexagonal-architecture/images/hexagonal-architecture.png[]
+image::/hexagonal-architecture/images/hexagonal-architecture.png[]
 
 六边形架构与洋葱架构的相同点是，它们都把与核心业务无关的技术实现代码从应用的核心代码中解耦出来。
 

@@ -9,7 +9,7 @@
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://blog.gaoyuexiang.cn/domain-centeric-architectures/"><meta property="og:image" content="https://blog.gaoyuexiang.cn/logo.png"><meta property="article:section" content="posts">
 <meta property="article:published_time" content="2021-05-25T22:13:57+08:00">
-<meta property="article:modified_time" content="2022-02-16T08:51:07+08:00">
+<meta property="article:modified_time" content="2022-12-27T19:12:55+08:00">
 <meta name=twitter:card content="summary_large_image">
 <meta name=twitter:image content="https://blog.gaoyuexiang.cn/logo.png">
 <meta name=twitter:title content="以领域为核心的架构们如何指导我们写代码">
@@ -17,7 +17,7 @@
 <meta name=application-name content="LoveIt">
 <meta name=apple-mobile-web-app-title content="LoveIt"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel="shortcut icon" type=image/x-icon href=/favicon.ico>
 <link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
-<link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=https://blog.gaoyuexiang.cn/domain-centeric-architectures/><link rel=prev href=https://blog.gaoyuexiang.cn/divergent-change-and-shotgun-surgery/><link rel=next href=https://blog.gaoyuexiang.cn/junit_alternative/><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css><link rel=stylesheet href=/css/style.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"以领域为核心的架构们如何指导我们写代码","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/blog.gaoyuexiang.cn\/domain-centeric-architectures\/"},"image":["https:\/\/blog.gaoyuexiang.cn\/images\/Apple-Devices-Preview.png"],"genre":"posts","keywords":"DDD, architecture, hexagonal-architecture, ports-and-adapters-pattern, ports-and-adapters-architecture, onion-architecture, clean-arch, 架构, 六边形架构, 端口与适配器架构, 洋葱架构, 整洁架构","wordcount":3695,"url":"https:\/\/blog.gaoyuexiang.cn\/domain-centeric-architectures\/","datePublished":"2021-05-25T22:13:57+08:00","dateModified":"2022-02-16T08:51:07+08:00","license":"CC BY-NC 4.0 CN","publisher":{"@type":"Organization","name":"无糖拿铁","logo":"https:\/\/blog.gaoyuexiang.cn\/images\/avatar.png"},"author":{"@type":"Person","name":"无糖拿铁"},"description":""}</script></head>
+<link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=https://blog.gaoyuexiang.cn/domain-centeric-architectures/><link rel=prev href=https://blog.gaoyuexiang.cn/divergent-change-and-shotgun-surgery/><link rel=next href=https://blog.gaoyuexiang.cn/junit_alternative/><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css><link rel=stylesheet href=/css/style.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"以领域为核心的架构们如何指导我们写代码","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/blog.gaoyuexiang.cn\/domain-centeric-architectures\/"},"image":["https:\/\/blog.gaoyuexiang.cn\/images\/Apple-Devices-Preview.png"],"genre":"posts","keywords":"DDD, architecture, hexagonal-architecture, ports-and-adapters-pattern, ports-and-adapters-architecture, onion-architecture, clean-arch, 架构, 六边形架构, 端口与适配器架构, 洋葱架构, 整洁架构","wordcount":3695,"url":"https:\/\/blog.gaoyuexiang.cn\/domain-centeric-architectures\/","datePublished":"2021-05-25T22:13:57+08:00","dateModified":"2022-12-27T19:12:55+08:00","license":"CC BY-NC 4.0 CN","publisher":{"@type":"Organization","name":"无糖拿铁","logo":"https:\/\/blog.gaoyuexiang.cn\/images\/avatar.png"},"author":{"@type":"Person","name":"无糖拿铁"},"description":""}</script></head>
 <body header-desktop=fixed header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem('theme')?localStorage.getItem('theme')==='dark':'auto'==='auto'?window.matchMedia('(prefers-color-scheme: dark)').matches:'auto'==='dark')&&document.body.setAttribute('theme','dark')</script>
 <div id=mask></div><div class=wrapper><header class=desktop id=header-desktop>
 <div class=header-wrapper>
@@ -213,7 +213,7 @@
 </div>
 <div class=imageblock>
 <div class=content>
-<img src=/posts/hexagonal-architecture/images/hexagonal-architecture.png alt="hexagonal architecture">
+<img src=/hexagonal-architecture/images/hexagonal-architecture.png alt="hexagonal architecture">
 </div>
 </div>
 <div class=paragraph>
@@ -409,8 +409,8 @@
 <div class=post-info>
 <div class=post-info-line>
 <div class=post-info-mod>
-<span>更新于 2022-02-16&nbsp;<a class=git-hash href=https://github.com/kbyyd24/LoveItAgain/commit/ac5b3b4319504675585a87ebc7a12af444abbfdd target=_blank title="commit by kbyyd24(melo@gaoyuexiang.cn) ac5b3b4319504675585a87ebc7a12af444abbfdd: fix extension">
-<i class="fas fa-hashtag fa-fw"></i>ac5b3b4</a></span>
+<span>更新于 2022-12-27&nbsp;<a class=git-hash href=https://github.com/kbyyd24/LoveItAgain/commit/de5b1e92565bfc73c3da3be04edad56baf68cdc3 target=_blank title="commit by kbyyd24(melo@gaoyuexiang.cn) de5b1e92565bfc73c3da3be04edad56baf68cdc3: fix hexagonal diagram">
+<i class="fas fa-hashtag fa-fw"></i>de5b1e9</a></span>
 </div>
 <div class=post-info-license></div>
 </div>
