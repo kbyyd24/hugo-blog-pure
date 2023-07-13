@@ -14,7 +14,7 @@ updated: 2020-07-25 23:31:52
 Eureka 是 Spring Cloud Netflix 的服务注册与发现工具。一般情况下，它都能很好的工作，但有时却会出现一些匪夷所思的情况。
 今天我们就来研究一下不当的配置导致的幽灵服务。
 
-# 幽灵出现
+## 幽灵出现
 
 我们先来给幽灵服务做一个定义：它们是 Eureka 注册表中的一些节点，但是它们实际上已经被关闭了，永远无法访问。
 
@@ -24,14 +24,14 @@ Eureka 是 Spring Cloud Netflix 的服务注册与发现工具。一般情况下
 
 那么问题来了。
 
-# 为什么这些服务没有注销？
+## 为什么这些服务没有注销？
 
 因为 `@PreDestroy` 是用来处理 `SIGTERM` 等信号的，所以只有在通过这些信息关闭 Eureka client 时，Eureka client 才会向 Eureka Server 发送 shutdown 请求。
 但是如果是通过 `kill -9` 这样的指令，或者是 [不优雅的 stop docker](../graceful-shutdown-docker-container/) ，即发送 `SIGKILL` 信号，都不会触发 `PreDestroy`，那么这些 Eureka client 也就不会被注销了。
 
 那么问题又来了。
 
-# 难道 Eureka 不会清理过期的注册信息吗？
+## 难道 Eureka 不会清理过期的注册信息吗？
 
 其实是会的。
 
@@ -56,9 +56,9 @@ Eureka 是 Spring Cloud Netflix 的服务注册与发现工具。一般情况下
 
 这就涉及到另一个问题，Eureka server self-preservation mode.
 
-# 自我保护模式
+## 自我保护模式
 
-## 概念
+### 概念
 
 Eureka client 之间调用时，不会向 Eureka server 发送任何请求，而是根据本地维护的注册表，找到需要调用的服务，直接调用，也就是 peer to peer 的模式。本地的注册表，其实是从 Eureka server 拉取回来的，默认每 30s 拉取一次更新。
 那么当 Eureka server 因为网络震荡没有接收到某些 Eureka client 发送的心跳请求时，并不意味着 Eureka client 之间的网络也出现了问题，Eureka client 之间可能仍然能够访问。
@@ -67,7 +67,7 @@ Eureka client 之间调用时，不会向 Eureka server 发送任何请求，而
 
 官方详细的解释可以看[这里](https://github.com/Netflix/eureka/wiki/Server-Self-Preservation-Mode)。
 
-## 自我保护的逻辑
+### 自我保护的逻辑
 
 在上面介绍的 `evict` 方法的逻辑之前，eureka 会首先调用 `isLeaseExpirationEnabled` 方法，以判断是否要执行后续的清理逻辑。
 
@@ -80,13 +80,13 @@ number-of-renews-per-min-threshold > 0
 
 那么接下来我们就看看这两个值是什么。
 
-### Number of Renews in Last Minute
+#### Number of Renews in Last Minute
 
 这个值的含义顾名思义，就是过去一分钟内，eureka server 接收到的心跳请求次数。这不是实时数据，而是每分钟更新一次。具体逻辑被 `MeasureRate` 实现。
 
 由于 eureka client 默认配置的心跳间隔是 30s，所以这默认情况下的这个值就是 `2*client-size`。
 
-### Number of Renews per Minute Threshold
+#### Number of Renews per Minute Threshold
 
 这个值就相对复杂一些，表示的是触发自我保护模式的心跳阈值。根据表达式，就明白它的含义：当过去一分钟实际接收到的心跳总数小于等于这个心跳阈值时，就会触发自我保护模式，Eureka server 就不会清理注册信息。
 
@@ -100,7 +100,7 @@ number-of-renews-per-min-threshold > 0
 
 好了，这里又冒出来三个值，我们先来看看后两个。
 
-#### Expected Client Renewal Interval Seconds
+##### Expected Client Renewal Interval Seconds
 
 这是一个配置的值，默认 30s，通过 `eureka.server.expected-client-renewal-interval-seconds` 配置。
 
@@ -108,11 +108,11 @@ number-of-renews-per-min-threshold > 0
 
 但这两个值显然应该保持一致，因为上面的 number-of-renews-in-last-min 其实就是 `(60 / lease-renewal-interval-in-seconds) * client-size`，而这里也几乎是同样的逻辑（如果把 expected-number-of-clients-sending-renews 看作 `client-size` 的话）。
 
-#### Renewal Percent Threshold
+##### Renewal Percent Threshold
 
 这个值在前面讲清理注册信息的时候已经讲过了，默认值 0.85。
 
-#### Expected Number of Clients Sending Renews
+##### Expected Number of Clients Sending Renews
 
 根据名字，这个值代表的是期望的会发送心跳请求的 client 数量，也就是前面的 `client-size`。但是实际上的值却有可能不同。
 
@@ -126,7 +126,7 @@ number-of-renews-per-min-threshold > 0
 
 了解了上面的这些逻辑，我们了解到，如果符合 `应有的心跳数 - 失去的心跳数 ≤ 心跳阈值`，那么就会触发自我保护机制。
 
-## 处理一个幽灵服务的极限值
+### 处理一个幽灵服务的极限值
 
 了解了前面这些，我不禁产生一个疑问：在默认配置的情况下，有多少个 client 之后，eureka server 才会清理掉过期的注册信息？出现多少个过期的注册信息，就会触发自我保护模式？
 
@@ -145,7 +145,7 @@ threshold = (n + default-open-for-traffic-count) * (60 / expect-client-renewal-i
 所以，一个集群如果要能够处理一个过期的注册信息，也就是 m=1， 那么至少需要有多于 12.33 个 eureka client，也就是 13 个。
 换句话说，在默认配置下，如果集群中只有不到 13 个服务，那么任何一个服务被不优雅的关闭，都会出现幽灵服务。
 
-### 验证
+#### 验证
 
 为了验证上面的结论，我写了个 [demo](https://github.com/kbyyd24/eureka-self-preservation-verify) 来验证一下。
 
@@ -153,7 +153,7 @@ threshold = (n + default-open-for-traffic-count) * (60 / expect-client-renewal-i
 
 > 这个 demo 用了 docker-compose，验证的步骤需要启动 14 个 container，想要试试的同学需要给自己的 docker 多分配点资源。
 
-#### 12 个 client 会触发自我保护模式
+##### 12 个 client 会触发自我保护模式
 
 话不多说，直接启动
 
@@ -180,7 +180,7 @@ docker kill eureka-self-preservation-verify_eureka-client_1
 
 ![](12-1-offline-client.png)
 
-#### 13 个 client 能够处理掉一个幽灵服务
+##### 13 个 client 能够处理掉一个幽灵服务
 
 还是上面的命令，只是这次我们启动 13 个 eureka-client
 
@@ -202,7 +202,7 @@ docker kill eureka-self-preservation-verify_eureka-client_1
 
 同时，也可以利用 `GET /eureka/apps` 查看注册信息，关注被杀掉的节点的 lastRenewalTimestamp 信息。这是它的最后注册时间，因为加了 90s，所以应该是一个未来的时间。用这个时间加上 90s，在这之后的第一次 `evict` 就应该清理掉这个节点信息，这可以在 eureka-server 的日志中看到。
 
-# 总结
+## 总结
 
 我们研究了 eureka 的自我保护模式，它的目的是避免在出现网络震荡时删除掉可能正常工作的节点信息。但如果配置不当，自我保护模式反而可能产生幽灵服务。
 

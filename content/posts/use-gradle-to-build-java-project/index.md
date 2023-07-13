@@ -11,7 +11,7 @@ tags:
 
 对此，`Gradle` 使用了插件来解决这些问题。
 
-# 插件
+## 插件
 
 `Gradle` 中的插件，可以给我们带来很多好处，包括：
 
@@ -41,11 +41,11 @@ plugins {
 
 接下来，我们接着上一篇文章的例子，使用 `Java Plugin` 来改造我们的构建脚本。
 
-# 改造 Hello World
+## 改造 Hello World
 
 `Java` 插件的文档：https://docs.gradle.org/current/userguide/java_plugin.html
 
-## Import `Java` Plugin
+### Import `Java` Plugin
 
 如上所述，我们使用 `Java Plugin` 需要先导入它：
 
@@ -57,7 +57,7 @@ plugins {
 
 因为 `Java` 插件是 `Gradle` 提供的核心插件，它是和 `Gradle` 版本绑定的，所以不需要使用 `version` 参数。
 
-## `SourceSet`
+### `SourceSet`
 
 引入 `Java` 插件后，我们先来了解一个核心概念：`SourceSet`。这是 `Java` 插件引入的概念，每一个 `SourceSet` 都包含了一组相关的资源。默认情况下，一个 `SourceSet` 对应 `src` 目录下的一个目录，目录名称就是 `SourceSet` 的名称；目录下会有一个 `java` 目录和一个 `resources` 目录。根据约定，这两个目录分别是存放 `java` 文件的目录和存放配置等资源文件的目录。
 
@@ -86,9 +86,9 @@ src
         └── HelloWorld.java
 ```
 
-## `Task`
+### `Task`
 
-### `Java` 插件引入的 `Task`
+#### `Java` 插件引入的 `Task`
 
 接着我们来看看 `Task` 需要做哪些修改。
 
@@ -112,7 +112,7 @@ src
 
 > 注意，执行测试是 `test` 任务，它没有因为添加 `sourceSet` 而自动添加 `sourceSetTest` 方法。因为自定义的 `SourceSet` 不一定是组件测试之类的不同类别的测试。所以，如果你添加了这样的 `SourceSet`，需要自己手动编写 `Test` 类型的测试 `task`。
 
-### 改进 Hello World
+#### 改进 Hello World
 
 由上面的了解可知，`Java` 插件已经为我们添加了 `compileJava` 和 `jar` 这两个 `task`，所以我们不需要再创建这样的 `task`。但是我们还是可以对这些 `task` 进行配置。
 
@@ -151,9 +151,9 @@ jar {
 assemble.dependsOn fatJar
 ```
 
-## `Dependency Configuration`
+### `Dependency Configuration`
 
-### `Java` 插件引入的 `Configuration`
+#### `Java` 插件引入的 `Configuration`
 
 上一篇文章讲到，在 `Gradle` 中声明依赖，需要关联到 `configuration`。`Java` 插件也提前为我们设计了一些 `configuration`，他们的主要关系可以通过两幅图来表示。
 
@@ -182,7 +182,7 @@ assemble.dependsOn fatJar
 
 你也许也发现了，和 `task` 一样，有一些名称相近的 `configuration`，所以很自然的推测：添加了自定义的 `SourceSet` 后，`Java` 插件会自动的添加一些 `configuration`。这些 `sourceSet configuration` 都可以在 `Java` 插件的页面上找到。
 
-### 改进 Hello World
+#### 改进 Hello World
 
 首先，我们可以直接使用 `Java` 插件提供的 `implementation`，而不需要自己创建任何 `configuration`:
 
@@ -219,7 +219,7 @@ task('fatJar', type: Jar) {
 }
 ```
 
-# 总结
+## 总结
 
 经过使用 `Java` 插件，并对构建脚本的修改，我们得到了更具有鲁棒性、实现了约定优于配置的构建脚本。
 
