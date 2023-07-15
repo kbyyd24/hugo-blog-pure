@@ -96,47 +96,32 @@
 </div>
 <div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents>
 <ul>
-<li>
-<ul>
-<li>
-<ul>
-<li>
-<ul>
-<li>
-<ul>
-<li><a href=#note>Note:</a></li>
-<li><a href=#follow-up>Follow up:</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
+<li><a href=#题目>题目</a></li>
+<li><a href=#解题思路>解题思路</a></li>
+<li><a href=#代码>代码</a></li>
 </ul>
 </nav></div>
-</div><div class=content id=content><h1 id=题目>题目</h1>
+</div><div class=content id=content><h2 id=题目>题目</h2>
 <p>先把题目放上：</p>
 <p>链接：<a href=https://leetcode.com/problems/sort-colors/ target=_blank rel="noopener noreffer">https://leetcode.com/problems/sort-colors</a></p>
 <blockquote>
 <p>Given an array with n objects colored red, white or blue, sort them so that objects of the same color are adjacent, with the colors in the order red, white and blue.</p>
 <p>Here, we will use the integers 0, 1, and 2 to represent the color red, white, and blue respectively.</p>
-<h6 id=note>Note:</h6>
-<p>You are not suppose to use the library&rsquo;s sort function for this problem.</p>
-<h6 id=follow-up>Follow up:</h6>
-<p>A rather straight forward solution is a two-pass algorithm using counting sort.
+<p><strong>Note:</strong>
+You are not suppose to use the library&rsquo;s sort function for this problem.</p>
+<p><strong>Follow up:</strong>
+A rather straight forward solution is a two-pass algorithm using counting sort.
 First, iterate the array counting number of 0&rsquo;s, 1&rsquo;s, and 2&rsquo;s, then overwrite array with total number of 0&rsquo;s, then 1&rsquo;s and followed by 2&rsquo;s.</p>
 <p>Could you come up with an one-pass algorithm using only constant space?</p>
 </blockquote>
 <hr>
-<h1 id=解题思路>解题思路</h1>
+<h2 id=解题思路>解题思路</h2>
 <p>拿到这个题目，第一个想到的就是遍历，计数，然后赋值。这个方法很容易想到，题目也给出了提示。</p>
 <p>然而，能只用一次遍历就得到预期的数组吗？</p>
 <p>当然可以。**按照要求，就是对数组进行遍历，找到<code>0</code>就放到前面去，找到<code>1</code>就放到中间，找到<code>2</code>就放到后面去。**有没有很眼熟？</p>
 <p>没错，这就是一个<strong>快速排序</strong>，因为只有<code>0</code>，<code>1</code>，<code>2</code>这三种数，所以仅仅需要一次遍历就能完成，连赋值都变得简单了起来。 😄</p>
 <hr>
-<h1 id=代码>代码</h1>
+<h2 id=代码>代码</h2>
 <div class=highlight><div class=chroma>
 <table class=lntable><tr><td class=lntd>
 <pre tabindex=0 class=chroma><code><span class=lnt> 1
@@ -216,7 +201,7 @@ Please enable JavaScript to view the comments powered by <a href=https://valine.
 </noscript></div></article></div>
 </main><footer class=footer>
 <div class=footer-container><div class=footer-line>由 <a href=https://gohugo.io/ target=_blank rel="noopener noreffer" title="Hugo 0.92.1">Hugo</a> 强力驱动 | 主题 - <a href=https://github.com/dillonzq/LoveIt target=_blank rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
-</div><div class=footer-line><i class="far fa-copyright fa-fw"></i><span itemprop=copyrightYear>2016 - 2022</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=https://blog.gaoyuexiang.cn/about target=_blank>无糖拿铁</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span><span class=icp-splitter>&nbsp;|&nbsp;</span><br class=icp-br>
+</div><div class=footer-line><i class="far fa-copyright fa-fw"></i><span itemprop=copyrightYear>2016 - 2023</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=https://blog.gaoyuexiang.cn/about target=_blank>无糖拿铁</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span><span class=icp-splitter>&nbsp;|&nbsp;</span><br class=icp-br>
 <span class=icp><a href=https://beian.miit.gov.cn/ target=_blank>蜀ICP备15031888号-2</a></span></div>
 </div>
 </footer></div>

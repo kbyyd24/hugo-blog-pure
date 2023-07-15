@@ -9,7 +9,7 @@
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://blog.gaoyuexiang.cn/use-gradle-to-build-java-project/"><meta property="og:image" content="https://blog.gaoyuexiang.cn/logo.png"><meta property="article:section" content="posts">
 <meta property="article:published_time" content="2020-02-24T21:09:31+00:00">
-<meta property="article:modified_time" content="2022-01-31T20:10:51+08:00">
+<meta property="article:modified_time" content="2023-07-14T00:20:19+08:00">
 <meta name=twitter:card content="summary_large_image">
 <meta name=twitter:image content="https://blog.gaoyuexiang.cn/logo.png">
 <meta name=twitter:title content="使用 Gradle 的 Java 插件构建 Java 项目">
@@ -17,7 +17,7 @@
 <meta name=application-name content="LoveIt">
 <meta name=apple-mobile-web-app-title content="LoveIt"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel="shortcut icon" type=image/x-icon href=/favicon.ico>
 <link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
-<link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=https://blog.gaoyuexiang.cn/use-gradle-to-build-java-project/><link rel=prev href=https://blog.gaoyuexiang.cn/use-gradle-to-build-java-project-without-plugin/><link rel=next href=https://blog.gaoyuexiang.cn/spring-security-servlet-overview/><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css><link rel=stylesheet href=/css/style.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"使用 Gradle 的 Java 插件构建 Java 项目","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/blog.gaoyuexiang.cn\/use-gradle-to-build-java-project\/"},"image":["https:\/\/blog.gaoyuexiang.cn\/images\/Apple-Devices-Preview.png"],"genre":"posts","keywords":"gradle, java","wordcount":2602,"url":"https:\/\/blog.gaoyuexiang.cn\/use-gradle-to-build-java-project\/","datePublished":"2020-02-24T21:09:31+00:00","dateModified":"2022-01-31T20:10:51+08:00","license":"CC BY-NC 4.0 CN","publisher":{"@type":"Organization","name":"无糖拿铁","logo":"https:\/\/blog.gaoyuexiang.cn\/images\/avatar.png"},"author":{"@type":"Person","name":"无糖拿铁"},"description":""}</script></head>
+<link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=https://blog.gaoyuexiang.cn/use-gradle-to-build-java-project/><link rel=prev href=https://blog.gaoyuexiang.cn/use-gradle-to-build-java-project-without-plugin/><link rel=next href=https://blog.gaoyuexiang.cn/spring-security-servlet-overview/><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css><link rel=stylesheet href=/css/style.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"使用 Gradle 的 Java 插件构建 Java 项目","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/blog.gaoyuexiang.cn\/use-gradle-to-build-java-project\/"},"image":["https:\/\/blog.gaoyuexiang.cn\/images\/Apple-Devices-Preview.png"],"genre":"posts","keywords":"gradle, java","wordcount":2602,"url":"https:\/\/blog.gaoyuexiang.cn\/use-gradle-to-build-java-project\/","datePublished":"2020-02-24T21:09:31+00:00","dateModified":"2023-07-14T00:20:19+08:00","license":"CC BY-NC 4.0 CN","publisher":{"@type":"Organization","name":"无糖拿铁","logo":"https:\/\/blog.gaoyuexiang.cn\/images\/avatar.png"},"author":{"@type":"Person","name":"无糖拿铁"},"description":""}</script></head>
 <body header-desktop=fixed header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem('theme')?localStorage.getItem('theme')==='dark':'auto'==='auto'?window.matchMedia('(prefers-color-scheme: dark)').matches:'auto'==='dark')&&document.body.setAttribute('theme','dark')</script>
 <div id=mask></div><div class=wrapper><header class=desktop id=header-desktop>
 <div class=header-wrapper>
@@ -96,6 +96,9 @@
 </div>
 <div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents>
 <ul>
+<li><a href=#插件>插件</a></li>
+<li><a href=#改造-hello-world>改造 Hello World</a>
+<ul>
 <li><a href=#import-java-plugin>Import <code>Java</code> Plugin</a></li>
 <li><a href=#sourceset><code>SourceSet</code></a></li>
 <li><a href=#task><code>Task</code></a>
@@ -111,10 +114,13 @@
 </ul>
 </li>
 </ul>
+</li>
+<li><a href=#总结>总结</a></li>
+</ul>
 </nav></div>
 </div><div class=content id=content><p>在<a href=../use-gradle-to-build-java-project-without-plugin/ rel>上一篇文章</a>中，我们在没有使用任何插件的情况下，练习了使用 <code>Gradle</code> 构建 <code>Java</code> 项目，最后得到一个脆弱的构建脚本和不符合约定的目录结构。</p>
 <p>对此，<code>Gradle</code> 使用了插件来解决这些问题。</p>
-<h1 id=插件>插件</h1>
+<h2 id=插件>插件</h2>
 <p><code>Gradle</code> 中的插件，可以给我们带来很多好处，包括：</p>
 <ol>
 <li>添加 <code>Task</code></li>
@@ -149,9 +155,9 @@
 </div>
 </div><hr>
 <p>接下来，我们接着上一篇文章的例子，使用 <code>Java Plugin</code> 来改造我们的构建脚本。</p>
-<h1 id=改造-hello-world>改造 Hello World</h1>
+<h2 id=改造-hello-world>改造 Hello World</h2>
 <p><code>Java</code> 插件的文档：https://docs.gradle.org/current/userguide/java_plugin.html</p>
-<h2 id=import-java-plugin>Import <code>Java</code> Plugin</h2>
+<h3 id=import-java-plugin>Import <code>Java</code> Plugin</h3>
 <p>如上所述，我们使用 <code>Java Plugin</code> 需要先导入它：</p>
 <div class=highlight><div class=chroma>
 <table class=lntable><tr><td class=lntd>
@@ -166,7 +172,7 @@
 </code></pre></td></tr></table>
 </div>
 </div><p>因为 <code>Java</code> 插件是 <code>Gradle</code> 提供的核心插件，它是和 <code>Gradle</code> 版本绑定的，所以不需要使用 <code>version</code> 参数。</p>
-<h2 id=sourceset><code>SourceSet</code></h2>
+<h3 id=sourceset><code>SourceSet</code></h3>
 <p>引入 <code>Java</code> 插件后，我们先来了解一个核心概念：<code>SourceSet</code>。这是 <code>Java</code> 插件引入的概念，每一个 <code>SourceSet</code> 都包含了一组相关的资源。默认情况下，一个 <code>SourceSet</code> 对应 <code>src</code> 目录下的一个目录，目录名称就是 <code>SourceSet</code> 的名称；目录下会有一个 <code>java</code> 目录和一个 <code>resources</code> 目录。根据约定，这两个目录分别是存放 <code>java</code> 文件的目录和存放配置等资源文件的目录。</p>
 <p><code>SourceSet</code> 还有更多的信息可以配置，参见：https://docs.gradle.org/current/userguide/building_java_projects.html#sec:java_source_sets</p>
 <p><code>Java</code> 插件还默认配置好了两个 <code>SourceSet</code>，分别是 <code>main</code> & <code>test</code>。所以在使用 <code>Java</code> 插件后，无需任何配置，就可以得到约定的目录结构：</p>
@@ -209,8 +215,8 @@ src
         └── HelloWorld.java
 </code></pre></td></tr></table>
 </div>
-</div><h2 id=task><code>Task</code></h2>
-<h3 id=java-插件引入的-task><code>Java</code> 插件引入的 <code>Task</code></h3>
+</div><h3 id=task><code>Task</code></h3>
+<h4 id=java-插件引入的-task><code>Java</code> 插件引入的 <code>Task</code></h4>
 <p>接着我们来看看 <code>Task</code> 需要做哪些修改。</p>
 <p><code>Java</code> 插件引入了下面的这些 <code>Task</code>，并且添加了依赖关系：</p>
 <p><img class=lazyload src=/svg/loading.min.svg data-src=javaPluginTasks.png data-srcset="/use-gradle-to-build-java-project/javaPluginTasks.png, javaPluginTasks.png 1.5x, /use-gradle-to-build-java-project/javaPluginTasks.png 2x" data-sizes=auto alt=/use-gradle-to-build-java-project/javaPluginTasks.png title=/use-gradle-to-build-java-project/javaPluginTasks.png></p>
@@ -230,7 +236,7 @@ src
 <blockquote>
 <p>注意，执行测试是 <code>test</code> 任务，它没有因为添加 <code>sourceSet</code> 而自动添加 <code>sourceSetTest</code> 方法。因为自定义的 <code>SourceSet</code> 不一定是组件测试之类的不同类别的测试。所以，如果你添加了这样的 <code>SourceSet</code>，需要自己手动编写 <code>Test</code> 类型的测试 <code>task</code>。</p>
 </blockquote>
-<h3 id=改进-hello-world>改进 Hello World</h3>
+<h4 id=改进-hello-world>改进 Hello World</h4>
 <p>由上面的了解可知，<code>Java</code> 插件已经为我们添加了 <code>compileJava</code> 和 <code>jar</code> 这两个 <code>task</code>，所以我们不需要再创建这样的 <code>task</code>。但是我们还是可以对这些 <code>task</code> 进行配置。</p>
 <p>比如，我们仍然希望控制 <code>jar</code> 产出的文件名，那我们的脚本就可以改成这样：</p>
 <div class=highlight><div class=chroma>
@@ -293,8 +299,8 @@ src
 <pre tabindex=0 class=chroma><code class=language-gradle data-lang=gradle><span class=n>assemble</span><span class=o>.</span><span class=na>dependsOn</span> <span class=n>fatJar</span>
 </code></pre></td></tr></table>
 </div>
-</div><h2 id=dependency-configuration><code>Dependency Configuration</code></h2>
-<h3 id=java-插件引入的-configuration><code>Java</code> 插件引入的 <code>Configuration</code></h3>
+</div><h3 id=dependency-configuration><code>Dependency Configuration</code></h3>
+<h4 id=java-插件引入的-configuration><code>Java</code> 插件引入的 <code>Configuration</code></h4>
 <p>上一篇文章讲到，在 <code>Gradle</code> 中声明依赖，需要关联到 <code>configuration</code>。<code>Java</code> 插件也提前为我们设计了一些 <code>configuration</code>，他们的主要关系可以通过两幅图来表示。</p>
 <p>与 <code>main sourceSet</code> 相关的：</p>
 <p><img class=lazyload src=/svg/loading.min.svg data-src=java-main-configurations.png data-srcset="/use-gradle-to-build-java-project/java-main-configurations.png, java-main-configurations.png 1.5x, /use-gradle-to-build-java-project/java-main-configurations.png 2x" data-sizes=auto alt=/use-gradle-to-build-java-project/java-main-configurations.png title=/use-gradle-to-build-java-project/java-main-configurations.png></p>
@@ -314,7 +320,7 @@ src
 <p>如果你使用过以前版本的 <code>Gradle</code>，想必会比较好奇为什么 <code>Compile</code> 会被废弃。这其实是出于构建工具的性能的考虑，关闭掉不必要的传递依赖。</p>
 </blockquote>
 <p>你也许也发现了，和 <code>task</code> 一样，有一些名称相近的 <code>configuration</code>，所以很自然的推测：添加了自定义的 <code>SourceSet</code> 后，<code>Java</code> 插件会自动的添加一些 <code>configuration</code>。这些 <code>sourceSet configuration</code> 都可以在 <code>Java</code> 插件的页面上找到。</p>
-<h3 id=改进-hello-world-1>改进 Hello World</h3>
+<h4 id=改进-hello-world-1>改进 Hello World</h4>
 <p>首先，我们可以直接使用 <code>Java</code> 插件提供的 <code>implementation</code>，而不需要自己创建任何 <code>configuration</code>:</p>
 <div class=highlight><div class=chroma>
 <table class=lntable><tr><td class=lntd>
@@ -376,7 +382,7 @@ src
 <span class=o>}</span>
 </code></pre></td></tr></table>
 </div>
-</div><h1 id=总结>总结</h1>
+</div><h2 id=总结>总结</h2>
 <p>经过使用 <code>Java</code> 插件，并对构建脚本的修改，我们得到了更具有鲁棒性、实现了约定优于配置的构建脚本。</p>
 <p>完整的脚本如下：</p>
 <div class=highlight><div class=chroma>
@@ -471,8 +477,8 @@ src
 <div class=post-info>
 <div class=post-info-line>
 <div class=post-info-mod>
-<span>更新于 2022-01-31&nbsp;<a class=git-hash href=https://github.com/kbyyd24/LoveItAgain/commit/8309bc020e867fcafd813c9ce7a1508339eaedeb target=_blank title="commit by kbyyd24(melo@gaoyuexiang.cn) 8309bc020e867fcafd813c9ce7a1508339eaedeb: reorg posts">
-<i class="fas fa-hashtag fa-fw"></i>8309bc0</a></span>
+<span>更新于 2023-07-14&nbsp;<a class=git-hash href=https://github.com/kbyyd24/LoveItAgain/commit/913db54d0bedb493700c829afb7d0374a7195a22 target=_blank title="commit by kbyyd24(melo@gaoyuexiang.cn) 913db54d0bedb493700c829afb7d0374a7195a22: fix render issues">
+<i class="fas fa-hashtag fa-fw"></i>913db54</a></span>
 </div>
 <div class=post-info-license></div>
 </div>
@@ -499,7 +505,7 @@ Please enable JavaScript to view the comments powered by <a href=https://valine.
 </noscript></div></article></div>
 </main><footer class=footer>
 <div class=footer-container><div class=footer-line>由 <a href=https://gohugo.io/ target=_blank rel="noopener noreffer" title="Hugo 0.92.1">Hugo</a> 强力驱动 | 主题 - <a href=https://github.com/dillonzq/LoveIt target=_blank rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
-</div><div class=footer-line><i class="far fa-copyright fa-fw"></i><span itemprop=copyrightYear>2016 - 2022</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=https://blog.gaoyuexiang.cn/about target=_blank>无糖拿铁</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span><span class=icp-splitter>&nbsp;|&nbsp;</span><br class=icp-br>
+</div><div class=footer-line><i class="far fa-copyright fa-fw"></i><span itemprop=copyrightYear>2016 - 2023</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=https://blog.gaoyuexiang.cn/about target=_blank>无糖拿铁</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span><span class=icp-splitter>&nbsp;|&nbsp;</span><br class=icp-br>
 <span class=icp><a href=https://beian.miit.gov.cn/ target=_blank>蜀ICP备15031888号-2</a></span></div>
 </div>
 </footer></div>

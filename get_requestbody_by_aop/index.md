@@ -7,14 +7,14 @@
 
 那要如何做呢?明显就需要用到`aop`了
 
-# 利用`AOP`读取`RequestBody`
+## 利用`AOP`读取`RequestBody`
 
 `aop`就是用来做切面的,具体概念这里不说了,自行谷歌.这里就讲具体问题的思路.
 
 这里用`aop`去切入`Controller`里面所有`public`的方法,利用`JoinPoint`获取参数,从而得到`RequestBody`.
 得到`RequestBody`后使用`Spring Boot`的日志打印
 
-## 创建一个切面
+### 创建一个切面
 
 ```java
 @Aspect
@@ -25,7 +25,7 @@ public class RequestMapAspect {}
 - `@Aspect`注解表明这是一个切面
 - `@Componet`注册为组件,否则无法使用`Spring Boot`的日志
 
-## 声明一个`logger`
+### 声明一个`logger`
 
 ```java
 private final Log log = LogFactory(this.getClass());
@@ -33,14 +33,14 @@ private final Log log = LogFactory(this.getClass());
 
 - 这里的`Log`与`LogFactory`均在`org.apache.commons.logging`包下,**不是`slf4j`,不是`logback`也不是`log4j`**!
 
-## 声明切点
+### 声明切点
 
 ```java
 @Pointcut(value = "excution(public * cn.gaoyuexiang.controller.*.*(..))")
 public void controllerLog() {}
 ```
 
-## 编写`Before`获取参数
+### 编写`Before`获取参数
 
 ```java
 @Before("controllerLog()")

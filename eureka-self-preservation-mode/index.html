@@ -9,7 +9,7 @@
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://blog.gaoyuexiang.cn/eureka-self-preservation-mode/"><meta property="og:image" content="https://blog.gaoyuexiang.cn/logo.png"><meta property="article:section" content="posts">
 <meta property="article:published_time" content="2020-07-25T23:31:52+00:00">
-<meta property="article:modified_time" content="2022-01-31T20:10:51+08:00">
+<meta property="article:modified_time" content="2023-07-14T00:20:19+08:00">
 <meta name=twitter:card content="summary_large_image">
 <meta name=twitter:image content="https://blog.gaoyuexiang.cn/logo.png">
 <meta name=twitter:title content="Eureka 中的幽灵 —— Self Preservation 导致的幽灵服务">
@@ -17,7 +17,7 @@
 <meta name=application-name content="LoveIt">
 <meta name=apple-mobile-web-app-title content="LoveIt"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel="shortcut icon" type=image/x-icon href=/favicon.ico>
 <link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
-<link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=https://blog.gaoyuexiang.cn/eureka-self-preservation-mode/><link rel=prev href=https://blog.gaoyuexiang.cn/how-to-use-spring-security-acl/><link rel=next href=https://blog.gaoyuexiang.cn/cyclomatic-complexity/><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css><link rel=stylesheet href=/css/style.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"Eureka 中的幽灵 —— Self Preservation 导致的幽灵服务","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/blog.gaoyuexiang.cn\/eureka-self-preservation-mode\/"},"image":["https:\/\/blog.gaoyuexiang.cn\/images\/Apple-Devices-Preview.png"],"genre":"posts","keywords":"Spring, Spring Cloud, Eureka, self preservation, 自我保护模式","wordcount":3162,"url":"https:\/\/blog.gaoyuexiang.cn\/eureka-self-preservation-mode\/","datePublished":"2020-07-25T23:31:52+00:00","dateModified":"2022-01-31T20:10:51+08:00","license":"CC BY-NC 4.0 CN","publisher":{"@type":"Organization","name":"无糖拿铁","logo":"https:\/\/blog.gaoyuexiang.cn\/images\/avatar.png"},"author":{"@type":"Person","name":"无糖拿铁"},"description":""}</script></head>
+<link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=https://blog.gaoyuexiang.cn/eureka-self-preservation-mode/><link rel=prev href=https://blog.gaoyuexiang.cn/how-to-use-spring-security-acl/><link rel=next href=https://blog.gaoyuexiang.cn/cyclomatic-complexity/><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css><link rel=stylesheet href=/css/style.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"Eureka 中的幽灵 —— Self Preservation 导致的幽灵服务","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/blog.gaoyuexiang.cn\/eureka-self-preservation-mode\/"},"image":["https:\/\/blog.gaoyuexiang.cn\/images\/Apple-Devices-Preview.png"],"genre":"posts","keywords":"Spring, Spring Cloud, Eureka, self preservation, 自我保护模式","wordcount":3162,"url":"https:\/\/blog.gaoyuexiang.cn\/eureka-self-preservation-mode\/","datePublished":"2020-07-25T23:31:52+00:00","dateModified":"2023-07-14T00:20:19+08:00","license":"CC BY-NC 4.0 CN","publisher":{"@type":"Organization","name":"无糖拿铁","logo":"https:\/\/blog.gaoyuexiang.cn\/images\/avatar.png"},"author":{"@type":"Person","name":"无糖拿铁"},"description":""}</script></head>
 <body header-desktop=fixed header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem('theme')?localStorage.getItem('theme')==='dark':'auto'==='auto'?window.matchMedia('(prefers-color-scheme: dark)').matches:'auto'==='dark')&&document.body.setAttribute('theme','dark')</script>
 <div id=mask></div><div class=wrapper><header class=desktop id=header-desktop>
 <div class=header-wrapper>
@@ -96,6 +96,11 @@
 </div>
 <div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents>
 <ul>
+<li><a href=#幽灵出现>幽灵出现</a></li>
+<li><a href=#为什么这些服务没有注销>为什么这些服务没有注销？</a></li>
+<li><a href=#难道-eureka-不会清理过期的注册信息吗>难道 Eureka 不会清理过期的注册信息吗？</a></li>
+<li><a href=#自我保护模式>自我保护模式</a>
+<ul>
 <li><a href=#概念>概念</a></li>
 <li><a href=#自我保护的逻辑>自我保护的逻辑</a>
 <ul>
@@ -120,19 +125,22 @@
 </ul>
 </li>
 </ul>
+</li>
+<li><a href=#总结>总结</a></li>
+</ul>
 </nav></div>
 </div><div class=content id=content><p>Eureka 是 Spring Cloud Netflix 的服务注册与发现工具。一般情况下，它都能很好的工作，但有时却会出现一些匪夷所思的情况。
 今天我们就来研究一下不当的配置导致的幽灵服务。</p>
-<h1 id=幽灵出现>幽灵出现</h1>
+<h2 id=幽灵出现>幽灵出现</h2>
 <p>我们先来给幽灵服务做一个定义：它们是 Eureka 注册表中的一些节点，但是它们实际上已经被关闭了，永远无法访问。</p>
 <p>我们可以通过 <code>GET /eureka/apps</code> 获取 Eureka 中注册的节点信息，其中包含了节点的最后更新时间： lastRenewalTimestamp 。如果发现这个时间已经过去了很久，那么这个节点可能就是一个幽灵节点。</p>
 <p>这其实是一个非常反常的现象，因为 Eureka client 在关闭时，通过 <code>@PreDestroy</code> 触发 <code>DiscoveryClient.shutdown()</code> 方法，向 Eureka Server 发送 shutdown 请求，从 Eureka Server 注册表中注销。</p>
 <p>那么问题来了。</p>
-<h1 id=为什么这些服务没有注销>为什么这些服务没有注销？</h1>
+<h2 id=为什么这些服务没有注销>为什么这些服务没有注销？</h2>
 <p>因为 <code>@PreDestroy</code> 是用来处理 <code>SIGTERM</code> 等信号的，所以只有在通过这些信息关闭 Eureka client 时，Eureka client 才会向 Eureka Server 发送 shutdown 请求。
 但是如果是通过 <code>kill -9</code> 这样的指令，或者是 <a href=../graceful-shutdown-docker-container/ rel>不优雅的 stop docker</a> ，即发送 <code>SIGKILL</code> 信号，都不会触发 <code>PreDestroy</code>，那么这些 Eureka client 也就不会被注销了。</p>
 <p>那么问题又来了。</p>
-<h1 id=难道-eureka-不会清理过期的注册信息吗>难道 Eureka 不会清理过期的注册信息吗？</h1>
+<h2 id=难道-eureka-不会清理过期的注册信息吗>难道 Eureka 不会清理过期的注册信息吗？</h2>
 <p>其实是会的。</p>
 <p>在 Eureka Server 的核心库 <code>eureka-core</code> 中，有一个 <code>AbstractInstanceRegistry</code> 类，其中实现了 <code>evict()</code> 方法，用来完成清理过期注册信息的工作。这个方法被一个 <code>TimerTask</code> 定时调用，默认间隔时间是 60s。</p>
 <p>在这个方法中，Eureka server 会：</p>
@@ -148,14 +156,14 @@
 <p>但是 eureka 在这里却有一个 <a href=https://github.com/Netflix/eureka/issues/531 target=_blank rel="noopener noreffer">bug</a>。Eureka server 在接收到心跳请求时，会把当前时间加上租期时间作为最后接收到心跳的时间。然后在清理时，又会在这个时间上再加一个租期时间来判断是否过期。所以一个服务过期时间总共是 180s，它被不优雅的关闭后最多经过 240s 就会被清理掉。</p>
 <p>但是事情可能没有那么简单，别说 240s，就是过了两天，这些幽灵服务可能还在你的注册表里。</p>
 <p>这就涉及到另一个问题，Eureka server self-preservation mode.</p>
-<h1 id=自我保护模式>自我保护模式</h1>
-<h2 id=概念>概念</h2>
+<h2 id=自我保护模式>自我保护模式</h2>
+<h3 id=概念>概念</h3>
 <p>Eureka client 之间调用时，不会向 Eureka server 发送任何请求，而是根据本地维护的注册表，找到需要调用的服务，直接调用，也就是 peer to peer 的模式。本地的注册表，其实是从 Eureka server 拉取回来的，默认每 30s 拉取一次更新。
 那么当 Eureka server 因为网络震荡没有接收到某些 Eureka client 发送的心跳请求时，并不意味着 Eureka client 之间的网络也出现了问题，Eureka client 之间可能仍然能够访问。
 如果这个时候更新注册表，清理了只是因为网络震荡而没有发送心跳的节点，那么本可能成功的调用就会失败。
 为了减少对服务的影响，Eureka 默认启动了自我保护模式，不会清理掉过期的注册信息。</p>
 <p>官方详细的解释可以看<a href=https://github.com/Netflix/eureka/wiki/Server-Self-Preservation-Mode target=_blank rel="noopener noreffer">这里</a>。</p>
-<h2 id=自我保护的逻辑>自我保护的逻辑</h2>
+<h3 id=自我保护的逻辑>自我保护的逻辑</h3>
 <p>在上面介绍的 <code>evict</code> 方法的逻辑之前，eureka 会首先调用 <code>isLeaseExpirationEnabled</code> 方法，以判断是否要执行后续的清理逻辑。</p>
 <p>这个方法首先会判断是否启用了自我保护模式，如果没有启用，那么就返回 <code>true</code>，否则会返回下面这个表达式的结果。</p>
 <div class=highlight><div class=chroma>
@@ -169,10 +177,10 @@
 </code></pre></td></tr></table>
 </div>
 </div><p>那么接下来我们就看看这两个值是什么。</p>
-<h3 id=number-of-renews-in-last-minute>Number of Renews in Last Minute</h3>
+<h4 id=number-of-renews-in-last-minute>Number of Renews in Last Minute</h4>
 <p>这个值的含义顾名思义，就是过去一分钟内，eureka server 接收到的心跳请求次数。这不是实时数据，而是每分钟更新一次。具体逻辑被 <code>MeasureRate</code> 实现。</p>
 <p>由于 eureka client 默认配置的心跳间隔是 30s，所以这默认情况下的这个值就是 <code>2*client-size</code>。</p>
-<h3 id=number-of-renews-per-minute-threshold>Number of Renews per Minute Threshold</h3>
+<h4 id=number-of-renews-per-minute-threshold>Number of Renews per Minute Threshold</h4>
 <p>这个值就相对复杂一些，表示的是触发自我保护模式的心跳阈值。根据表达式，就明白它的含义：当过去一分钟实际接收到的心跳总数小于等于这个心跳阈值时，就会触发自我保护模式，Eureka server 就不会清理注册信息。</p>
 <p>接着，我们来看看这个阈值是如何计算出来的：</p>
 <div class=highlight><div class=chroma>
@@ -188,13 +196,13 @@
 </code></pre></td></tr></table>
 </div>
 </div><p>好了，这里又冒出来三个值，我们先来看看后两个。</p>
-<h4 id=expected-client-renewal-interval-seconds>Expected Client Renewal Interval Seconds</h4>
+<h5 id=expected-client-renewal-interval-seconds>Expected Client Renewal Interval Seconds</h5>
 <p>这是一个配置的值，默认 30s，通过 <code>eureka.server.expected-client-renewal-interval-seconds</code> 配置。</p>
 <p>需要注意的是，这个值不是 client 真实的发送心跳的时间间隔，真实的心跳间隔是值 client 中配置的 <code>eureka.instance.lease-renewal-interval-in-seconds</code>，同样默认 30s。</p>
 <p>但这两个值显然应该保持一致，因为上面的 number-of-renews-in-last-min 其实就是 <code>(60 / lease-renewal-interval-in-seconds) * client-size</code>，而这里也几乎是同样的逻辑（如果把 expected-number-of-clients-sending-renews 看作 <code>client-size</code> 的话）。</p>
-<h4 id=renewal-percent-threshold>Renewal Percent Threshold</h4>
+<h5 id=renewal-percent-threshold>Renewal Percent Threshold</h5>
 <p>这个值在前面讲清理注册信息的时候已经讲过了，默认值 0.85。</p>
-<h4 id=expected-number-of-clients-sending-renews>Expected Number of Clients Sending Renews</h4>
+<h5 id=expected-number-of-clients-sending-renews>Expected Number of Clients Sending Renews</h5>
 <p>根据名字，这个值代表的是期望的会发送心跳请求的 client 数量，也就是前面的 <code>client-size</code>。但是实际上的值却有可能不同。</p>
 <p>这个值的一个更新时间是启动 eureka server 时。Eureka server 会尝试从配置的邻居 server 节点拉取注册表信息来配置。如果没有邻居节点，或者注册表中没有信息的话，就会被设置为默认值 1，通过 <code>eureka.server.defaultOpenForTrafficCount</code> 配置。</p>
 <blockquote>
@@ -203,7 +211,7 @@
 <p>这个值的另一个更新时间是一个定时任务，默认每 15min 执行一次。可以通过 <code>eureka.server.renewal-threshold-update-interval-ms</code> 修改这个时间。</p>
 <p>最后，每当这个值被更新之后，都会更新我们的心跳阈值。</p>
 <p>了解了上面的这些逻辑，我们了解到，如果符合 <code>应有的心跳数 - 失去的心跳数 ≤ 心跳阈值</code>，那么就会触发自我保护机制。</p>
-<h2 id=处理一个幽灵服务的极限值>处理一个幽灵服务的极限值</h2>
+<h3 id=处理一个幽灵服务的极限值>处理一个幽灵服务的极限值</h3>
 <p>了解了前面这些，我不禁产生一个疑问：在默认配置的情况下，有多少个 client 之后，eureka server 才会清理掉过期的注册信息？出现多少个过期的注册信息，就会触发自我保护模式？</p>
 <p>这其实只是一个数学问题。假设集群中一共有 n 个 client，eureka server 能接受的不会触发自我保护模式的过期注册信息个数有 m 个，那么我们就可以有如下的推导：</p>
 <div class=highlight><div class=chroma>
@@ -228,7 +236,7 @@
 </div>
 </div><p>所以，一个集群如果要能够处理一个过期的注册信息，也就是 m=1， 那么至少需要有多于 12.33 个 eureka client，也就是 13 个。
 换句话说，在默认配置下，如果集群中只有不到 13 个服务，那么任何一个服务被不优雅的关闭，都会出现幽灵服务。</p>
-<h3 id=验证>验证</h3>
+<h4 id=验证>验证</h4>
 <p>为了验证上面的结论，我写了个 <a href=https://github.com/kbyyd24/eureka-self-preservation-verify target=_blank rel="noopener noreffer">demo</a> 来验证一下。</p>
 <blockquote>
 <p>为了保证每分钟的 <code>evict</code> 方法都用到最新的心跳阈值，我把 <code>expected-number-of-clients-sending-renews</code> 的更新时间设置为了 60s。</p>
@@ -236,7 +244,7 @@
 <blockquote>
 <p>这个 demo 用了 docker-compose，验证的步骤需要启动 14 个 container，想要试试的同学需要给自己的 docker 多分配点资源。</p>
 </blockquote>
-<h4 id=12-个-client-会触发自我保护模式>12 个 client 会触发自我保护模式</h4>
+<h5 id=12-个-client-会触发自我保护模式>12 个 client 会触发自我保护模式</h5>
 <p>话不多说，直接启动</p>
 <div class=highlight><div class=chroma>
 <table class=lntable><tr><td class=lntd>
@@ -264,7 +272,7 @@
 </div>
 </div><p>然后几分钟过去了，eureka server 的注册服务仍然有 12 个。</p>
 <p><img class=lazyload src=/svg/loading.min.svg data-src=12-1-offline-client.png data-srcset="/eureka-self-preservation-mode/12-1-offline-client.png, 12-1-offline-client.png 1.5x, /eureka-self-preservation-mode/12-1-offline-client.png 2x" data-sizes=auto alt=/eureka-self-preservation-mode/12-1-offline-client.png title=/eureka-self-preservation-mode/12-1-offline-client.png></p>
-<h4 id=13-个-client-能够处理掉一个幽灵服务>13 个 client 能够处理掉一个幽灵服务</h4>
+<h5 id=13-个-client-能够处理掉一个幽灵服务>13 个 client 能够处理掉一个幽灵服务</h5>
 <p>还是上面的命令，只是这次我们启动 13 个 eureka-client</p>
 <p><img class=lazyload src=/svg/loading.min.svg data-src=13-online-client.png data-srcset="/eureka-self-preservation-mode/13-online-client.png, 13-online-client.png 1.5x, /eureka-self-preservation-mode/13-online-client.png 2x" data-sizes=auto alt=/eureka-self-preservation-mode/13-online-client.png title=/eureka-self-preservation-mode/13-online-client.png></p>
 <p>然后也是随便杀掉一个 client，等待结果。</p>
@@ -275,7 +283,7 @@
 <p>还可以观察一下杀掉两个 client 的效果：</p>
 <p><img class=lazyload src=/svg/loading.min.svg data-src=13-2-offline.png data-srcset="/eureka-self-preservation-mode/13-2-offline.png, 13-2-offline.png 1.5x, /eureka-self-preservation-mode/13-2-offline.png 2x" data-sizes=auto alt=/eureka-self-preservation-mode/13-2-offline.png title=/eureka-self-preservation-mode/13-2-offline.png></p>
 <p>同时，也可以利用 <code>GET /eureka/apps</code> 查看注册信息，关注被杀掉的节点的 lastRenewalTimestamp 信息。这是它的最后注册时间，因为加了 90s，所以应该是一个未来的时间。用这个时间加上 90s，在这之后的第一次 <code>evict</code> 就应该清理掉这个节点信息，这可以在 eureka-server 的日志中看到。</p>
-<h1 id=总结>总结</h1>
+<h2 id=总结>总结</h2>
 <p>我们研究了 eureka 的自我保护模式，它的目的是避免在出现网络震荡时删除掉可能正常工作的节点信息。但如果配置不当，自我保护模式反而可能产生幽灵服务。</p>
 <p>可以影响到自我保护模式的配置主要有两个：</p>
 <ul>
@@ -287,8 +295,8 @@
 <div class=post-info>
 <div class=post-info-line>
 <div class=post-info-mod>
-<span>更新于 2022-01-31&nbsp;<a class=git-hash href=https://github.com/kbyyd24/LoveItAgain/commit/8309bc020e867fcafd813c9ce7a1508339eaedeb target=_blank title="commit by kbyyd24(melo@gaoyuexiang.cn) 8309bc020e867fcafd813c9ce7a1508339eaedeb: reorg posts">
-<i class="fas fa-hashtag fa-fw"></i>8309bc0</a></span>
+<span>更新于 2023-07-14&nbsp;<a class=git-hash href=https://github.com/kbyyd24/LoveItAgain/commit/913db54d0bedb493700c829afb7d0374a7195a22 target=_blank title="commit by kbyyd24(melo@gaoyuexiang.cn) 913db54d0bedb493700c829afb7d0374a7195a22: fix render issues">
+<i class="fas fa-hashtag fa-fw"></i>913db54</a></span>
 </div>
 <div class=post-info-license></div>
 </div>
@@ -315,7 +323,7 @@ Please enable JavaScript to view the comments powered by <a href=https://valine.
 </noscript></div></article></div>
 </main><footer class=footer>
 <div class=footer-container><div class=footer-line>由 <a href=https://gohugo.io/ target=_blank rel="noopener noreffer" title="Hugo 0.92.1">Hugo</a> 强力驱动 | 主题 - <a href=https://github.com/dillonzq/LoveIt target=_blank rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
-</div><div class=footer-line><i class="far fa-copyright fa-fw"></i><span itemprop=copyrightYear>2016 - 2022</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=https://blog.gaoyuexiang.cn/about target=_blank>无糖拿铁</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span><span class=icp-splitter>&nbsp;|&nbsp;</span><br class=icp-br>
+</div><div class=footer-line><i class="far fa-copyright fa-fw"></i><span itemprop=copyrightYear>2016 - 2023</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=https://blog.gaoyuexiang.cn/about target=_blank>无糖拿铁</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span><span class=icp-splitter>&nbsp;|&nbsp;</span><br class=icp-br>
 <span class=icp><a href=https://beian.miit.gov.cn/ target=_blank>蜀ICP备15031888号-2</a></span></div>
 </div>
 </footer></div>

@@ -4,7 +4,7 @@
 
 本文目标是探索在没有使用任何额外插件的情况下，如何使用 `Gradle` 构建一个 `Java` 项目，以此对比使用 `Java` 插件时得到的好处。
 
-# 初始化项目
+## 初始化项目
 
 使用 `Gradle Init` 插件提供的 `init` task 来创建一个 `Gradle` 项目：
 
@@ -29,7 +29,7 @@ gradle init --type basic --dsl groovy --project-name gradle-demo
 
 接下来，我们将关注点放到 `build.gradle` 上面，这是接下来编写构建脚本的地方。
 
-# Hello World
+## Hello World
 
 首先，我们编写一个 `Java` 的 HelloWorld，做为业务代码的代表：
 
@@ -43,7 +43,7 @@ public class HelloWorld {
 
 然后，将这个内容保存到 `src/HelloWorld.java` 文件中，不按照 `maven` 的约定来组织项目结构。
 
-# 编译 Java
+## 编译 Java
 
 接着，我们需要给我们的构建脚本添加任务来编译刚才写的 `Java` 文件。这里就需要使用到 `Task`。关于 `Task	`，`Gradle` 上有比较详细的文档描述如何使用它：https://docs.gradle.org/current/dsl/org.gradle.api.Task.html#org.gradle.api.Task & https://docs.gradle.org/current/userguide/more_about_tasks.html。
 
@@ -84,7 +84,7 @@ Hello World
 
 我们可以看到，HelloWorld 已经编译成功，并且可以被正确执行。
 
-# 添加第三方依赖
+## 添加第三方依赖
 
 在实际的项目中，难免会使用到其他人开发的库。要使用别人开发的库，就需要添加依赖。在 `Gradle` 中添加依赖，需要做这样四个事情：
 
@@ -93,7 +93,7 @@ Hello World
 3. 申明 `dependency`
 4. 将 `dependency` 添加到 `classpath`
 
-## 申明 `repository`
+### 申明 `repository`
 
 在 `Gradle` 中可以定义项目在哪些 `repository` 中寻找依赖，通过 `dependencies` 语法块申明：
 
@@ -110,7 +110,7 @@ repositories {
 
 申明了 `repository` 之后，`Gradle` 才会知道在哪里寻找申明的依赖。
 
-## 定义 `configuration`
+### 定义 `configuration`
 
 如果你使用过 `maven` 的话，也许 `repository` 和 `dependency` 都能理解，但对 `configuration` 却可能感到陌生。
 
@@ -134,7 +134,7 @@ configurations {
 }
 ```
 
-## 申明 `dependency`
+### 申明 `dependency`
 
 申明 `dependency` 需要使用到上一步的 `configuration`，将依赖关联到一个 `configuration` 中：
 
@@ -146,7 +146,7 @@ dependencies {
 
 通过这样的申明，在 `forHelloWorld` 这个 `configuration` 中就存在了 `guava` 这个依赖。
 
-## 将 `dependency` 添加到 `classpath`
+### 将 `dependency` 添加到 `classpath`
 
 接下来，我们就需要将 `guava` 这个依赖添加到 `compileJava` 这个 `task` 的 `classpath` 中，这样我们在代码中使用的 `guava` 提供的代码就能在编译期被 `JVM` 识别到。
 
@@ -156,7 +156,7 @@ dependencies {
 classpath = files("${buildDir}/classes", configurations.forHelloWorld)
 ```
 
-## 修改 HelloWorld
+### 修改 HelloWorld
 
 完成上面四步之后，我们就可以在我们的代码中使用 `guava` 的代码了：
 
@@ -170,7 +170,7 @@ public class HelloWrold {
 }
 ```
 
-# 打包
+## 打包
 
 前面已经了解过如何进行编译，接着我们来看看如何打包。
 
@@ -179,7 +179,7 @@ public class HelloWrold {
 1. 一种是普通的 `Jar`，里面不包含自己的依赖，而是在 `Jar` 文件外的一个 `metadata` 文件申明依赖，比如 `maven` 中的 `pom.xml`
 2. 另一种被称作 `fatJar` (or `uberJar`) ，里面已经包含了所有的运行时需要的 `class` 文件和 `resource` 文件。
 
-## 创建普通的 `Jar` 文件
+### 创建普通的 `Jar` 文件
 
 在这个练习中，我们就只关注 `Jar` 本身，不关心 `metadata` 文件。
 
@@ -233,7 +233,7 @@ drwxr-xr-x  2.0 unx        0 b- defN 20-Feb-22 23:14 META-INF/
 3 files, 1678 bytes uncompressed, 825 bytes compressed:  50.8%
 ```
 
-## 创建 `fatJar`
+### 创建 `fatJar`
 
 接着，同样使用 `Jar` 这个类型，我们创建一个 `fatJar` 任务：
 
@@ -281,7 +281,7 @@ build
 Hello World
 ```
 
-# 总结
+## 总结
 
 通过练习在不使用 `Java Plugin` 的情况下，使用 `Gradle` 来构建项目，实现了编译源码、依赖管理和打包的功能，并得到了如下完整的 `gradle.build` 文件：
 

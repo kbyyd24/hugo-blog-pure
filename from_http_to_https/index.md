@@ -5,11 +5,11 @@
 这个五一折腾了下`https`，看了加密的建立过程和原理，然后动手实践，把博客从不支持`https`的阿里云虚机上搬到了新买的腾讯云的主机上，配好了`https`，这里记录一下。
 
 
-# 加密连接建立过程与原理
+## 加密连接建立过程与原理
 
 这个部分不想自己写了，参见 sf 上的[这篇文章](https://segmentfault.com/a/1190000004985253)就很容易理解。
 
-## 我的理解
+### 我的理解
 
 `https`并不是一个全新的协议，而是一个组合的协议，是`ssl`与`http`组合而来的，其模型如下图
 ![alt text](https://cattail.me/assets/how-https-works/tcp-ip-model.png)
@@ -29,7 +29,7 @@
 
 按照这个逻辑，我们就可以对所有应用层的协议进行加密工作，比如`sftp`。另外，最让码农感觉幸福的是，只要服务器做好配置，我们不需要修改代码，只需要修改接口的协议，其加密过程对于程序来说是透明的。
 
-## letsencrypt
+### letsencrypt
 
 Let's Encrypt 是一个提供免费`SSL`证书的项目，托管在`github`上：
 [https://github.com/letsencrypt/letsencrypt](https://github.com/letsencrypt/letsencrypt)
@@ -38,9 +38,9 @@ Let's Encrypt 是一个提供免费`SSL`证书的项目，托管在`github`上�
 
 > 然而，这个项目提供的证书默认有效期是 90 天，我们需要定期的更新证书，或者写个脚本，定时执行。
 
-# 实战
+## 实战
 
-## 准备工作
+### 准备工作
 
 在获取证书的时候，需要使用 80 和 443 端口，所以需要先关闭占用这两个端口的程序
 
@@ -48,7 +48,7 @@ Let's Encrypt 是一个提供免费`SSL`证书的项目，托管在`github`上�
 # systemctl stop nginx.service
 ```
 
-## 获取`letsencrypt`
+### 获取`letsencrypt`
 
 ```shell
 # git clone https://github.com/letsencrypt/letsencrypt
@@ -57,7 +57,7 @@ Let's Encrypt 是一个提供免费`SSL`证书的项目，托管在`github`上�
 ```
 > 最后一个命令会帮助解决项目的依赖问题
 
-## 获取证书
+### 获取证书
 
 上一个命令结束后会打印出一些使用的帮助信息，可以根据帮助信息选择需要的参数。
 
@@ -81,7 +81,7 @@ IMPORTANT NOTES:
    Donating to EFF:                    https://eff.org/donate-le
 ```
 
-## 配置nginx
+### 配置nginx
 
 `nginx`的配置能够在网上找到很多资料，这里我就把我的与`ssl`相关的配置贴出来
 

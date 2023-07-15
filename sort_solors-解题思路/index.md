@@ -1,7 +1,7 @@
 # Sort Colors 解题思路
 
 
-# 题目
+## 题目
 
 先把题目放上：
 
@@ -11,10 +11,10 @@
 >
 > Here, we will use the integers 0, 1, and 2 to represent the color red, white, and blue respectively.
 >
-> ###### Note:
+> **Note:**
 > You are not suppose to use the library's sort function for this problem.
 >
-> ###### Follow up:
+> **Follow up:**
 > A rather straight forward solution is a two-pass algorithm using counting sort.
 > First, iterate the array counting number of 0's, 1's, and 2's, then overwrite array with total number of 0's,  then 1's and followed by 2's.
 >
@@ -22,7 +22,7 @@
 
 ---
 
-# 解题思路
+## 解题思路
 
 拿到这个题目，第一个想到的就是遍历，计数，然后赋值。这个方法很容易想到，题目也给出了提示。
 
@@ -34,7 +34,7 @@
 
 ---
 
-# 代码
+## 代码
 
 ```java
 public class Solution {
