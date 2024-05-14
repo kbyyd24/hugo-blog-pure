@@ -1,0 +1,492 @@
+<!doctype html><html lang=zh-cn>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=robots content="noodp">
+<meta http-equiv=x-ua-compatible content="IE=edge, chrome=1">
+<title>函数式编程给代码设计带来了什么变化？ - 无糖拿铁，谢谢</title><meta name=Description content="学习、记录、分享"><meta property="og:title" content="函数式编程给代码设计带来了什么变化？">
+<meta property="og:description" content="我第一次接触函数式编程还是在大学的时候，学长实习回来给我介绍了这个新的概念。后来通过阅读《Java8 函数式编程》，我入门了函数式的一些常见方">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://blog.gaoyuexiang.cn/what-we-can-learn-from-functional-programming-for-projects/"><meta property="og:image" content="https://blog.gaoyuexiang.cn/logo.png"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2024-05-14T16:38:19+08:00">
+<meta property="article:modified_time" content="2024-05-14T16:39:19+08:00">
+<meta name=twitter:card content="summary_large_image">
+<meta name=twitter:image content="https://blog.gaoyuexiang.cn/logo.png">
+<meta name=twitter:title content="函数式编程给代码设计带来了什么变化？">
+<meta name=twitter:description content="我第一次接触函数式编程还是在大学的时候，学长实习回来给我介绍了这个新的概念。后来通过阅读《Java8 函数式编程》，我入门了函数式的一些常见方">
+<meta name=application-name content="LoveIt">
+<meta name=apple-mobile-web-app-title content="LoveIt"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel="shortcut icon" type=image/x-icon href=/favicon.ico>
+<link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
+<link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=https://blog.gaoyuexiang.cn/what-we-can-learn-from-functional-programming-for-projects/><link rel=prev href=https://blog.gaoyuexiang.cn/rebuild-family-network-with-low-cost/><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css><link rel=stylesheet href=/css/style.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"函数式编程给代码设计带来了什么变化？","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/blog.gaoyuexiang.cn\/what-we-can-learn-from-functional-programming-for-projects\/"},"image":["https:\/\/blog.gaoyuexiang.cn\/images\/Apple-Devices-Preview.png"],"genre":"posts","wordcount":3757,"url":"https:\/\/blog.gaoyuexiang.cn\/what-we-can-learn-from-functional-programming-for-projects\/","datePublished":"2024-05-14T16:38:19+08:00","dateModified":"2024-05-14T16:39:19+08:00","license":"CC BY-NC 4.0 CN","publisher":{"@type":"Organization","name":"无糖拿铁","logo":"https:\/\/blog.gaoyuexiang.cn\/images\/avatar.png"},"author":{"@type":"Person","name":"无糖拿铁"},"description":""}</script></head>
+<body header-desktop=fixed header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem('theme')?localStorage.getItem('theme')==='dark':'auto'==='auto'?window.matchMedia('(prefers-color-scheme: dark)').matches:'auto'==='dark')&&document.body.setAttribute('theme','dark')</script>
+<div id=mask></div><div class=wrapper><header class=desktop id=header-desktop>
+<div class=header-wrapper>
+<div class=header-title>
+<a href=/ title=无糖拿铁，谢谢><span class=header-title-pre><i class="far fa-kiss-wink-heart fa-fw"></i></span>无糖拿铁，谢谢</a>
+</div>
+<div class=menu>
+<div class=menu-inner><a class=menu-item href=/posts/> 所有文章 </a><a class=menu-item href=/tags/> 标签 </a><a class=menu-item href=/categories/> 分类 </a><a class=menu-item href=/series-index/> 系列 </a><a class=menu-item href=/about/> 关于 </a><a class=menu-item href=https://github.com/kbyyd24/ title=GitHub rel="noopener noreffer" target=_blank><i class="fab fa-github fa-fw"></i> </a><span class="menu-item delimiter"></span><span class="menu-item search" id=search-desktop>
+<input type=text placeholder=搜索文章标题或内容... id=search-input-desktop>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-desktop title=搜索>
+<i class="fas fa-search fa-fw"></i>
+</a>
+<a href=javascript:void(0); class="search-button search-clear" id=search-clear-desktop title=清空>
+<i class="fas fa-times-circle fa-fw"></i>
+</a>
+<span class="search-button search-loading" id=search-loading-desktop>
+<i class="fas fa-spinner fa-fw fa-spin"></i>
+</span>
+</span><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
+<i class="fas fa-adjust fa-fw"></i>
+</a>
+</div>
+</div>
+</div>
+</header><header class=mobile id=header-mobile>
+<div class=header-container>
+<div class=header-wrapper>
+<div class=header-title>
+<a href=/ title=无糖拿铁，谢谢><span class=header-title-pre><i class="far fa-kiss-wink-heart fa-fw"></i></span>无糖拿铁，谢谢</a>
+</div>
+<div class=menu-toggle id=menu-toggle-mobile>
+<span></span><span></span><span></span>
+</div>
+</div>
+<div class=menu id=menu-mobile><div class=search-wrapper>
+<div class="search mobile" id=search-mobile>
+<input type=text placeholder=搜索文章标题或内容... id=search-input-mobile>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-mobile title=搜索>
+<i class="fas fa-search fa-fw"></i>
+</a>
+<a href=javascript:void(0); class="search-button search-clear" id=search-clear-mobile title=清空>
+<i class="fas fa-times-circle fa-fw"></i>
+</a>
+<span class="search-button search-loading" id=search-loading-mobile>
+<i class="fas fa-spinner fa-fw fa-spin"></i>
+</span>
+</div>
+<a href=javascript:void(0); class=search-cancel id=search-cancel-mobile>
+取消
+</a>
+</div><a class=menu-item href=/posts/ title>所有文章</a><a class=menu-item href=/tags/ title>标签</a><a class=menu-item href=/categories/ title>分类</a><a class=menu-item href=/series-index/ title>系列</a><a class=menu-item href=/about/ title>关于</a><a class=menu-item href=https://github.com/kbyyd24/ title=GitHub rel="noopener noreffer" target=_blank><i class="fab fa-github fa-fw"></i></a><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
+<i class="fas fa-adjust fa-fw"></i>
+</a></div>
+</div>
+</header>
+<div class="search-dropdown desktop">
+<div id=search-dropdown-desktop></div>
+</div>
+<div class="search-dropdown mobile">
+<div id=search-dropdown-mobile></div>
+</div>
+<main class=main>
+<div class=container><div class=toc id=toc-auto>
+<h2 class=toc-title>目录</h2>
+<div class="toc-content always-active" id=toc-content-auto></div>
+</div><article class="page single"><h1 class="single-title animated flipInX">函数式编程给代码设计带来了什么变化？</h1><div class=post-meta>
+<div class=post-meta-line><span class=post-author><a href=https://blog.gaoyuexiang.cn/about title=Author target=_blank rel="noopener noreffer author" class=author><i class="fas fa-user-circle fa-fw"></i>无糖拿铁</a></span></div>
+<div class=post-meta-line><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime=2024-05-14>2024-05-14</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 3757 字&nbsp;
+<i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 8 分钟&nbsp;<span id=/what-we-can-learn-from-functional-programming-for-projects/ class=leancloud_visitors data-flag-title=函数式编程给代码设计带来了什么变化？>
+<i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
+</span>&nbsp;</div>
+</div><div class="details toc" id=toc-static kept>
+<div class="details-summary toc-title">
+<span>目录</span>
+<span><i class="details-icon fas fa-angle-right"></i></span>
+</div>
+<div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents>
+<ul>
+<li><a href=#数据的不可变性>数据的不可变性</a>
+<ul>
+<li><a href=#重新思考领域模型的实现>重新思考领域模型的实现</a></li>
+<li><a href=#选择不可变的容器>选择不可变的容器</a></li>
+<li><a href=#避免-var-关键字>避免 var 关键字</a></li>
+</ul>
+</li>
+<li><a href=#重新思考设计模式>重新思考设计模式</a></li>
+<li><a href=#巧用柯里化>巧用柯里化</a></li>
+<li><a href=#总结>总结</a></li>
+</ul>
+</nav></div>
+</div><div class=content id=content><p>我第一次接触函数式编程还是在大学的时候，学长实习回来给我介绍了这个新的概念。后来通过阅读《Java8 函数式编程》，我入门了函数式的一些常见方法和思维方式，并在之后的实践中一直尝试使用函数式的方式来解决问题。</p>
+<p>渐渐地，我发现有的人使用函数式仅仅是在使用 <code>map</code>、<code>filter</code> 等函数时使用一下，而没有尝试在更多地地方使用函数式编程、利用它带来地优势。本文就简单分析一下我认为函数式可以为我们的代码带来的改变。</p>
+<h2 id=数据的不可变性>数据的不可变性</h2>
+<p>尽管《重构》中把全局数据和可变数据当作两种坏味道罗列了出来，但我们似乎没有特别强调数据不可变的重要性。再加上古老的 Java 对不可变数据的支持不是那么便捷，我们总是利用可变数据来实现我们的软件。实际上，它们之所以是坏味道，就在于全局变量与可变数据是可以被改变的，其他引用它们的地方可能会因为它们的改变引发 bug。</p>
+<p>而函数式天生的数据不可变的特性，加上现代语言的支持，让我们可以在代码中更容易地采用不可变数据，避免前面说的那两种坏味道。</p>
+<h3 id=重新思考领域模型的实现>重新思考领域模型的实现</h3>
+<p>在面向对象的语言中，数据是可变的。我们修改一个对象中的属性，是通过直接修改它的值来实现的。修改后的对象还是原来的那个对象，它在内存中的位置并没有发生变化。</p>
+<p>而在函数式中，数据是不变的。这似乎意味着我们不能使用函数式的思维来实现领域模型。</p>
+<p>但看完《函数响应式领域建模》这本书，我们得到了一种新思路：<strong>每次方法的操作结束都返回一个新的对象，这个对象包含了修改后的新数据；这个时候系统中存在同一个业务对象的两个不同内存对象实例，我们应该把旧对象实例当作进行操作前的快照，把新的对象实例当作业务对象的当前状态。</strong></p>
+<p>接受这种思路的关键在于解耦业务对象和内存中的对象实例，它们本来就是不同上下文中的概念。接受了这种思路，我们就能够非常容易地实现面向对象的不可变对象。</p>
+<p>以 Kotlin 为例，我们可以使用不可变的 <code>data class</code> 来定义模型，然后以利用 <code>copy()</code> 函数来轻松的实现修改。比如我们要修改账号的昵称，可以提供这样的方法：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-kotlin data-lang=kotlin><span class=k>data</span> <span class=k>class</span> <span class=nc>Account</span><span class=p>(</span>
+  <span class=k>val</span> <span class=py>nickName</span><span class=p>:</span> <span class=n>String</span><span class=p>,</span>
+  <span class=c1>//...
+</span><span class=c1></span><span class=p>)</span> <span class=p>{</span>
+  <span class=k>fun</span> <span class=nf>updateNickName</span><span class=p>(</span><span class=n>newName</span><span class=p>:</span> <span class=n>String</span><span class=p>):</span> <span class=n>Account</span> <span class=p>=</span> <span class=k>this</span><span class=p>.</span><span class=n>copy</span><span class=p>(</span><span class=n>nickName</span> <span class=p>=</span> <span class=n>newName</span><span class=p>)</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>在调用完 <code>updateNickName</code> 之后，我们应该使用它的返回值来进行后续的操作，而原来的对象则不再被需要了。</p>
+<h3 id=选择不可变的容器>选择不可变的容器</h3>
+<p>在 Java 中，List、Map 等接口并没有不可变的限定，默认的实现也没有这样的限制。这就导致我们创建出来的 List 等对象很容易被修改。而在 Kotlin 中则对这些接口进行了重新设计，它们默认不再是可变的。如果想要一个可变的列表，那么需要把类型声明成 <code>MutableList</code>。这可以帮助我们避免意外地修改这些集合。而在 Java 中，我们则要有意识地选择不可变的容器来达到相同地目的，比如使用 Guava 提供的一些函数来创建 List、Map 等。</p>
+<p>使用不可变的容器，带来的一个改变是对容器的修改操作。如果容器是可变的，那么修改操作可能就是 <code>list.add(xxx)</code> 这样的操作。容器变成不可变之后，这样的操作就失效了。在 Kotlin 中我们可以利用 <code>plus()</code> 函数来为容器添加值，而原来的容器不会改变，这个函数会返回一个新的容器对象，它包含了原有容器中的元素和 <code>plus</code> 函数中的参数。</p>
+<p>如果我们要对一个 <code>List</code> 对象中的所有元素进行修改，在传统做法中，我们可能会写下面这样的代码：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-kotlin data-lang=kotlin><span class=k>fun</span> <span class=nf>mapItem</span><span class=p>(</span><span class=n>source</span><span class=p>:</span> <span class=n>List</span><span class=p>&lt;</span><span class=n>SourceItem</span><span class=p>&gt;):</span> <span class=n>List</span><span class=p>&lt;</span><span class=n>ResultItem</span><span class=p>&gt;</span> <span class=p>{</span>
+  <span class=k>val</span> <span class=py>result</span> <span class=p>=</span> <span class=n>mutalbeListOf</span><span class=p>&lt;</span><span class=n>ResultItem</span><span class=p>&gt;()</span>
+  <span class=k>for</span> <span class=p>(</span><span class=n>item</span> <span class=k>in</span> <span class=n>source</span><span class=p>)</span> <span class=p>{</span>
+    <span class=k>val</span> <span class=py>resultItem</span> <span class=p>=</span> <span class=n>item</span><span class=p>.</span><span class=n>toResultItem</span><span class=p>()</span>
+    <span class=n>result</span><span class=p>.</span><span class=n>add</span><span class=p>(</span><span class=n>resultItem</span><span class=p>)</span>
+  <span class=p>}</span>
+  <span class=k>return</span> <span class=n>result</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>而如果我们使用不可变的容器，上面的方法就不能奏效了。在函数式中，我们可以直接利用 <code>map</code> 函数来处理这个问题：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-kotlin data-lang=kotlin><span class=n>source</span><span class=p>.</span><span class=n>map</span> <span class=p>{</span> <span class=k>it</span><span class=p>.</span><span class=n>toResultItem</span><span class=p>()</span> <span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>可以看到，这种方式避免了手动创建新的容器，而是通过 <code>map</code> 函数，让 JDK 帮我们做到这一点，从而节省掉了大量的无关代码。</p>
+<p>再比如，我们要根据用户的输入来生成 SQL 的查询条件，下面是一个使用可变容器的 JOOQ 例子：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-kotlin data-lang=kotlin><span class=k>fun</span> <span class=nf>buildConditions</span><span class=p>(</span><span class=n>search</span><span class=p>:</span> <span class=n>String</span><span class=p>?,</span> <span class=n>deliveryType</span><span class=p>:</span> <span class=n>DeliveryType</span><span class=p>?,</span> <span class=n>brand</span><span class=p>:</span> <span class=n>String</span><span class=p>?):</span> <span class=n>List</span><span class=p>&lt;</span><span class=n>Condition</span><span class=p>&gt;</span> <span class=p>{</span>
+  <span class=k>val</span> <span class=py>conditions</span> <span class=p>=</span> <span class=n>mutalbeListOf</span><span class=p>(</span><span class=n>noCondition</span><span class=p>())</span>
+  <span class=k>if</span> <span class=p>(</span><span class=n>search</span> <span class=o>!=</span> <span class=k>null</span><span class=p>)</span> <span class=p>{</span>
+    <span class=n>conditions</span><span class=p>.</span><span class=n>add</span><span class=p>(</span><span class=n>PRODUCT</span><span class=p>.</span><span class=n>NAME</span><span class=p>.</span><span class=n>containsIgnoreCase</span><span class=p>(</span><span class=n>search</span><span class=p>))</span>
+  <span class=p>}</span>
+  <span class=k>if</span> <span class=p>(</span><span class=n>deliveryType</span> <span class=o>!=</span> <span class=k>null</span><span class=p>)</span> <span class=p>{</span>
+    <span class=n>conditions</span><span class=p>.</span><span class=n>add</span><span class=p>(</span><span class=n>PRODUCT</span><span class=p>.</span><span class=n>DELEVERY_TYPE</span><span class=p>.</span><span class=n>eq</span><span class=p>(</span><span class=n>deliveryType</span><span class=p>.</span><span class=n>name</span><span class=p>))</span>
+  <span class=p>}</span>
+  <span class=k>if</span> <span class=p>(</span><span class=n>brand</span> <span class=o>!=</span> <span class=k>null</span><span class=p>)</span> <span class=p>{</span>
+    <span class=n>condition</span><span class=p>.</span><span class=n>add</span><span class=p>(</span><span class=n>PRODUCT</span><span class=p>.</span><span class=n>BRAND</span><span class=p>.</span><span class=n>eq</span><span class=p>(</span><span class=n>brand</span><span class=p>))</span>
+  <span class=p>}</span>
+  <span class=k>return</span> <span class=n>conditions</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><blockquote>
+<p>不需要纠结 JOOQ 是什么，上面的 <code>PRODUCT</code> 代表数据表，<code>NAME</code>、<code>DELIVERY_TYPE</code>、<code>BRAND</code> 代表表中的列，剩下的内容看名字即可。</p>
+</blockquote>
+<p>如果我们要使用不可变的容器来改造上面这个例子，那么可以变成下面这样：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-kotlin data-lang=kotlin><span class=k>fun</span> <span class=nf>buildConditions</span><span class=p>(</span><span class=n>search</span><span class=p>:</span> <span class=n>String</span><span class=p>?,</span> <span class=n>deliveryType</span><span class=p>:</span> <span class=n>DeliveryType</span><span class=p>?,</span> <span class=n>brand</span><span class=p>:</span> <span class=n>String</span><span class=p>?):</span> <span class=n>List</span><span class=p>&lt;</span><span class=n>Condition</span><span class=p>&gt;</span> <span class=p>{</span>
+  <span class=k>var</span> <span class=py>conditions</span> <span class=p>=</span> <span class=n>listOf</span><span class=p>(</span><span class=n>noCondition</span><span class=p>())</span>
+  <span class=k>if</span> <span class=p>(</span><span class=n>search</span> <span class=o>!=</span> <span class=k>null</span><span class=p>)</span> <span class=p>{</span>
+    <span class=n>conditions</span> <span class=p>=</span> <span class=n>conditions</span><span class=p>.</span><span class=n>plus</span><span class=p>(</span><span class=n>PRODUCT</span><span class=p>.</span><span class=n>NAME</span><span class=p>.</span><span class=n>containsIgnoreCase</span><span class=p>(</span><span class=n>search</span><span class=p>))</span>
+  <span class=p>}</span>
+  <span class=k>if</span> <span class=p>(</span><span class=n>deliveryType</span> <span class=o>!=</span> <span class=k>null</span><span class=p>)</span> <span class=p>{</span>
+    <span class=n>conditions</span> <span class=p>=</span> <span class=n>conditions</span><span class=p>.</span><span class=n>plus</span><span class=p>(</span><span class=n>PRODUCT</span><span class=p>.</span><span class=n>DELEVERY_TYPE</span><span class=p>.</span><span class=n>eq</span><span class=p>(</span><span class=n>deliveryType</span><span class=p>.</span><span class=n>name</span><span class=p>))</span>
+  <span class=p>}</span>
+  <span class=k>if</span> <span class=p>(</span><span class=n>brand</span> <span class=o>!=</span> <span class=k>null</span><span class=p>)</span> <span class=p>{</span>
+    <span class=n>conditions</span> <span class=p>=</span> <span class=n>conditions</span><span class=p>.</span><span class=n>plus</span><span class=p>(</span><span class=n>PRODUCT</span><span class=p>.</span><span class=n>BRAND</span><span class=p>.</span><span class=n>eq</span><span class=p>(</span><span class=n>brand</span><span class=p>))</span>
+  <span class=p>}</span>
+  <span class=k>return</span> <span class=n>conditions</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>而这种改造又引入了 <code>var</code> 这个关键字，这就是下面要讨论的内容。</p>
+<h3 id=避免-var-关键字>避免 var 关键字</h3>
+<p><code>var</code> 代表可以被重新赋值的变量，<code>val</code> 代表不可被重新赋值的“变量”。重新赋值意味着需要关注每一个使用这个变量的地方是否对它进行了赋值。这对代码阅读来讲不能说是不好吧，至少也是个灾难了 🌚 。出现 <code>var</code> 意味着这个变量的值有多个来源，这代表着它的可能有多种含义，而我们暂时没有识别出来。</p>
+<p>如果代码中出现了 <code>var</code>，那就值得好好阅读一下代码，看看是不是可以避免它，哪怕把赋值的逻辑移动到同一个方法中也行。</p>
+<p>接着前面的例子，如果我们还想避免使用 <code>var</code> 关键字，可以考虑这样改造：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-kotlin data-lang=kotlin><span class=k>fun</span> <span class=nf>buildConditions</span><span class=p>(</span><span class=n>search</span><span class=p>:</span> <span class=n>String</span><span class=p>?,</span> <span class=n>deliveryType</span><span class=p>:</span> <span class=n>DeliveryType</span><span class=p>?,</span> <span class=n>brand</span><span class=p>:</span> <span class=n>String</span><span class=p>?):</span> <span class=n>List</span><span class=p>&lt;</span><span class=n>Condition</span><span class=p>&gt;</span> <span class=p>{</span>
+  <span class=k>return</span> <span class=n>listOf</span><span class=p>(</span><span class=n>noCondition</span><span class=p>())</span>
+    <span class=p>.</span><span class=n>addCondition</span><span class=p>(</span><span class=n>PRODUCT</span><span class=p>.</span><span class=n>NAME</span><span class=p>.</span><span class=n>containsIgnoreCase</span><span class=p>(</span><span class=n>search</span><span class=p>))</span> <span class=p>{</span> <span class=n>search</span> <span class=o>!=</span> <span class=k>null</span> <span class=p>}</span>
+    <span class=p>.</span><span class=n>addCondition</span><span class=p>(</span><span class=n>PRODUCT</span><span class=p>.</span><span class=n>DELIVERY_TYPE</span><span class=p>.</span><span class=n>eq</span><span class=p>(</span><span class=n>deliveryType</span><span class=o>?.</span><span class=n>name</span><span class=p>))</span> <span class=p>{</span> <span class=n>deliveryType</span> <span class=o>!=</span> <span class=k>null</span> <span class=p>}</span>
+    <span class=p>.</span><span class=n>addCondition</span><span class=p>(</span><span class=n>PRODUCT</span><span class=p>.</span><span class=n>BRAND</span><span class=p>.</span><span class=n>eq</span><span class=p>(</span><span class=n>brand</span><span class=p>))</span> <span class=p>{</span> <span class=n>brand</span> <span class=o>!=</span> <span class=k>null</span> <span class=p>}</span>
+<span class=p>}</span>
+
+<span class=k>fun</span> <span class=nf>List</span><span class=p>&lt;</span><span class=n>Condition</span><span class=p>&gt;.</span><span class=n>addCoundition</span><span class=p>(</span><span class=n>condition</span><span class=p>:</span> <span class=n>Condition</span><span class=p>,</span> <span class=n>predicate</span><span class=p>:</span> <span class=p>()</span> <span class=o>-&gt;</span> <span class=n>Bool</span><span class=p>):</span> <span class=n>List</span><span class=p>&lt;</span><span class=n>Condition</span><span class=p>&gt;</span> <span class=p>{</span>
+  <span class=k>return</span> <span class=k>this</span><span class=p>.</span><span class=n>takkeIf</span> <span class=p>{</span> <span class=n>predicate</span><span class=p>()</span> <span class=p>}</span>
+    <span class=o>?.</span><span class=n>let</span> <span class=p>{</span> <span class=k>it</span><span class=p>.</span><span class=n>plus</span><span class=p>(</span><span class=n>condition</span><span class=p>)</span> <span class=p>}</span>
+    <span class=o>?:</span> <span class=k>this</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>这段代码在每次调用 <code>addCondition</code> 方法后都会得到一个新的 list 对象，而我们并没有定义很多 <code>conditions</code> 变量来接收这些对象，而是使用链式调用来避免无效且重复的变量名。</p>
+<p>再比如一个场景，我们在登录的时候，如果账号不存在，那就自动创建出来，那么使用 <code>var</code> 的代码可能会像下面这样：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-kotlin data-lang=kotlin><span class=k>fun</span> <span class=nf>login</span><span class=p>(</span><span class=n>name</span><span class=p>:</span> <span class=n>String</span><span class=p>,</span> <span class=n>password</span><span class=p>:</span> <span class=n>String</span><span class=p>)</span> <span class=p>{</span>
+  <span class=k>var</span> <span class=py>account</span> <span class=p>=</span> <span class=n>AccountRepository</span><span class=p>.</span><span class=n>findBy</span><span class=p>(</span><span class=n>name</span><span class=p>,</span> <span class=n>password</span><span class=p>)</span>
+  <span class=k>if</span> <span class=p>(</span><span class=n>account</span> <span class=o>!=</span> <span class=k>null</span><span class=p>)</span> <span class=p>{</span>
+    <span class=n>account</span> <span class=p>=</span> <span class=n>accountFactory</span><span class=p>.</span><span class=n>create</span><span class=p>(</span><span class=n>name</span><span class=p>,</span> <span class=n>password</span><span class=p>)</span>
+  <span class=p>}</span>
+  <span class=c1>//...
+</span><span class=c1></span><span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>我们可以把它改成</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-kotlin data-lang=kotlin><span class=k>fun</span> <span class=nf>login</span><span class=p>(</span><span class=n>name</span><span class=p>:</span> <span class=n>String</span><span class=p>,</span> <span class=n>password</span><span class=p>:</span> <span class=n>String</span><span class=p>)</span> <span class=p>{</span>
+  <span class=k>val</span> <span class=py>account</span> <span class=p>=</span> <span class=n>findOrCreate</span><span class=p>(</span><span class=n>name</span><span class=p>,</span> <span class=n>password</span><span class=p>)</span>
+  <span class=c1>//...
+</span><span class=c1></span><span class=p>}</span>
+
+<span class=k>fun</span> <span class=nf>findOrcreate</span><span class=p>(</span><span class=n>name</span><span class=p>:</span> <span class=n>String</span><span class=p>,</span> <span class=n>password</span><span class=p>:</span> <span class=n>String</span><span class=p>):</span> <span class=n>Account</span> <span class=p>=</span> <span class=n>accountRepository</span><span class=p>.</span><span class=n>findBy</span><span class=p>(</span><span class=n>name</span><span class=p>,</span> <span class=n>password</span><span class=p>)</span> <span class=o>?:</span> <span class=n>accountFactory</span><span class=p>.</span><span class=n>create</span><span class=p>(</span><span class=n>name</span><span class=p>,</span> <span class=n>password</span><span class=p>)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><code>val</code> 和不可变容器的例子局限在一两个函数的上下文中，并不能充分说明它们带来的真正好处，读者可以带入自己面临的场景来思考这两个问题。虽然例子中的上下文有限，看起来使用 <code>var</code> 或 <code>val</code>、使用可变容器或者不可变容器的区别并不大，但是在全局中保持代码风格的统一也是一件好事，不是吗？</p>
+<h2 id=重新思考设计模式>重新思考设计模式</h2>
+<p>对于相似代码逻辑，我们应该如何处理？复制一份来修改？利用设计模式？利用面向对象的多态？</p>
+<p>函数式为我们带来了新思路：可以把函数当作函数的参数和返回值。所以当两个地方有相似的逻辑时，我们可以把这一段代码定义成一个函数，其中不同的代码作为这个新函数的参数，而这个参数则是一个函数。当调用我们定义的这个函数时，调用方需要传递一个函数作为参数，于是不同的调用方就可以通过传递不同的参数来实现不同的需求。</p>
+<p>上面这个被定义出来的函数，像不像设计模式中的模板方法？没错，正是模板方法模式，而且这种方式比模板方法需要的代码量更少——不需要定义抽象方法、不需要进行继承、不需要思考子类的名称。</p>
+<p>举个例子，一个引用中有 todo 和纪念日两种功能，我们要实现列出今天到期的待办事项和今天的纪念日两个功能，那么代码可能是这样：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-kotlin data-lang=kotlin><span class=k>fun</span> <span class=nf>findDueToday</span><span class=p>(</span><span class=n>tasks</span><span class=p>:</span> <span class=n>List</span><span class=p>&lt;</span><span class=n>Task</span><span class=p>&gt;):</span> <span class=n>List</span><span class=p>&lt;</span><span class=n>Task</span><span class=p>&gt;</span> <span class=p>{</span>
+  <span class=k>val</span> <span class=py>today</span> <span class=p>=</span> <span class=n>LocalDate</span><span class=p>.</span><span class=n>now</span><span class=p>()</span>
+  <span class=k>return</span> <span class=n>tasks</span><span class=p>.</span><span class=n>filter</span> <span class=p>{</span> <span class=k>it</span><span class=p>.</span><span class=n>dueDate</span> <span class=o>==</span> <span class=n>today</span> <span class=p>}</span>
+<span class=p>}</span>
+
+<span class=k>fun</span> <span class=nf>findMemorialToday</span><span class=p>(</span><span class=n>memorialDays</span><span class=p>:</span> <span class=n>List</span><span class=p>&lt;</span><span class=n>MemorialDay</span><span class=p>&gt;):</span> <span class=n>List</span><span class=p>&lt;</span><span class=n>MemorialDay</span><span class=p>&gt;</span> <span class=p>{</span>
+  <span class=k>val</span> <span class=py>today</span> <span class=p>=</span> <span class=n>LocalDate</span><span class=p>.</span><span class=n>now</span><span class=p>()</span>
+  <span class=k>return</span> <span class=n>tasks</span><span class=p>.</span><span class=n>filter</span> <span class=p>{</span> <span class=k>it</span><span class=p>.</span><span class=n>nextTime</span><span class=p>()</span> <span class=o>==</span> <span class=n>today</span> <span class=p>}</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>可以看到，在这个简单的例子中，两个方法只有两个区别：<code>filter</code> 函数的参数不同，以及处理的数据类型不同。所以我们可以对 <code>filter</code> 函数的参数进行抽象，让它不再依赖要处理的数据类型即可：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-kotlin data-lang=kotlin><span class=k>fun</span> <span class=nf>findDueToday</span><span class=p>(</span><span class=n>tasks</span><span class=p>:</span> <span class=n>List</span><span class=p>&lt;</span><span class=n>Task</span><span class=p>&gt;):</span> <span class=n>List</span><span class=p>&lt;</span><span class=n>Task</span><span class=p>&gt;</span> <span class=p>{</span>
+  <span class=k>return</span> <span class=n>findToday</span><span class=p>(</span><span class=n>tasks</span><span class=p>,</span> <span class=p>{</span> <span class=k>it</span><span class=p>.</span><span class=n>dueDate</span> <span class=p>})</span>
+<span class=p>}</span>
+
+<span class=k>fun</span> <span class=nf>findMemorialToday</span><span class=p>(</span><span class=n>memorialDays</span><span class=p>:</span> <span class=n>List</span><span class=p>&lt;</span><span class=n>MemorialDay</span><span class=p>&gt;):</span> <span class=n>List</span><span class=p>&lt;</span><span class=n>MemorialDay</span><span class=p>&gt;</span> <span class=p>{</span>
+  <span class=k>return</span> <span class=n>findToday</span><span class=p>(</span><span class=n>memorialDays</span><span class=p>,</span> <span class=p>{</span> <span class=k>it</span><span class=p>.</span><span class=n>nextTime</span><span class=p>()</span> <span class=p>})</span>
+<span class=p>}</span>
+
+<span class=k>fun</span> <span class=p>&lt;</span><span class=nc>T</span><span class=p>&gt;</span> <span class=nf>findToday</span><span class=p>(</span><span class=n>list</span><span class=p>:</span> <span class=n>List</span><span class=p>&lt;</span><span class=n>T</span><span class=p>&gt;,</span> <span class=n>dateGetter</span><span class=p>:</span> <span class=p>(</span><span class=n>T</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>LocalDate</span><span class=p>):</span> <span class=n>List</span><span class=p>&lt;</span><span class=n>T</span><span class=p>&gt;</span> <span class=p>{</span>
+  <span class=k>val</span> <span class=py>today</span> <span class=p>=</span> <span class=n>LocalDate</span><span class=p>.</span><span class=n>now</span><span class=p>()</span>
+  <span class=k>return</span> <span class=n>list</span><span class=p>.</span><span class=n>filter</span> <span class=p>{</span> <span class=n>dateGetter</span><span class=p>(</span><span class=k>it</span><span class=p>)</span> <span class=o>==</span> <span class=n>today</span> <span class=p>}</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>在这个例子中，通过对相似代码中不同部分抽象成函数，从而得到了一部分相同的代码，也就是 <code>findToday</code> 方法的内容。如果采用模板方法模式，我们还需要让 <code>Task</code> 和 <code>MemorialDay</code> 这两个类型拥有相同的父类或接口，而从业务的表达上却很难给这样的抽象命名。</p>
+<p>事实上，我们常说的设计模式是针对面向对象编程设计出来的一系列模型设计模式。而在我们引入和函数式的概念后，我们面对相同的问题可以有传统设计模式之外的新方案，而不再需要原原本本地套用为面向对象编程设计的设计模式。</p>
+<h2 id=巧用柯里化>巧用柯里化</h2>
+<p>柯里化是我很喜欢使用的一种方式，用来解决函数的参数过长、函数中的部分逻辑需要延后执行等场景。但并不需要完全地按照柯里化的描述转换成每个函数只有一个参数，而是根据参数的作用分组后进行柯里化。</p>
+<p>比如我们要实现把文件上传到 S3 的功能，那么代码可能是这样：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-kotlin data-lang=kotlin><span class=k>fun</span> <span class=nf>upload</span><span class=p>(</span><span class=n>bucket</span><span class=p>:</span> <span class=n>String</span><span class=p>,</span> <span class=n>key</span><span class=p>:</span> <span class=n>String</span><span class=p>,</span> <span class=n>fileContent</span><span class=p>:</span> <span class=n>ByteArray</span><span class=p>)</span> <span class=p>{</span>
+  <span class=k>val</span> <span class=py>request</span> <span class=p>=</span> <span class=n>PutObjectRequest</span><span class=p>.</span><span class=n>builder</span><span class=p>()</span>
+    <span class=p>.</span><span class=n>bucket</span><span class=p>(</span><span class=n>bucket</span><span class=p>)</span>
+    <span class=p>.</span><span class=n>key</span><span class=p>(</span><span class=n>key</span><span class=p>)</span>
+    <span class=p>.</span><span class=n>build</span><span class=p>()</span>
+  <span class=n>s3Client</span><span class=p>.</span><span class=n>putObject</span><span class=p>(</span><span class=n>request</span><span class=p>,</span> <span class=n>RequestBody</span><span class=p>.</span><span class=n>fromBytes</span><span class=p>(</span><span class=n>fileContent</span><span class=p>))</span>
+<span class=p>}</span>
+
+<span class=n>upload</span><span class=p>(</span><span class=s2>&#34;upload-bucket&#34;</span><span class=p>,</span> <span class=s2>&#34;fliename&#34;</span><span class=p>,</span> <span class=n>fileContent</span><span class=p>)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>可以看到，最后一行的调用代码需要一次性传递全部的参数。当参数过多时，这样的方式就会导致代码难以阅读。但是通过分析代码，我们可以把上面的步骤拆分成准备 <code>request</code> 对象和发出请求两个部分，从而得到下面的代码：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-kotlin data-lang=kotlin><span class=k>fun</span> <span class=nf>buildUploadRequest</span><span class=p>(</span><span class=n>bucket</span><span class=p>:</span> <span class=n>String</span><span class=p>,</span> <span class=n>key</span><span class=p>:</span> <span class=n>String</span><span class=p>):</span> <span class=p>(</span><span class=n>ByteArray</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>Unit</span> <span class=p>{</span>
+  <span class=k>val</span> <span class=py>request</span> <span class=p>=</span> <span class=n>PutObjectRequest</span><span class=p>.</span><span class=n>builder</span><span class=p>()</span>
+    <span class=p>.</span><span class=n>bucket</span><span class=p>(</span><span class=n>bucket</span><span class=p>)</span>
+    <span class=p>.</span><span class=n>key</span><span class=p>(</span><span class=n>key</span><span class=p>)</span>
+    <span class=p>.</span><span class=n>build</span><span class=p>()</span>
+  <span class=k>return</span> <span class=p>{</span> <span class=n>fileContent</span> <span class=o>-&gt;</span>
+    <span class=n>s3Client</span><span class=p>.</span><span class=n>putObject</span><span class=p>(</span><span class=n>request</span><span class=p>,</span> <span class=n>RequestBody</span><span class=p>.</span><span class=n>fromBytes</span><span class=p>(</span><span class=n>fileContent</span><span class=p>))</span>
+  <span class=p>}</span>
+<span class=p>}</span>
+
+<span class=k>val</span> <span class=py>upload</span> <span class=p>=</span> <span class=n>buildUploadRequest</span><span class=p>(</span><span class=s2>&#34;upload-bucket&#34;</span><span class=p>,</span> <span class=s2>&#34;filename&#34;</span><span class=p>)</span>
+<span class=n>upload</span><span class=p>(</span><span class=n>fileContent</span><span class=p>)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>可以看到，原始的方法多了一个返回值，是一个接收 <code>ByteArray</code> 类型为参数、没有返回值的函数。所以在调用之后我们可以得到一个变量 <code>upload</code>，它就是这样一个函数。所以我们可以传递一个 <code>ByteArray</code> 类型的对象作为参数来调用它，从而执行上传操作。</p>
+<p>实际上，我们并不是使用了柯里化，而是借用柯里化的思维设计出了一个高阶函数，把原本一步完成的步骤进行拆分，尽量让每一步都清晰明了，减少阅读的困难。</p>
+<p>但是理解高阶函数需要一定的知识，并不是每一个人都能很容易地理解上面地代码。我在实际工作中地尝试也往往被吐槽看不懂。所以选择这种方式前，先想想项目中的小伙伴能不能看懂这种代码再做决定会好一点。</p>
+<h2 id=总结>总结</h2>
+<p>以上是我对函数式对面向对象编程带来影响的简单思考。
+总的来说，我们就是要以提高代码质量为目的，思考面向对象编程的各种范式背后的原因，分析函数式编程可以为此带来的改变。所谓他山之石可以攻玉，函数式编程就好像这个他山之石，可以帮助我们提高代码的可读性、安全性、可维护性等方面，帮助我们写出更好的代码。</p>
+</div><div class=post-footer id=post-footer>
+<div class=post-info>
+<div class=post-info-line>
+<div class=post-info-mod>
+<span>更新于 2024-05-14&nbsp;<a class=git-hash href=https://github.com/kbyyd24/LoveItAgain/commit/da432436640b416e240cb02253c4687dd51a4466 target=_blank title="commit by kbyyd24(melo@gaoyuexiang.cn) da432436640b416e240cb02253c4687dd51a4466: publish functional programming changing post">
+<i class="fas fa-hashtag fa-fw"></i>da43243</a></span>
+</div>
+<div class=post-info-license></div>
+</div>
+<div class=post-info-line>
+<div class=post-info-md><span>
+<a class=link-to-markdown href=/what-we-can-learn-from-functional-programming-for-projects/index.md target=_blank>阅读原始文档</a>
+</span></div>
+<div class=post-info-share>
+<span><a href=javascript:void(0); title="分享到 Twitter" data-sharer=twitter data-url=https://blog.gaoyuexiang.cn/what-we-can-learn-from-functional-programming-for-projects/ data-title=函数式编程给代码设计带来了什么变化？><i class="fab fa-twitter fa-fw"></i></a><a href=javascript:void(0); title="分享到 Facebook" data-sharer=facebook data-url=https://blog.gaoyuexiang.cn/what-we-can-learn-from-functional-programming-for-projects/><i class="fab fa-facebook-square fa-fw"></i></a><a href=javascript:void(0); title="分享到 Linkedin" data-sharer=linkedin data-url=https://blog.gaoyuexiang.cn/what-we-can-learn-from-functional-programming-for-projects/><i class="fab fa-linkedin fa-fw"></i></a><a href=javascript:void(0); title="分享到 WhatsApp" data-sharer=whatsapp data-url=https://blog.gaoyuexiang.cn/what-we-can-learn-from-functional-programming-for-projects/ data-title=函数式编程给代码设计带来了什么变化？ data-web><i class="fab fa-whatsapp fa-fw"></i></a><a href=javascript:void(0); title="分享到 Hacker News" data-sharer=hackernews data-url=https://blog.gaoyuexiang.cn/what-we-can-learn-from-functional-programming-for-projects/ data-title=函数式编程给代码设计带来了什么变化？><i class="fab fa-hacker-news fa-fw"></i></a><a href=javascript:void(0); title="分享到 Reddit" data-sharer=reddit data-url=https://blog.gaoyuexiang.cn/what-we-can-learn-from-functional-programming-for-projects/><i class="fab fa-reddit fa-fw"></i></a><a href=javascript:void(0); title="分享到 Line" data-sharer=line data-url=https://blog.gaoyuexiang.cn/what-we-can-learn-from-functional-programming-for-projects/ data-title=函数式编程给代码设计带来了什么变化？><i data-svg-src=https://cdn.jsdelivr.net/npm/simple-icons@2.14.0/icons/line.svg></i></a><a href=javascript:void(0); title="分享到 Pocket" data-sharer=pocket data-url=https://blog.gaoyuexiang.cn/what-we-can-learn-from-functional-programming-for-projects/><i class="fab fa-get-pocket fa-fw"></i></a><a href=javascript:void(0); title="分享到 微博" data-sharer=weibo data-url=https://blog.gaoyuexiang.cn/what-we-can-learn-from-functional-programming-for-projects/ data-title=函数式编程给代码设计带来了什么变化？><i class="fab fa-weibo fa-fw"></i></a><a href=javascript:void(0); title="分享到 人人" data-sharer=renren data-url=https://blog.gaoyuexiang.cn/what-we-can-learn-from-functional-programming-for-projects/><i class="fab fa-renren fa-fw"></i></a><a href=javascript:void(0); title="分享到 Evernote" data-sharer=evernote data-url=https://blog.gaoyuexiang.cn/what-we-can-learn-from-functional-programming-for-projects/ data-title=函数式编程给代码设计带来了什么变化？><i class="fab fa-evernote fa-fw"></i></a><a href=javascript:void(0); title="分享到 Skype" data-sharer=skype data-url=https://blog.gaoyuexiang.cn/what-we-can-learn-from-functional-programming-for-projects/ data-title=函数式编程给代码设计带来了什么变化？><i class="fab fa-skype fa-fw"></i></a><a href=javascript:void(0); title="分享到 Trello" data-sharer=trello data-url=https://blog.gaoyuexiang.cn/what-we-can-learn-from-functional-programming-for-projects/ data-title=函数式编程给代码设计带来了什么变化？ data-description><i class="fab fa-trello fa-fw"></i></a></span>
+</div>
+</div>
+</div>
+<div class=post-info-more>
+<section class=post-tags></section>
+<section>
+<span><a href=javascript:void(0); onclick=window.history.back()>返回</a></span>&nbsp;|&nbsp;<span><a href=/>主页</a></span>
+</section>
+</div>
+<div class=post-nav><a href=/rebuild-family-network-with-low-cost/ class=prev rel=prev title=零成本实现软路由><i class="fas fa-angle-left fa-fw"></i>零成本实现软路由</a></div>
+</div>
+<div id=comments><div id=valine class=comment></div><noscript>
+Please enable JavaScript to view the comments powered by <a href=https://valine.js.org/>Valine</a>.
+</noscript></div></article></div>
+</main><footer class=footer>
+<div class=footer-container><div class=footer-line>由 <a href=https://gohugo.io/ target=_blank rel="noopener noreffer" title="Hugo 0.92.1">Hugo</a> 强力驱动 | 主题 - <a href=https://github.com/dillonzq/LoveIt target=_blank rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+</div><div class=footer-line><i class="far fa-copyright fa-fw"></i><span itemprop=copyrightYear>2016 - 2024</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=https://blog.gaoyuexiang.cn/about target=_blank>无糖拿铁</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span><span class=icp-splitter>&nbsp;|&nbsp;</span><br class=icp-br>
+<span class=icp><a href=https://beian.miit.gov.cn/ target=_blank>蜀ICP备15031888号-2</a></span></div>
+</div>
+</footer></div>
+<div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title=回到顶部>
+<i class="fas fa-arrow-up fa-fw"></i>
+</a><a href=# id=view-comments class=fixed-button title=查看评论>
+<i class="fas fa-comment fa-fw"></i>
+</a>
+</div>
+<link rel=stylesheet href=/lib/valine/valine.min.css><script type=text/javascript src=https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/autocomplete.js@0.37.1/dist/autocomplete.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/lunr@2.3.8/lunr.min.js></script><script type=text/javascript src=/lib/lunr/lunr.stemmer.support.min.js></script><script type=text/javascript src=/lib/lunr/lunr.zh.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/lazysizes@5.2.2/lazysizes.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/sharer.js@0.4.0/sharer.min.js></script><script type=text/javascript>window.config={code:{copyTitle:"复制到剪贴板",maxShownLines:100},comment:{valine:{appId:"Voz5TpLaiKvWLiVk63CrRybt-gzGzoHsz",appKey:"xzDAABvBBG6vK7iwgd1VKUnw",avatar:"mm",el:"#valine",emojiCDN:"https://cdn.jsdelivr.net/npm/emoji-datasource-google@5.0.1/img/google/64/",emojiMaps:{100:"1f4af.png",alien:"1f47d.png",anger:"1f4a2.png",angry:"1f620.png",anguished:"1f627.png",astonished:"1f632.png",black_heart:"1f5a4.png",blue_heart:"1f499.png",blush:"1f60a.png",bomb:"1f4a3.png",boom:"1f4a5.png",broken_heart:"1f494.png",brown_heart:"1f90e.png",clown_face:"1f921.png",cold_face:"1f976.png",cold_sweat:"1f630.png",confounded:"1f616.png",confused:"1f615.png",cry:"1f622.png",crying_cat_face:"1f63f.png",cupid:"1f498.png",dash:"1f4a8.png",disappointed:"1f61e.png",disappointed_relieved:"1f625.png",dizzy:"1f4ab.png",dizzy_face:"1f635.png",drooling_face:"1f924.png",exploding_head:"1f92f.png",expressionless:"1f611.png",face_vomiting:"1f92e.png",face_with_cowboy_hat:"1f920.png",face_with_hand_over_mouth:"1f92d.png",face_with_head_bandage:"1f915.png",face_with_monocle:"1f9d0.png",face_with_raised_eyebrow:"1f928.png",face_with_rolling_eyes:"1f644.png",face_with_symbols_on_mouth:"1f92c.png",face_with_thermometer:"1f912.png",fearful:"1f628.png",flushed:"1f633.png",frowning:"1f626.png",ghost:"1f47b.png",gift_heart:"1f49d.png",green_heart:"1f49a.png",grimacing:"1f62c.png",grin:"1f601.png",grinning:"1f600.png",hankey:"1f4a9.png",hear_no_evil:"1f649.png",heart:"2764-fe0f.png",heart_decoration:"1f49f.png",heart_eyes:"1f60d.png",heart_eyes_cat:"1f63b.png",heartbeat:"1f493.png",heartpulse:"1f497.png",heavy_heart_exclamation_mark_ornament:"2763-fe0f.png",hole:"1f573-fe0f.png",hot_face:"1f975.png",hugging_face:"1f917.png",hushed:"1f62f.png",imp:"1f47f.png",innocent:"1f607.png",japanese_goblin:"1f47a.png",japanese_ogre:"1f479.png",joy:"1f602.png",joy_cat:"1f639.png",kiss:"1f48b.png",kissing:"1f617.png",kissing_cat:"1f63d.png",kissing_closed_eyes:"1f61a.png",kissing_heart:"1f618.png",kissing_smiling_eyes:"1f619.png",laughing:"1f606.png",left_speech_bubble:"1f5e8-fe0f.png",love_letter:"1f48c.png",lying_face:"1f925.png",mask:"1f637.png",money_mouth_face:"1f911.png",nauseated_face:"1f922.png",nerd_face:"1f913.png",neutral_face:"1f610.png",no_mouth:"1f636.png",open_mouth:"1f62e.png",orange_heart:"1f9e1.png",partying_face:"1f973.png",pensive:"1f614.png",persevere:"1f623.png",pleading_face:"1f97a.png",pouting_cat:"1f63e.png",purple_heart:"1f49c.png",rage:"1f621.png",relaxed:"263a-fe0f.png",relieved:"1f60c.png",revolving_hearts:"1f49e.png",right_anger_bubble:"1f5ef-fe0f.png",robot_face:"1f916.png",rolling_on_the_floor_laughing:"1f923.png",scream:"1f631.png",scream_cat:"1f640.png",see_no_evil:"1f648.png",shushing_face:"1f92b.png",skull:"1f480.png",skull_and_crossbones:"2620-fe0f.png",sleeping:"1f634.png",sleepy:"1f62a.png",slightly_frowning_face:"1f641.png",slightly_smiling_face:"1f642.png",smile:"1f604.png",smile_cat:"1f638.png",smiley:"1f603.png",smiley_cat:"1f63a.png",smiling_face_with_3_hearts:"1f970.png",smiling_imp:"1f608.png",smirk:"1f60f.png",smirk_cat:"1f63c.png",sneezing_face:"1f927.png",sob:"1f62d.png",space_invader:"1f47e.png",sparkling_heart:"1f496.png",speak_no_evil:"1f64a.png",speech_balloon:"1f4ac.png","star-struck":"1f929.png",stuck_out_tongue:"1f61b.png",stuck_out_tongue_closed_eyes:"1f61d.png",stuck_out_tongue_winking_eye:"1f61c.png",sunglasses:"1f60e.png",sweat:"1f613.png",sweat_drops:"1f4a6.png",sweat_smile:"1f605.png",thinking_face:"1f914.png",thought_balloon:"1f4ad.png",tired_face:"1f62b.png",triumph:"1f624.png",two_hearts:"1f495.png",unamused:"1f612.png",upside_down_face:"1f643.png",weary:"1f629.png",white_frowning_face:"2639-fe0f.png",white_heart:"1f90d.png",wink:"1f609.png",woozy_face:"1f974.png",worried:"1f61f.png",yawning_face:"1f971.png",yellow_heart:"1f49b.png",yum:"1f60b.png",zany_face:"1f92a.png",zipper_mouth_face:"1f910.png",zzz:"1f4a4.png"},enableQQ:!1,highlight:!0,lang:"zh-cn",pageSize:10,placeholder:"你的评论 ...",recordIP:!0,serverURLs:"https://leancloud.hugoloveit.com",visitor:!0}},search:{highlightTag:"em",lunrIndexURL:"/index.json",lunrLanguageCode:"zh",lunrSegmentitURL:"/lib/lunr/lunr.segmentit.js",maxResultLength:10,noResultsFound:"没有找到结果",snippetLength:50,type:"lunr"}}</script><script type=text/javascript src=/js/theme.min.js></script>
+</body>
+</html>

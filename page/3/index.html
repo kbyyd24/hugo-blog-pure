@@ -82,6 +82,11 @@
 <main class=main>
 <div class=container><div class="page home" posts><div class=home-profile><div class=home-avatar><a href=/posts/ title=所有文章><img class=lazyload src=/svg/loading.min.svg data-src="https://www.gravatar.com/avatar/8613a75479af50c38344107afb4e9a1f?s=240&d=mp" data-srcset="https://www.gravatar.com/avatar/8613a75479af50c38344107afb4e9a1f?s=240&d=mp, https://www.gravatar.com/avatar/8613a75479af50c38344107afb4e9a1f?s=240&d=mp 1.5x, https://www.gravatar.com/avatar/8613a75479af50c38344107afb4e9a1f?s=240&d=mp 2x" data-sizes=auto alt="https://www.gravatar.com/avatar/8613a75479af50c38344107afb4e9a1f?s=240&d=mp" title="https://www.gravatar.com/avatar/8613a75479af50c38344107afb4e9a1f?s=240&d=mp"></a></div><h1 class=home-title>无糖拿铁</h1><div class=links><a href=https://github.com/kbyyd24 title=GitHub target=_blank rel="noopener noreffer me"><i class="fab fa-github-alt fa-fw"></i></a><a href=mailto:blog@gaoyuexiang.cn title=Email rel=me><i class="far fa-envelope fa-fw"></i></a><a href=/index.xml title=RSS target=_blank rel="noopener noreffer me"><i class="fas fa-rss fa-fw"></i></a></div></div>
 <article class="single summary" itemscope itemtype=http://schema.org/Article><h1 class=single-title itemprop="name headline">
+<a href=/graceful-shutdown-docker-container/>你的 docker stop，它优雅吗？</a>
+</h1><div class=post-meta><span class=post-author><a href=https://blog.gaoyuexiang.cn/about title=Author target=_blank rel="noopener noreffer author" class=author><i class="fas fa-user-circle fa-fw"></i>无糖拿铁</a></span>&nbsp;<span class=post-publish>发布于 <time datetime=2020-06-18>2020-06-18</time></span></div><div class=content>我们平时在使用 Docker 的时候，一般会使用 ctrl+c 或者 docker stop 的方式关闭容器。 但有时候我们可能会遇到 ctrl+c 不生效，或者 docker stop 之后要等待 10s 的情况，就像这样： 也许你会觉</div><div class=post-footer>
+<a href=/graceful-shutdown-docker-container/>阅读全文</a><div class=post-tags>
+<i class="fas fa-tags fa-fw"></i>&nbsp;<a href=/tags/docker/>docker</a>,&nbsp;<a href=/tags/linux/>linux</a>,&nbsp;<a href=/tags/exec/>exec</a>,&nbsp;<a href=/tags/trap/>trap</a>,&nbsp;<a href=/tags/wait/>wait</a></div></div>
+</article><article class="single summary" itemscope itemtype=http://schema.org/Article><h1 class=single-title itemprop="name headline">
 <a href=/spring-security-authorization/>Spring Security 的权限验证</a>
 </h1><div class=post-meta><span class=post-author><a href=https://blog.gaoyuexiang.cn/about title=Author target=_blank rel="noopener noreffer author" class=author><i class="fas fa-user-circle fa-fw"></i>无糖拿铁</a></span>&nbsp;<span class=post-publish>发布于 <time datetime=2020-06-13>2020-06-13</time></span></div><div class=content>在前面的文章里，我们对 Spring Security 进行权限验证的组件有了大致的了解，我们首先来回顾并探究一下细节。 Figure 1. 本文涉及到的组件 FilterSecurityInterceptor 这是 AbstractSecurityInterceptor 的一个子类，并且实现了</div><div class=post-footer>
 <a href=/spring-security-authorization/>阅读全文</a><div class=post-tags>
@@ -106,11 +111,6 @@
 </h1><div class=post-meta><span class=post-author><a href=https://blog.gaoyuexiang.cn/about title=Author target=_blank rel="noopener noreffer author" class=author><i class="fas fa-user-circle fa-fw"></i>无糖拿铁</a></span>&nbsp;<span class=post-publish>发布于 <time datetime=2020-02-22>2020-02-22</time></span></div><div class=content>本文目标是探索在没有使用任何额外插件的情况下，如何使用 Gradle 构建一个 Java 项目，以此对比使用 Java 插件时得到的好处。 初始化项目 使用 Gradle Init 插件提供的 init task 来创</div><div class=post-footer>
 <a href=/use-gradle-to-build-java-project-without-plugin/>阅读全文</a><div class=post-tags>
 <i class="fas fa-tags fa-fw"></i>&nbsp;<a href=/tags/gradle/>gradle</a>,&nbsp;<a href=/tags/java/>Java</a></div></div>
-</article><article class="single summary" itemscope itemtype=http://schema.org/Article><h1 class=single-title itemprop="name headline">
-<a href=/microservice-arch-pattern/>《微服务架构设计模式》读书总结</a>
-</h1><div class=post-meta><span class=post-author><a href=https://blog.gaoyuexiang.cn/about title=Author target=_blank rel="noopener noreffer author" class=author><i class="fas fa-user-circle fa-fw"></i>无糖拿铁</a></span>&nbsp;<span class=post-publish>发布于 <time datetime=2020-02-01>2020-02-01</time></span></div><div class=content>《微服务架构设计模式》这本书介绍了引入微服务架构后面临的挑战，提供了一些模式用于应对这些挑战。所有的模式都可以在 作者的网站上找到，书上只是使</div><div class=post-footer>
-<a href=/microservice-arch-pattern/>阅读全文</a><div class=post-tags>
-<i class="fas fa-tags fa-fw"></i>&nbsp;<a href=/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/>微服务</a>,&nbsp;<a href=/tags/microservice/>microservice</a></div></div>
 </article><ul class=pagination><li class=page-item>
 <span class=page-link>
 <a href=/>1</a>
