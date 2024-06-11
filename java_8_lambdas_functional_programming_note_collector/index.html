@@ -1,355 +1,60 @@
-<!doctype html><html lang=zh-cn>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<meta name=robots content="noodp">
-<meta http-equiv=x-ua-compatible content="IE=edge, chrome=1">
-<title>「Java 8 函数式编程」读书笔记——高级集合类和收集器 - 无糖拿铁，谢谢</title><meta name=Description content="学习、记录、分享"><meta property="og:title" content="「Java 8 函数式编程」读书笔记——高级集合类和收集器">
-<meta property="og:description" content="本章是该书的第五章, 主要讲了方法引用和收集器 方法引用 形如: 1 2 artist -> artist.getName() (String arg) -> arg.length() 这样的表达式, 可以简写为: 1 2 Artist::getName String::length 这种简写的语法被称为方法引用.">
-<meta property="og:type" content="article">
-<meta property="og:url" content="https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_collector/"><meta property="og:image" content="https://blog.gaoyuexiang.cn/logo.png"><meta property="article:section" content="posts">
-<meta property="article:published_time" content="2017-02-10T00:00:00+00:00">
-<meta property="article:modified_time" content="2022-01-31T20:10:51+08:00">
-<meta name=twitter:card content="summary_large_image">
-<meta name=twitter:image content="https://blog.gaoyuexiang.cn/logo.png">
-<meta name=twitter:title content="「Java 8 函数式编程」读书笔记——高级集合类和收集器">
-<meta name=twitter:description content="本章是该书的第五章, 主要讲了方法引用和收集器 方法引用 形如: 1 2 artist -> artist.getName() (String arg) -> arg.length() 这样的表达式, 可以简写为: 1 2 Artist::getName String::length 这种简写的语法被称为方法引用.">
-<meta name=application-name content="LoveIt">
-<meta name=apple-mobile-web-app-title content="LoveIt"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel="shortcut icon" type=image/x-icon href=/favicon.ico>
-<link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
-<link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_collector/><link rel=prev href=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_lib/><link rel=next href=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_parallel/><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css><link rel=stylesheet href=/css/style.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"「Java 8 函数式编程」读书笔记——高级集合类和收集器","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/blog.gaoyuexiang.cn\/java_8_lambdas_functional_programming_note_collector\/"},"image":["https:\/\/blog.gaoyuexiang.cn\/images\/Apple-Devices-Preview.png"],"genre":"posts","keywords":"java, lambda, Java Lambda, Java 8, 函数式编程","wordcount":2589,"url":"https:\/\/blog.gaoyuexiang.cn\/java_8_lambdas_functional_programming_note_collector\/","datePublished":"2017-02-10T00:00:00+00:00","dateModified":"2022-01-31T20:10:51+08:00","license":"CC BY-NC 4.0 CN","publisher":{"@type":"Organization","name":"无糖拿铁","logo":"https:\/\/blog.gaoyuexiang.cn\/images\/avatar.png"},"author":{"@type":"Person","name":"无糖拿铁"},"description":""}</script></head>
-<body header-desktop=fixed header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem('theme')?localStorage.getItem('theme')==='dark':'auto'==='auto'?window.matchMedia('(prefers-color-scheme: dark)').matches:'auto'==='dark')&&document.body.setAttribute('theme','dark')</script>
-<div id=mask></div><div class=wrapper><header class=desktop id=header-desktop>
-<div class=header-wrapper>
-<div class=header-title>
-<a href=/ title=无糖拿铁，谢谢><span class=header-title-pre><i class="far fa-kiss-wink-heart fa-fw"></i></span>无糖拿铁，谢谢</a>
-</div>
-<div class=menu>
-<div class=menu-inner><a class=menu-item href=/posts/> 所有文章 </a><a class=menu-item href=/tags/> 标签 </a><a class=menu-item href=/categories/> 分类 </a><a class=menu-item href=/series-index/> 系列 </a><a class=menu-item href=/about/> 关于 </a><a class=menu-item href=https://github.com/kbyyd24/ title=GitHub rel="noopener noreffer" target=_blank><i class="fab fa-github fa-fw"></i> </a><span class="menu-item delimiter"></span><span class="menu-item search" id=search-desktop>
+<!doctype html><html lang=zh-CN><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><meta http-equiv=X-UA-Compatible content="IE=edge, chrome=1"><title>「Java 8 函数式编程」读书笔记——高级集合类和收集器 - 无糖拿铁，谢谢</title><meta name=Description content="学习、记录、分享"><meta property="og:url" content="https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_collector/">
+<meta property="og:site_name" content="无糖拿铁，谢谢"><meta property="og:title" content="「Java 8 函数式编程」读书笔记——高级集合类和收集器"><meta property="og:description" content="本章是该书的第五章, 主要讲了方法引用和收集器 方法引用 形如: 1 2 artist -> artist.getName() (String arg) -> arg.length() 这样的表达式, 可以简写为: 1 2 Artist::getName String::length 这种简写的语法被称为方法引用."><meta property="og:locale" content="zh_CN"><meta property="og:type" content="article"><meta property="article:section" content="posts"><meta property="article:published_time" content="2017-02-10T00:00:00+00:00"><meta property="article:modified_time" content="2022-01-31T20:10:51+08:00"><meta property="article:tag" content="Java"><meta property="article:tag" content="Lambda"><meta property="article:tag" content="Java Lambda"><meta property="article:tag" content="Java 8"><meta property="article:tag" content="函数式编程"><meta property="og:image" content="https://blog.gaoyuexiang.cn/logo.png"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://blog.gaoyuexiang.cn/logo.png"><meta name=twitter:title content="「Java 8 函数式编程」读书笔记——高级集合类和收集器"><meta name=twitter:description content="本章是该书的第五章, 主要讲了方法引用和收集器 方法引用 形如: 1 2 artist -> artist.getName() (String arg) -> arg.length() 这样的表达式, 可以简写为: 1 2 Artist::getName String::length 这种简写的语法被称为方法引用."><meta name=application-name content="LoveIt"><meta name=apple-mobile-web-app-title content="LoveIt"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel="shortcut icon" type=image/x-icon href=/favicon.ico><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_collector/><link rel=prev href=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_lib/><link rel=next href=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_parallel/><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css><link rel=stylesheet href=/css/style.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"「Java 8 函数式编程」读书笔记——高级集合类和收集器","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/blog.gaoyuexiang.cn\/java_8_lambdas_functional_programming_note_collector\/"},"image":["https:\/\/blog.gaoyuexiang.cn\/images\/Apple-Devices-Preview.png"],"genre":"posts","keywords":"java, lambda, Java Lambda, Java 8, 函数式编程","wordcount":2597,"url":"https:\/\/blog.gaoyuexiang.cn\/java_8_lambdas_functional_programming_note_collector\/","datePublished":"2017-02-10T00:00:00+00:00","dateModified":"2022-01-31T20:10:51+08:00","license":"CC BY-NC 4.0 CN","publisher":{"@type":"Organization","name":"无糖拿铁","logo":"https:\/\/blog.gaoyuexiang.cn\/images\/avatar.png"},"author":{"@type":"Person","name":"无糖拿铁"},"description":""}</script></head><body header-desktop=fixed header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem("theme")?localStorage.getItem("theme")==="dark":"auto"==="auto"?window.matchMedia("(prefers-color-scheme: dark)").matches:"auto"==="dark")&&document.body.setAttribute("theme","dark")</script><div id=mask></div><div class=wrapper><header class=desktop id=header-desktop><div class=header-wrapper><div class=header-title><a href=/ title=无糖拿铁，谢谢><span class=header-title-pre><i class='far fa-kiss-wink-heart fa-fw'></i></span>无糖拿铁，谢谢</a></div><div class=menu><div class=menu-inner><a class=menu-item href=/posts/>所有文章 </a><a class=menu-item href=/tags/>标签 </a><a class=menu-item href=/categories/>分类 </a><a class=menu-item href=/series-index/>系列 </a><a class=menu-item href=/about/>关于 </a><a class=menu-item href=https://github.com/kbyyd24/ title=GitHub rel="noopener noreffer" target=_blank><i class='fab fa-github fa-fw'></i> </a><span class="menu-item delimiter"></span><span class="menu-item search" id=search-desktop>
 <input type=text placeholder=搜索文章标题或内容... id=search-input-desktop>
-<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-desktop title=搜索>
-<i class="fas fa-search fa-fw"></i>
-</a>
-<a href=javascript:void(0); class="search-button search-clear" id=search-clear-desktop title=清空>
-<i class="fas fa-times-circle fa-fw"></i>
-</a>
-<span class="search-button search-loading" id=search-loading-desktop>
-<i class="fas fa-spinner fa-fw fa-spin"></i>
-</span>
-</span><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
-<i class="fas fa-adjust fa-fw"></i>
-</a>
-</div>
-</div>
-</div>
-</header><header class=mobile id=header-mobile>
-<div class=header-container>
-<div class=header-wrapper>
-<div class=header-title>
-<a href=/ title=无糖拿铁，谢谢><span class=header-title-pre><i class="far fa-kiss-wink-heart fa-fw"></i></span>无糖拿铁，谢谢</a>
-</div>
-<div class=menu-toggle id=menu-toggle-mobile>
-<span></span><span></span><span></span>
-</div>
-</div>
-<div class=menu id=menu-mobile><div class=search-wrapper>
-<div class="search mobile" id=search-mobile>
-<input type=text placeholder=搜索文章标题或内容... id=search-input-mobile>
-<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-mobile title=搜索>
-<i class="fas fa-search fa-fw"></i>
-</a>
-<a href=javascript:void(0); class="search-button search-clear" id=search-clear-mobile title=清空>
-<i class="fas fa-times-circle fa-fw"></i>
-</a>
-<span class="search-button search-loading" id=search-loading-mobile>
-<i class="fas fa-spinner fa-fw fa-spin"></i>
-</span>
-</div>
-<a href=javascript:void(0); class=search-cancel id=search-cancel-mobile>
-取消
-</a>
-</div><a class=menu-item href=/posts/ title>所有文章</a><a class=menu-item href=/tags/ title>标签</a><a class=menu-item href=/categories/ title>分类</a><a class=menu-item href=/series-index/ title>系列</a><a class=menu-item href=/about/ title>关于</a><a class=menu-item href=https://github.com/kbyyd24/ title=GitHub rel="noopener noreffer" target=_blank><i class="fab fa-github fa-fw"></i></a><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
-<i class="fas fa-adjust fa-fw"></i>
-</a></div>
-</div>
-</header>
-<div class="search-dropdown desktop">
-<div id=search-dropdown-desktop></div>
-</div>
-<div class="search-dropdown mobile">
-<div id=search-dropdown-mobile></div>
-</div>
-<main class=main>
-<div class=container><div class=toc id=toc-auto>
-<h2 class=toc-title>目录</h2>
-<div class="toc-content always-active" id=toc-content-auto></div>
-</div><article class="page single"><h1 class="single-title animated flipInX">「Java 8 函数式编程」读书笔记——高级集合类和收集器</h1><div class=post-meta>
-<div class=post-meta-line><span class=post-author><a href=https://blog.gaoyuexiang.cn/about title=Author target=_blank rel="noopener noreffer author" class=author><i class="fas fa-user-circle fa-fw"></i>无糖拿铁</a></span></div>
-<div class=post-meta-line><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime=2017-02-10>2017-02-10</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 2589 字&nbsp;
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-desktop title=搜索><i class="fas fa-search fa-fw"></i>
+</a><a href=javascript:void(0); class="search-button search-clear" id=search-clear-desktop title=清空><i class="fas fa-times-circle fa-fw"></i>
+</a><span class="search-button search-loading" id=search-loading-desktop><i class="fas fa-spinner fa-fw fa-spin"></i>
+</span></span><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题><i class="fas fa-adjust fa-fw"></i></a></div></div></div></header><header class=mobile id=header-mobile><div class=header-container><div class=header-wrapper><div class=header-title><a href=/ title=无糖拿铁，谢谢><span class=header-title-pre><i class='far fa-kiss-wink-heart fa-fw'></i></span>无糖拿铁，谢谢</a></div><div class=menu-toggle id=menu-toggle-mobile><span></span><span></span><span></span></div></div><div class=menu id=menu-mobile><div class=search-wrapper><div class="search mobile" id=search-mobile><input type=text placeholder=搜索文章标题或内容... id=search-input-mobile>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-mobile title=搜索><i class="fas fa-search fa-fw"></i>
+</a><a href=javascript:void(0); class="search-button search-clear" id=search-clear-mobile title=清空><i class="fas fa-times-circle fa-fw"></i>
+</a><span class="search-button search-loading" id=search-loading-mobile><i class="fas fa-spinner fa-fw fa-spin"></i></span></div><a href=javascript:void(0); class=search-cancel id=search-cancel-mobile>取消</a></div><a class=menu-item href=/posts/ title>所有文章</a><a class=menu-item href=/tags/ title>标签</a><a class=menu-item href=/categories/ title>分类</a><a class=menu-item href=/series-index/ title>系列</a><a class=menu-item href=/about/ title>关于</a><a class=menu-item href=https://github.com/kbyyd24/ title=GitHub rel="noopener noreffer" target=_blank><i class='fab fa-github fa-fw'></i></a><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
+<i class="fas fa-adjust fa-fw"></i></a></div></div></header><div class="search-dropdown desktop"><div id=search-dropdown-desktop></div></div><div class="search-dropdown mobile"><div id=search-dropdown-mobile></div></div><main class=main><div class=container><div class=toc id=toc-auto><h2 class=toc-title>目录</h2><div class="toc-content always-active" id=toc-content-auto></div></div><article class="page single"><h1 class="single-title animated flipInX">「Java 8 函数式编程」读书笔记——高级集合类和收集器</h1><div class=post-meta><div class=post-meta-line><span class=post-author><a href=https://blog.gaoyuexiang.cn/about title=Author target=_blank rel="noopener noreffer author" class=author><i class="fas fa-user-circle fa-fw"></i>无糖拿铁</a></span></div><div class=post-meta-line><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime=2017-02-10>2017-02-10</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 2597 字&nbsp;
 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 6 分钟&nbsp;<span id=/java_8_lambdas_functional_programming_note_collector/ class=leancloud_visitors data-flag-title="「Java 8 函数式编程」读书笔记——高级集合类和收集器">
 <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
-</span>&nbsp;</div>
-</div><div class="details toc" id=toc-static kept>
-<div class="details-summary toc-title">
-<span>目录</span>
-<span><i class="details-icon fas fa-angle-right"></i></span>
-</div>
-<div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents>
-<ul>
-<li><a href=#方法引用的类型>方法引用的类型</a></li>
-</ul>
-<ul>
-<li><a href=#乱序>乱序</a></li>
-<li><a href=#排序>排序</a></li>
-</ul>
-<ul>
-<li><a href=#转换成集合>转换成集合</a></li>
-<li><a href=#转换成值>转换成值</a></li>
-<li><a href=#数据分割>数据分割</a></li>
-<li><a href=#数据分组>数据分组</a></li>
-<li><a href=#生成字符串>生成字符串</a></li>
-<li><a href=#组合收集器>组合收集器</a></li>
-<li><a href=#定制收集器>定制收集器</a>
-<ul>
-<li><a href=#使用reduce方法>使用<code>reduce</code>方法</a></li>
-<li><a href=#实现collector接口>实现<code>Collector</code>接口</a></li>
-</ul>
-</li>
-</ul>
-</nav></div>
-</div><div class=content id=content><p>本章是该书的第五章, 主要讲了方法引用和收集器</p>
-<h1 id=方法引用>方法引用</h1>
-<p>形如:</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span>&nbsp;</div></div><div class="details toc" id=toc-static kept><div class="details-summary toc-title"><span>目录</span>
+<span><i class="details-icon fas fa-angle-right"></i></span></div><div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents><ul><li><a href=#方法引用的类型>方法引用的类型</a></li></ul><ul><li><a href=#乱序>乱序</a></li><li><a href=#排序>排序</a></li></ul><ul><li><a href=#转换成集合>转换成集合</a></li><li><a href=#转换成值>转换成值</a></li><li><a href=#数据分割>数据分割</a></li><li><a href=#数据分组>数据分组</a></li><li><a href=#生成字符串>生成字符串</a></li><li><a href=#组合收集器>组合收集器</a></li><li><a href=#定制收集器>定制收集器</a><ul><li><a href=#使用reduce方法>使用<code>reduce</code>方法</a></li><li><a href=#实现collector接口>实现<code>Collector</code>接口</a></li></ul></li></ul></nav></div></div><div class=content id=content><p>本章是该书的第五章, 主要讲了方法引用和收集器</p><h1 id=方法引用>方法引用</h1><p>形如:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=n>artist</span> <span class=o>-&gt;</span> <span class=n>artist</span><span class=o>.</span><span class=na>getName</span><span class=o>()</span>
-<span class=o>(</span><span class=n>String</span> <span class=n>arg</span><span class=o>)</span> <span class=o>-&gt;</span> <span class=n>arg</span><span class=o>.</span><span class=na>length</span><span class=o>()</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>这样的表达式, 可以简写为:</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=n>artist</span><span class=w> </span><span class=o>-&gt;</span><span class=w> </span><span class=n>artist</span><span class=p>.</span><span class=na>getName</span><span class=p>()</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>(</span><span class=n>String</span><span class=w> </span><span class=n>arg</span><span class=p>)</span><span class=w> </span><span class=o>-&gt;</span><span class=w> </span><span class=n>arg</span><span class=p>.</span><span class=na>length</span><span class=p>()</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>这样的表达式, 可以简写为:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=nl>Artist:</span><span class=o>:</span><span class=n>getName</span>
-<span class=nl>String:</span><span class=o>:</span><span class=n>length</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>这种简写的语法被称为<code>方法引用</code>. 方法引用无需考虑参数, 因为一个方法引用可以在不同的情况下解析为不同的<code>Lambda</code>表达式, 这依赖于<code>JVM</code>的推断.</p>
-<h2 id=方法引用的类型>方法引用的类型</h2>
-<p>方法引用可以分为四类:</p>
-<ul>
-<li>引用静态方法: <code>ClassName::staticMethodName</code>, 比如: <code>String.valueOf</code></li>
-<li>引用特定实例方法: <code>object::instanceMethodName</code>, 比如: str::toString</li>
-<li>引用特定类型的任意对象的实例方法: <code>ClassName::instanceMethodName</code>, 比如: <code>String::length</code></li>
-<li>引用构造方法: <code>ClassName::new</code>, 比如: <code>String::new</code></li>
-</ul>
-<h1 id=元素顺序>元素顺序</h1>
-<p>当我们对集合进行操作时, 有时希望是按照一定的顺序来操作, 而有时又希望是乱序的操作. 有两个方法可以帮助我们进行顺序的操作.</p>
-<h2 id=乱序>乱序</h2>
-<p><code>BaseStream.unordered()</code>方法可以打乱顺序, 科技将本来有序的集合变成无序的集合</p>
-<h2 id=排序>排序</h2>
-<p><code>Stream.sorted</code>方法有两个签名, 一个无参, 一个有参数<code>Comparator&lt;? super T> comparator</code></p>
-<ul>
-<li>无参的方法要求<code>T</code>实现了<code>Comparable</code>接口</li>
-<li>有参方法需要提供一个比较器</li>
-</ul>
-<h1 id=收集器>收集器</h1>
-<p>收集器是一种通用的, 从流中生成复杂值的结构. 将其传给<code>collect</code>方法, 所有的流就都可以使用它. 而下面提到的单个收集器, 都可以使用<code>reduce</code>方法模拟.</p>
-<h2 id=转换成集合>转换成集合</h2>
-<p>我们可以使用<code>Collectors</code>中的静态方法<code>toList()</code> <code>toSet()</code>等, 将流收集为<code>List</code>或<code>Set</code></p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=nl>Artist</span><span class=p>::</span><span class=n>getName</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nl>String</span><span class=p>::</span><span class=n>length</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>这种简写的语法被称为<code>方法引用</code>. 方法引用无需考虑参数, 因为一个方法引用可以在不同的情况下解析为不同的<code>Lambda</code>表达式, 这依赖于<code>JVM</code>的推断.</p><h2 id=方法引用的类型>方法引用的类型</h2><p>方法引用可以分为四类:</p><ul><li>引用静态方法: <code>ClassName::staticMethodName</code>, 比如: <code>String.valueOf</code></li><li>引用特定实例方法: <code>object::instanceMethodName</code>, 比如: str::toString</li><li>引用特定类型的任意对象的实例方法: <code>ClassName::instanceMethodName</code>, 比如: <code>String::length</code></li><li>引用构造方法: <code>ClassName::new</code>, 比如: <code>String::new</code></li></ul><h1 id=元素顺序>元素顺序</h1><p>当我们对集合进行操作时, 有时希望是按照一定的顺序来操作, 而有时又希望是乱序的操作. 有两个方法可以帮助我们进行顺序的操作.</p><h2 id=乱序>乱序</h2><p><code>BaseStream.unordered()</code>方法可以打乱顺序, 科技将本来有序的集合变成无序的集合</p><h2 id=排序>排序</h2><p><code>Stream.sorted</code>方法有两个签名, 一个无参, 一个有参数<code>Comparator&lt;? super T> comparator</code></p><ul><li>无参的方法要求<code>T</code>实现了<code>Comparable</code>接口</li><li>有参方法需要提供一个比较器</li></ul><h1 id=收集器>收集器</h1><p>收集器是一种通用的, 从流中生成复杂值的结构. 将其传给<code>collect</code>方法, 所有的流就都可以使用它. 而下面提到的单个收集器, 都可以使用<code>reduce</code>方法模拟.</p><h2 id=转换成集合>转换成集合</h2><p>我们可以使用<code>Collectors</code>中的静态方法<code>toList()</code> <code>toSet()</code>等, 将流收集为<code>List</code>或<code>Set</code></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=n>stream</span><span class=o>.</span><span class=na>collect</span><span class=o>(</span><span class=n>toList</span><span class=o>())</span>
-<span class=n>stream</span><span class=o>.</span><span class=na>collect</span><span class=o>(</span><span class=n>toSet</span><span class=o>())</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>我们不需要关心具体使用的是哪一种具体的实现, <code>Stream</code>类库会为我们选择. 因为我们可以利用<code>Stream</code>进行并行数据处理, 所以选择是否线程安全的集合十分重要.</p>
-<p>当然我们也可以指定使用哪一种实现来进行收集:</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=n>stream</span><span class=o>.</span><span class=na>collect</span><span class=o>(</span><span class=n>toCollection</span><span class=o>(</span><span class=n>ArrayList</span><span class=o>::</span><span class=k>new</span><span class=o>))</span>
-</code></pre></td></tr></table>
-</div>
-</div><h2 id=转换成值>转换成值</h2>
-<p><code>Collectors</code>类提供了很多的方法用于转化值, 比如<code>counting</code> <code>maxBy</code> <code>minBy</code>等等, 可以查看<code>javadoc</code>了解.</p>
-<p>目前了解到的是, 这三个方法都可以使用<code>Stream</code>中的<code>count</code> <code>max</code> <code>min</code>方法代替, 而不需要作为<code>collect</code>方法的参数</p>
-<h2 id=数据分割>数据分割</h2>
-<p>有时我们想按照一个条件把数据分成两个部分, 而不是只获取符合条件的部分, 这时可以使用<code>partitioningBy</code>方法收集. 将它传入<code>collect</code>方法, 可以得到一个<code>Map&lt;Boolean, List></code>, 然后就可以对相应的数据进行处理了.</p>
-<h2 id=数据分组>数据分组</h2>
-<p><code>groupingBy</code>方法可以将流分成多个<code>List</code>, 而不仅仅是两个, 接收一个<code>Lambda</code>表达式作为参数, 其返回值作为<code>key</code>, 最后的结果也是一个<code>Map</code>, 形如<code>Map&lt;String, List></code>. 这一方法类似于<code>SQL</code>中的<code>group by</code></p>
-<h2 id=生成字符串>生成字符串</h2>
-<p>如果要从流中得到字符串, 可以在得到<code>Stream&lt;String></code>之后使用<code>Collectors.joining</code>方法收集. 该方法接收3个<code>String</code>参数, 分别是<code>分隔符</code> <code>前缀</code> <code>后缀</code></p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=n>stream</span><span class=p>.</span><span class=na>collect</span><span class=p>(</span><span class=n>toList</span><span class=p>())</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>stream</span><span class=p>.</span><span class=na>collect</span><span class=p>(</span><span class=n>toSet</span><span class=p>())</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>我们不需要关心具体使用的是哪一种具体的实现, <code>Stream</code>类库会为我们选择. 因为我们可以利用<code>Stream</code>进行并行数据处理, 所以选择是否线程安全的集合十分重要.</p><p>当然我们也可以指定使用哪一种实现来进行收集:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=n>stream</span><span class=p>.</span><span class=na>collect</span><span class=p>(</span><span class=n>toCollection</span><span class=p>(</span><span class=n>ArrayList</span><span class=p>::</span><span class=k>new</span><span class=p>))</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><h2 id=转换成值>转换成值</h2><p><code>Collectors</code>类提供了很多的方法用于转化值, 比如<code>counting</code> <code>maxBy</code> <code>minBy</code>等等, 可以查看<code>javadoc</code>了解.</p><p>目前了解到的是, 这三个方法都可以使用<code>Stream</code>中的<code>count</code> <code>max</code> <code>min</code>方法代替, 而不需要作为<code>collect</code>方法的参数</p><h2 id=数据分割>数据分割</h2><p>有时我们想按照一个条件把数据分成两个部分, 而不是只获取符合条件的部分, 这时可以使用<code>partitioningBy</code>方法收集. 将它传入<code>collect</code>方法, 可以得到一个<code>Map&lt;Boolean, List></code>, 然后就可以对相应的数据进行处理了.</p><h2 id=数据分组>数据分组</h2><p><code>groupingBy</code>方法可以将流分成多个<code>List</code>, 而不仅仅是两个, 接收一个<code>Lambda</code>表达式作为参数, 其返回值作为<code>key</code>, 最后的结果也是一个<code>Map</code>, 形如<code>Map&lt;String, List></code>. 这一方法类似于<code>SQL</code>中的<code>group by</code></p><h2 id=生成字符串>生成字符串</h2><p>如果要从流中得到字符串, 可以在得到<code>Stream&lt;String></code>之后使用<code>Collectors.joining</code>方法收集. 该方法接收3个<code>String</code>参数, 分别是<code>分隔符</code> <code>前缀</code> <code>后缀</code></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=n>artists</span><span class=o>.</span><span class=na>stream</span><span class=o>()</span>
-  <span class=o>.</span><span class=na>map</span><span class=o>(</span><span class=n>Artist</span><span class=o>::</span><span class=n>getName</span><span class=o>)</span>
-  <span class=o>.</span><span class=na>collect</span><span class=o>(</span><span class=n>Collectors</span><span class=o>.</span><span class=na>joining</span><span class=o>(</span><span class=s>&#34;,&#34;</span><span class=o>,</span> <span class=s>&#34;[&#34;</span><span class=o>,</span> <span class=s>&#34;]&#34;</span><span class=o>));</span>
-</code></pre></td></tr></table>
-</div>
-</div><h2 id=组合收集器>组合收集器</h2>
-<p>我们可以将收集器组合起来, 达到更强的功能. 书上举了两个栗子🌰</p>
-<ul>
-<li>例一</li>
-</ul>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=n>artists</span><span class=p>.</span><span class=na>stream</span><span class=p>()</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=p>.</span><span class=na>map</span><span class=p>(</span><span class=n>Artist</span><span class=p>::</span><span class=n>getName</span><span class=p>)</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=p>.</span><span class=na>collect</span><span class=p>(</span><span class=n>Collectors</span><span class=p>.</span><span class=na>joining</span><span class=p>(</span><span class=s>&#34;,&#34;</span><span class=p>,</span><span class=w> </span><span class=s>&#34;[&#34;</span><span class=p>,</span><span class=w> </span><span class=s>&#34;]&#34;</span><span class=p>));</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><h2 id=组合收集器>组合收集器</h2><p>我们可以将收集器组合起来, 达到更强的功能. 书上举了两个栗子&#x1f330;</p><ul><li>例一</li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
 </span><span class=lnt>5
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=kd>public</span> <span class=n>Map</span><span class=o>&lt;</span><span class=n>Artist</span><span class=o>,</span> <span class=n>Long</span><span class=o>&gt;</span> <span class=nf>numberOfAlbums</span><span class=o>(</span><span class=n>Stream</span><span class=o>&lt;</span><span class=n>Album</span><span class=o>&gt;</span> <span class=n>albums</span><span class=o>)</span> <span class=o>{</span>
-  <span class=k>return</span> <span class=n>albums</span>
-    <span class=o>.</span><span class=na>collect</span><span class=o>(</span>
-    <span class=n>groupingBy</span><span class=o>(</span><span class=n>Album</span><span class=o>::</span><span class=n>getMainMusicina</span><span class=o>,</span> <span class=n>counting</span><span class=o>()));</span>
-<span class=o>}</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>这个方法的目的是统计每个歌手的作品数目. 如果不组合收集器, 我们先用<code>groupingBy</code>得到一个<code>Map&lt;Artist, List&lt;Album>></code>之后, 还要去遍历<code>Map</code>得到统计数目, 增加了代码量和性能开销.</p>
-<p>上面的<code>counting</code>方法类似于<code>count</code>方法, 作用于<code>List&lt;Album></code>的流上.</p>
-<ul>
-<li>例二</li>
-</ul>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=kd>public</span><span class=w> </span><span class=n>Map</span><span class=o>&lt;</span><span class=n>Artist</span><span class=p>,</span><span class=w> </span><span class=n>Long</span><span class=o>&gt;</span><span class=w> </span><span class=nf>numberOfAlbums</span><span class=p>(</span><span class=n>Stream</span><span class=o>&lt;</span><span class=n>Album</span><span class=o>&gt;</span><span class=w> </span><span class=n>albums</span><span class=p>)</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=k>return</span><span class=w> </span><span class=n>albums</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=p>.</span><span class=na>collect</span><span class=p>(</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>groupingBy</span><span class=p>(</span><span class=n>Album</span><span class=p>::</span><span class=n>getMainMusicina</span><span class=p>,</span><span class=w> </span><span class=n>counting</span><span class=p>()));</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>}</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>这个方法的目的是统计每个歌手的作品数目. 如果不组合收集器, 我们先用<code>groupingBy</code>得到一个<code>Map&lt;Artist, List&lt;Album>></code>之后, 还要去遍历<code>Map</code>得到统计数目, 增加了代码量和性能开销.</p><p>上面的<code>counting</code>方法类似于<code>count</code>方法, 作用于<code>List&lt;Album></code>的流上.</p><ul><li>例二</li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
 </span><span class=lnt>5
 </span><span class=lnt>6
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=kd>public</span> <span class=n>Map</span><span class=o>&lt;</span><span class=n>Artist</span><span class=o>,</span> <span class=n>List</span><span class=o>&lt;</span><span class=n>String</span><span class=o>&gt;&gt;</span> <span class=nf>nameOfAlbums</span><span class=o>(</span><span class=n>Stream</span><span class=o>&lt;</span><span class=n>Album</span><span class=o>&gt;</span> <span class=n>albums</span><span class=o>)</span> <span class=o>{</span>
-  <span class=k>return</span> <span class=n>albums</span>
-    <span class=o>.</span><span class=na>collect</span><span class=o>(</span>
-    <span class=n>groupingBy</span><span class=o>(</span><span class=n>Album</span><span class=o>::</span><span class=n>getMainMusician</span><span class=o>,</span>
-              <span class=n>mapping</span><span class=o>(</span><span class=n>Album</span><span class=o>::</span><span class=n>getName</span><span class=o>,</span> <span class=n>toList</span><span class=o>())));</span>
-<span class=o>}</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>这个方法的目的是得到每个歌手的作品名称列表. 如果不组合收集器, 我们将会先得到一个<code>Map&lt;Artist, List&lt;Album>></code>. 然而, 我们只想得到作品名称, 也就是一个<code>List&lt;String></code>, 组合<code>mapping</code>收集器可以帮助我们实现效果.</p>
-<p><code>mapping</code>收集器的功能类似于<code>map</code>, 将一种类型的流转换成另一种类型. 所以类似的, <code>mapping</code>并不知道要把结果收集成什么数据结构, 它的第二个参数就会接收一个普通的收集器, 比如这里的<code>toList</code>, 来完成收集.</p>
-<p>这里的<code>counting</code>和<code>mapping</code>是我们用到的第二个收集器, 用于收集最终结果的一个子集, 这些收集器叫做<code>下游收集器</code>.</p>
-<h2 id=定制收集器>定制收集器</h2>
-<p>定制收集器看起来麻烦, 其实抓住要点就行了.</p>
-<h3 id=使用reduce方法>使用<code>reduce</code>方法</h3>
-<p>前面说过, 这些收集器都可以使用<code>reduce</code>方法实现, 我们定制收集器, 实际上就是为<code>reduce</code>方法编写三个参数, 分别是:</p>
-<ul>
-<li>identity</li>
-<li>accumulator</li>
-<li>combiner</li>
-</ul>
-<p>关于这三个参数的意义, 如果不太理解, 可以看看这个答案: <a href=https://segmentfault.com/q/1010000004944450 target=_blank rel="noopener noreffer">https://segmentfault.com/q/1010000004944450</a></p>
-<p>我们可以设计一个类, 为这三个参数设计三个方法, 再提供一个方法用于获取目标类型(如果这个类就是目标类型的话, 可以不提供这个方法)</p>
-<h3 id=实现collector接口>实现<code>Collector</code>接口</h3>
-<p>如果不想显式的使用<code>reduce</code>方法, 我们只需要提供一个类, 实现<code>Collector</code>接口.</p>
-<p>该接口需要三个泛型参数, 依次是:</p>
-<ul>
-<li>待收集元素的类型</li>
-<li>累加器的类型</li>
-<li>最终结果的类型</li>
-</ul>
-<p>需要实现的方法有:</p>
-<ul>
-<li>
-<p><code>supplier</code>: 生成初始容器</p>
-</li>
-<li>
-<p><code>accumulator</code>: 累加计算方法</p>
-</li>
-<li>
-<p><code>combiner</code>: 在并发流中合并容器</p>
-</li>
-<li>
-<p><code>finisher</code>: 将容器转换成最终值</p>
-</li>
-<li>
-<p><code>characteristics</code>: 获取特征集合</p>
-</li>
-</ul>
-<p>多数情况下, 我们的容器器和我们的目标类型并不一致, 这时, 需要实现<code>finisher</code>方法将容器转化为目标类型, 比如调用容器的<code>toString</code>方法.</p>
-<p>有时我们的目标类型就是我们的容器, <code>finisher</code>方法就不需要对容器做任何操作, 而是通过设置<code>characteristics</code>为<code>IDENTITY_FINISH</code>, 使用框架提供的优化得到结果.</p>
-<p>详细讲解可以参见<a href=http://irusist.github.io/2016/01/04/Java-8%E4%B9%8BCollector/ target=_blank rel="noopener noreffer">http://irusist.github.io/2016/01/04/Java-8%E4%B9%8BCollector/</a></p>
-<h1 id=map新增方法><code>Map</code>新增方法</h1>
-<p><code>Java 8</code>为<code>Map</code>新增了很多方法, 可以通过搜索引擎轻松找到相关文章. 这里举几个书中提到的相关方法.</p>
-<ul>
-<li><code>V computeIfAbsent(K key, Function&lt;? super K, ? extends V> mappingFunction)</code></li>
-<li><code>V computeIfPresent(K key, BiFunction&lt;? super K, ? super V, extends V> remappingFunction)</code></li>
-<li><code>V compute(K key, BiFunction&lt;? super K, ? super V, ? extends V> remappingFunction)</code></li>
-</ul>
-<p>这三个方法类似, 都是根据<code>key</code>来处理, 只是<code>Lambda</code>表达式的执行条件不同, 从函数名就可以看出来. 不过要注意<code>Lambda</code>表达式的参数, 第一个方法的<code>Lambda</code>只需要一个参数<code>key</code>, 后面两个方法的<code>Lambda</code>需要两个参数<code>key</code>和<code>value</code>, 而<code>compute</code>方法的<code>Lambda</code>中的<code>value</code>参数可能为<code>null</code>.</p>
-<ul>
-<li><code>V merge(K key, V value, BiFunction&lt;? super V, ? super V, ? extends V> remappingFunction)</code></li>
-</ul>
-<p>此方法用于合并<code>value</code>, 新<code>value</code>在第二个参数给出. <code>Lambda</code>表达式规定合并方法, 其两个参数依次是<code>oldValue</code>和<code>newValue</code>, <code>oldValue</code>是原<code>Map</code>的<code>value</code>, 可能为空; <code>newValue</code>为<code>merge</code>方法的第二个参数.</p>
-<ul>
-<li><code>void forEach(BiConsumer&lt;? super K, ? super V> action)</code></li>
-</ul>
-<p>通过<code>forEach</code>方法, 不再需要使用外部迭代来遍历<code>Map</code>.</p>
-</div><div class=post-footer id=post-footer>
-<div class=post-info>
-<div class=post-info-line>
-<div class=post-info-mod>
-<span>更新于 2022-01-31&nbsp;<a class=git-hash href=https://github.com/kbyyd24/LoveItAgain/commit/8309bc020e867fcafd813c9ce7a1508339eaedeb target=_blank title="commit by kbyyd24(melo@gaoyuexiang.cn) 8309bc020e867fcafd813c9ce7a1508339eaedeb: reorg posts">
-<i class="fas fa-hashtag fa-fw"></i>8309bc0</a></span>
-</div>
-<div class=post-info-license></div>
-</div>
-<div class=post-info-line>
-<div class=post-info-md><span>
-<a class=link-to-markdown href=/java_8_lambdas_functional_programming_note_collector/index.md target=_blank>阅读原始文档</a>
-</span></div>
-<div class=post-info-share>
-<span><a href=javascript:void(0); title="分享到 Twitter" data-sharer=twitter data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_collector/ data-title="「Java 8 函数式编程」读书笔记——高级集合类和收集器" data-hashtags="java,lambda,Java Lambda,Java 8,函数式编程"><i class="fab fa-twitter fa-fw"></i></a><a href=javascript:void(0); title="分享到 Facebook" data-sharer=facebook data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_collector/ data-hashtag=java><i class="fab fa-facebook-square fa-fw"></i></a><a href=javascript:void(0); title="分享到 Linkedin" data-sharer=linkedin data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_collector/><i class="fab fa-linkedin fa-fw"></i></a><a href=javascript:void(0); title="分享到 WhatsApp" data-sharer=whatsapp data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_collector/ data-title="「Java 8 函数式编程」读书笔记——高级集合类和收集器" data-web><i class="fab fa-whatsapp fa-fw"></i></a><a href=javascript:void(0); title="分享到 Hacker News" data-sharer=hackernews data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_collector/ data-title="「Java 8 函数式编程」读书笔记——高级集合类和收集器"><i class="fab fa-hacker-news fa-fw"></i></a><a href=javascript:void(0); title="分享到 Reddit" data-sharer=reddit data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_collector/><i class="fab fa-reddit fa-fw"></i></a><a href=javascript:void(0); title="分享到 Line" data-sharer=line data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_collector/ data-title="「Java 8 函数式编程」读书笔记——高级集合类和收集器"><i data-svg-src=https://cdn.jsdelivr.net/npm/simple-icons@2.14.0/icons/line.svg></i></a><a href=javascript:void(0); title="分享到 Pocket" data-sharer=pocket data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_collector/><i class="fab fa-get-pocket fa-fw"></i></a><a href=javascript:void(0); title="分享到 微博" data-sharer=weibo data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_collector/ data-title="「Java 8 函数式编程」读书笔记——高级集合类和收集器"><i class="fab fa-weibo fa-fw"></i></a><a href=javascript:void(0); title="分享到 人人" data-sharer=renren data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_collector/><i class="fab fa-renren fa-fw"></i></a><a href=javascript:void(0); title="分享到 Evernote" data-sharer=evernote data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_collector/ data-title="「Java 8 函数式编程」读书笔记——高级集合类和收集器"><i class="fab fa-evernote fa-fw"></i></a><a href=javascript:void(0); title="分享到 Skype" data-sharer=skype data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_collector/ data-title="「Java 8 函数式编程」读书笔记——高级集合类和收集器"><i class="fab fa-skype fa-fw"></i></a><a href=javascript:void(0); title="分享到 Trello" data-sharer=trello data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_collector/ data-title="「Java 8 函数式编程」读书笔记——高级集合类和收集器" data-description><i class="fab fa-trello fa-fw"></i></a></span>
-</div>
-</div>
-</div>
-<div class=post-info-more>
-<section class=post-tags><i class="fas fa-tags fa-fw"></i>&nbsp;<a href=/tags/java/>Java</a>,&nbsp;<a href=/tags/lambda/>lambda</a>,&nbsp;<a href=/tags/java-lambda/>Java Lambda</a>,&nbsp;<a href=/tags/java-8/>Java 8</a>,&nbsp;<a href=/tags/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/>函数式编程</a></section>
-<section>
-<span><a href=javascript:void(0); onclick=window.history.back()>返回</a></span>&nbsp;|&nbsp;<span><a href=/>主页</a></span>
-</section>
-</div>
-<div class=post-nav><a href=/java_8_lambdas_functional_programming_note_lib/ class=prev rel=prev title="「Java 8 函数式编程」读书笔记——类库"><i class="fas fa-angle-left fa-fw"></i>「Java 8 函数式编程」读书笔记——类库</a>
-<a href=/java_8_lambdas_functional_programming_note_parallel/ class=next rel=next title="「Java 8 函数式编程」读书笔记——数据并行化">「Java 8 函数式编程」读书笔记——数据并行化<i class="fas fa-angle-right fa-fw"></i></a></div>
-</div>
-<div id=comments><div id=valine class=comment></div><noscript>
-Please enable JavaScript to view the comments powered by <a href=https://valine.js.org/>Valine</a>.
-</noscript></div></article></div>
-</main><footer class=footer>
-<div class=footer-container><div class=footer-line>由 <a href=https://gohugo.io/ target=_blank rel="noopener noreffer" title="Hugo 0.92.1">Hugo</a> 强力驱动 | 主题 - <a href=https://github.com/dillonzq/LoveIt target=_blank rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
-</div><div class=footer-line><i class="far fa-copyright fa-fw"></i><span itemprop=copyrightYear>2016 - 2024</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=https://blog.gaoyuexiang.cn/about target=_blank>无糖拿铁</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span><span class=icp-splitter>&nbsp;|&nbsp;</span><br class=icp-br>
-<span class=icp><a href=https://beian.miit.gov.cn/ target=_blank>蜀ICP备15031888号-2</a></span></div>
-</div>
-</footer></div>
-<div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title=回到顶部>
-<i class="fas fa-arrow-up fa-fw"></i>
-</a><a href=# id=view-comments class=fixed-button title=查看评论>
-<i class="fas fa-comment fa-fw"></i>
-</a>
-</div>
-<link rel=stylesheet href=/lib/valine/valine.min.css><script type=text/javascript src=https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/autocomplete.js@0.37.1/dist/autocomplete.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/lunr@2.3.8/lunr.min.js></script><script type=text/javascript src=/lib/lunr/lunr.stemmer.support.min.js></script><script type=text/javascript src=/lib/lunr/lunr.zh.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/lazysizes@5.2.2/lazysizes.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/sharer.js@0.4.0/sharer.min.js></script><script type=text/javascript>window.config={code:{copyTitle:"复制到剪贴板",maxShownLines:100},comment:{valine:{appId:"Voz5TpLaiKvWLiVk63CrRybt-gzGzoHsz",appKey:"xzDAABvBBG6vK7iwgd1VKUnw",avatar:"mm",el:"#valine",emojiCDN:"https://cdn.jsdelivr.net/npm/emoji-datasource-google@5.0.1/img/google/64/",emojiMaps:{100:"1f4af.png",alien:"1f47d.png",anger:"1f4a2.png",angry:"1f620.png",anguished:"1f627.png",astonished:"1f632.png",black_heart:"1f5a4.png",blue_heart:"1f499.png",blush:"1f60a.png",bomb:"1f4a3.png",boom:"1f4a5.png",broken_heart:"1f494.png",brown_heart:"1f90e.png",clown_face:"1f921.png",cold_face:"1f976.png",cold_sweat:"1f630.png",confounded:"1f616.png",confused:"1f615.png",cry:"1f622.png",crying_cat_face:"1f63f.png",cupid:"1f498.png",dash:"1f4a8.png",disappointed:"1f61e.png",disappointed_relieved:"1f625.png",dizzy:"1f4ab.png",dizzy_face:"1f635.png",drooling_face:"1f924.png",exploding_head:"1f92f.png",expressionless:"1f611.png",face_vomiting:"1f92e.png",face_with_cowboy_hat:"1f920.png",face_with_hand_over_mouth:"1f92d.png",face_with_head_bandage:"1f915.png",face_with_monocle:"1f9d0.png",face_with_raised_eyebrow:"1f928.png",face_with_rolling_eyes:"1f644.png",face_with_symbols_on_mouth:"1f92c.png",face_with_thermometer:"1f912.png",fearful:"1f628.png",flushed:"1f633.png",frowning:"1f626.png",ghost:"1f47b.png",gift_heart:"1f49d.png",green_heart:"1f49a.png",grimacing:"1f62c.png",grin:"1f601.png",grinning:"1f600.png",hankey:"1f4a9.png",hear_no_evil:"1f649.png",heart:"2764-fe0f.png",heart_decoration:"1f49f.png",heart_eyes:"1f60d.png",heart_eyes_cat:"1f63b.png",heartbeat:"1f493.png",heartpulse:"1f497.png",heavy_heart_exclamation_mark_ornament:"2763-fe0f.png",hole:"1f573-fe0f.png",hot_face:"1f975.png",hugging_face:"1f917.png",hushed:"1f62f.png",imp:"1f47f.png",innocent:"1f607.png",japanese_goblin:"1f47a.png",japanese_ogre:"1f479.png",joy:"1f602.png",joy_cat:"1f639.png",kiss:"1f48b.png",kissing:"1f617.png",kissing_cat:"1f63d.png",kissing_closed_eyes:"1f61a.png",kissing_heart:"1f618.png",kissing_smiling_eyes:"1f619.png",laughing:"1f606.png",left_speech_bubble:"1f5e8-fe0f.png",love_letter:"1f48c.png",lying_face:"1f925.png",mask:"1f637.png",money_mouth_face:"1f911.png",nauseated_face:"1f922.png",nerd_face:"1f913.png",neutral_face:"1f610.png",no_mouth:"1f636.png",open_mouth:"1f62e.png",orange_heart:"1f9e1.png",partying_face:"1f973.png",pensive:"1f614.png",persevere:"1f623.png",pleading_face:"1f97a.png",pouting_cat:"1f63e.png",purple_heart:"1f49c.png",rage:"1f621.png",relaxed:"263a-fe0f.png",relieved:"1f60c.png",revolving_hearts:"1f49e.png",right_anger_bubble:"1f5ef-fe0f.png",robot_face:"1f916.png",rolling_on_the_floor_laughing:"1f923.png",scream:"1f631.png",scream_cat:"1f640.png",see_no_evil:"1f648.png",shushing_face:"1f92b.png",skull:"1f480.png",skull_and_crossbones:"2620-fe0f.png",sleeping:"1f634.png",sleepy:"1f62a.png",slightly_frowning_face:"1f641.png",slightly_smiling_face:"1f642.png",smile:"1f604.png",smile_cat:"1f638.png",smiley:"1f603.png",smiley_cat:"1f63a.png",smiling_face_with_3_hearts:"1f970.png",smiling_imp:"1f608.png",smirk:"1f60f.png",smirk_cat:"1f63c.png",sneezing_face:"1f927.png",sob:"1f62d.png",space_invader:"1f47e.png",sparkling_heart:"1f496.png",speak_no_evil:"1f64a.png",speech_balloon:"1f4ac.png","star-struck":"1f929.png",stuck_out_tongue:"1f61b.png",stuck_out_tongue_closed_eyes:"1f61d.png",stuck_out_tongue_winking_eye:"1f61c.png",sunglasses:"1f60e.png",sweat:"1f613.png",sweat_drops:"1f4a6.png",sweat_smile:"1f605.png",thinking_face:"1f914.png",thought_balloon:"1f4ad.png",tired_face:"1f62b.png",triumph:"1f624.png",two_hearts:"1f495.png",unamused:"1f612.png",upside_down_face:"1f643.png",weary:"1f629.png",white_frowning_face:"2639-fe0f.png",white_heart:"1f90d.png",wink:"1f609.png",woozy_face:"1f974.png",worried:"1f61f.png",yawning_face:"1f971.png",yellow_heart:"1f49b.png",yum:"1f60b.png",zany_face:"1f92a.png",zipper_mouth_face:"1f910.png",zzz:"1f4a4.png"},enableQQ:!1,highlight:!0,lang:"zh-cn",pageSize:10,placeholder:"你的评论 ...",recordIP:!0,serverURLs:"https://leancloud.gaoyuexiang.cn",visitor:!0}},search:{highlightTag:"em",lunrIndexURL:"/index.json",lunrLanguageCode:"zh",lunrSegmentitURL:"/lib/lunr/lunr.segmentit.js",maxResultLength:10,noResultsFound:"没有找到结果",snippetLength:50,type:"lunr"}}</script><script type=text/javascript src=/js/theme.min.js></script>
-</body>
-</html>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=kd>public</span><span class=w> </span><span class=n>Map</span><span class=o>&lt;</span><span class=n>Artist</span><span class=p>,</span><span class=w> </span><span class=n>List</span><span class=o>&lt;</span><span class=n>String</span><span class=o>&gt;&gt;</span><span class=w> </span><span class=nf>nameOfAlbums</span><span class=p>(</span><span class=n>Stream</span><span class=o>&lt;</span><span class=n>Album</span><span class=o>&gt;</span><span class=w> </span><span class=n>albums</span><span class=p>)</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=k>return</span><span class=w> </span><span class=n>albums</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=p>.</span><span class=na>collect</span><span class=p>(</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>groupingBy</span><span class=p>(</span><span class=n>Album</span><span class=p>::</span><span class=n>getMainMusician</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>              </span><span class=n>mapping</span><span class=p>(</span><span class=n>Album</span><span class=p>::</span><span class=n>getName</span><span class=p>,</span><span class=w> </span><span class=n>toList</span><span class=p>())));</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>}</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>这个方法的目的是得到每个歌手的作品名称列表. 如果不组合收集器, 我们将会先得到一个<code>Map&lt;Artist, List&lt;Album>></code>. 然而, 我们只想得到作品名称, 也就是一个<code>List&lt;String></code>, 组合<code>mapping</code>收集器可以帮助我们实现效果.</p><p><code>mapping</code>收集器的功能类似于<code>map</code>, 将一种类型的流转换成另一种类型. 所以类似的, <code>mapping</code>并不知道要把结果收集成什么数据结构, 它的第二个参数就会接收一个普通的收集器, 比如这里的<code>toList</code>, 来完成收集.</p><p>这里的<code>counting</code>和<code>mapping</code>是我们用到的第二个收集器, 用于收集最终结果的一个子集, 这些收集器叫做<code>下游收集器</code>.</p><h2 id=定制收集器>定制收集器</h2><p>定制收集器看起来麻烦, 其实抓住要点就行了.</p><h3 id=使用reduce方法>使用<code>reduce</code>方法</h3><p>前面说过, 这些收集器都可以使用<code>reduce</code>方法实现, 我们定制收集器, 实际上就是为<code>reduce</code>方法编写三个参数, 分别是:</p><ul><li>identity</li><li>accumulator</li><li>combiner</li></ul><p>关于这三个参数的意义, 如果不太理解, 可以看看这个答案: <a href=https://segmentfault.com/q/1010000004944450 target=_blank rel="noopener noreffer">https://segmentfault.com/q/1010000004944450</a></p><p>我们可以设计一个类, 为这三个参数设计三个方法, 再提供一个方法用于获取目标类型(如果这个类就是目标类型的话, 可以不提供这个方法)</p><h3 id=实现collector接口>实现<code>Collector</code>接口</h3><p>如果不想显式的使用<code>reduce</code>方法, 我们只需要提供一个类, 实现<code>Collector</code>接口.</p><p>该接口需要三个泛型参数, 依次是:</p><ul><li>待收集元素的类型</li><li>累加器的类型</li><li>最终结果的类型</li></ul><p>需要实现的方法有:</p><ul><li><p><code>supplier</code>: 生成初始容器</p></li><li><p><code>accumulator</code>: 累加计算方法</p></li><li><p><code>combiner</code>: 在并发流中合并容器</p></li><li><p><code>finisher</code>: 将容器转换成最终值</p></li><li><p><code>characteristics</code>: 获取特征集合</p></li></ul><p>多数情况下, 我们的容器器和我们的目标类型并不一致, 这时, 需要实现<code>finisher</code>方法将容器转化为目标类型, 比如调用容器的<code>toString</code>方法.</p><p>有时我们的目标类型就是我们的容器, <code>finisher</code>方法就不需要对容器做任何操作, 而是通过设置<code>characteristics</code>为<code>IDENTITY_FINISH</code>, 使用框架提供的优化得到结果.</p><p>详细讲解可以参见<a href=http://irusist.github.io/2016/01/04/Java-8%E4%B9%8BCollector/ target=_blank rel="noopener noreffer">http://irusist.github.io/2016/01/04/Java-8%E4%B9%8BCollector/</a></p><h1 id=map新增方法><code>Map</code>新增方法</h1><p><code>Java 8</code>为<code>Map</code>新增了很多方法, 可以通过搜索引擎轻松找到相关文章. 这里举几个书中提到的相关方法.</p><ul><li><code>V computeIfAbsent(K key, Function&lt;? super K, ? extends V> mappingFunction)</code></li><li><code>V computeIfPresent(K key, BiFunction&lt;? super K, ? super V, extends V> remappingFunction)</code></li><li><code>V compute(K key, BiFunction&lt;? super K, ? super V, ? extends V> remappingFunction)</code></li></ul><p>这三个方法类似, 都是根据<code>key</code>来处理, 只是<code>Lambda</code>表达式的执行条件不同, 从函数名就可以看出来. 不过要注意<code>Lambda</code>表达式的参数, 第一个方法的<code>Lambda</code>只需要一个参数<code>key</code>, 后面两个方法的<code>Lambda</code>需要两个参数<code>key</code>和<code>value</code>, 而<code>compute</code>方法的<code>Lambda</code>中的<code>value</code>参数可能为<code>null</code>.</p><ul><li><code>V merge(K key, V value, BiFunction&lt;? super V, ? super V, ? extends V> remappingFunction)</code></li></ul><p>此方法用于合并<code>value</code>, 新<code>value</code>在第二个参数给出. <code>Lambda</code>表达式规定合并方法, 其两个参数依次是<code>oldValue</code>和<code>newValue</code>, <code>oldValue</code>是原<code>Map</code>的<code>value</code>, 可能为空; <code>newValue</code>为<code>merge</code>方法的第二个参数.</p><ul><li><code>void forEach(BiConsumer&lt;? super K, ? super V> action)</code></li></ul><p>通过<code>forEach</code>方法, 不再需要使用外部迭代来遍历<code>Map</code>.</p></div><div class=post-footer id=post-footer><div class=post-info><div class=post-info-line><div class=post-info-mod><span>更新于 2022-01-31&nbsp;<a class=git-hash href=https://github.com/kbyyd24/LoveItAgain/commit/8309bc020e867fcafd813c9ce7a1508339eaedeb target=_blank title="commit by kbyyd24(melo@gaoyuexiang.cn) 8309bc020e867fcafd813c9ce7a1508339eaedeb: reorg posts">
+<i class="fas fa-hashtag fa-fw"></i>8309bc0</a></span></div><div class=post-info-license></div></div><div class=post-info-line><div class=post-info-md><span><a class=link-to-markdown href=/java_8_lambdas_functional_programming_note_collector/index.md target=_blank>阅读原始文档</a></span></div><div class=post-info-share><span><a href=javascript:void(0); title="分享到 Twitter" data-sharer=twitter data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_collector/ data-title="「Java 8 函数式编程」读书笔记——高级集合类和收集器" data-hashtags="java,lambda,Java Lambda,Java 8,函数式编程"><i class="fab fa-twitter fa-fw"></i></a><a href=javascript:void(0); title="分享到 Facebook" data-sharer=facebook data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_collector/ data-hashtag=java><i class="fab fa-facebook-square fa-fw"></i></a><a href=javascript:void(0); title="分享到 Linkedin" data-sharer=linkedin data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_collector/><i class="fab fa-linkedin fa-fw"></i></a><a href=javascript:void(0); title="分享到 WhatsApp" data-sharer=whatsapp data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_collector/ data-title="「Java 8 函数式编程」读书笔记——高级集合类和收集器" data-web><i class="fab fa-whatsapp fa-fw"></i></a><a href=javascript:void(0); title="分享到 Hacker News" data-sharer=hackernews data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_collector/ data-title="「Java 8 函数式编程」读书笔记——高级集合类和收集器"><i class="fab fa-hacker-news fa-fw"></i></a><a href=javascript:void(0); title="分享到 Reddit" data-sharer=reddit data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_collector/><i class="fab fa-reddit fa-fw"></i></a><a href=javascript:void(0); title="分享到 Line" data-sharer=line data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_collector/ data-title="「Java 8 函数式编程」读书笔记——高级集合类和收集器"><i data-svg-src=https://cdn.jsdelivr.net/npm/simple-icons@2.14.0/icons/line.svg></i></a><a href=javascript:void(0); title="分享到 Pocket" data-sharer=pocket data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_collector/><i class="fab fa-get-pocket fa-fw"></i></a><a href=javascript:void(0); title="分享到 微博" data-sharer=weibo data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_collector/ data-title="「Java 8 函数式编程」读书笔记——高级集合类和收集器"><i class="fab fa-weibo fa-fw"></i></a><a href=javascript:void(0); title="分享到 人人" data-sharer=renren data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_collector/><i class="fab fa-renren fa-fw"></i></a><a href=javascript:void(0); title="分享到 Evernote" data-sharer=evernote data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_collector/ data-title="「Java 8 函数式编程」读书笔记——高级集合类和收集器"><i class="fab fa-evernote fa-fw"></i></a><a href=javascript:void(0); title="分享到 Skype" data-sharer=skype data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_collector/ data-title="「Java 8 函数式编程」读书笔记——高级集合类和收集器"><i class="fab fa-skype fa-fw"></i></a><a href=javascript:void(0); title="分享到 Trello" data-sharer=trello data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_collector/ data-title="「Java 8 函数式编程」读书笔记——高级集合类和收集器" data-description><i class="fab fa-trello fa-fw"></i></a></span></div></div></div><div class=post-info-more><section class=post-tags><i class="fas fa-tags fa-fw"></i>&nbsp;<a href=/tags/java/>Java</a>,&nbsp;<a href=/tags/lambda/>Lambda</a>,&nbsp;<a href=/tags/java-lambda/>Java Lambda</a>,&nbsp;<a href=/tags/java-8/>Java 8</a>,&nbsp;<a href=/tags/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/>函数式编程</a></section><section><span><a href=javascript:void(0); onclick=window.history.back()>返回</a></span>&nbsp;|&nbsp;<span><a href=/>主页</a></span></section></div><div class=post-nav><a href=/java_8_lambdas_functional_programming_note_lib/ class=prev rel=prev title="「Java 8 函数式编程」读书笔记——类库"><i class="fas fa-angle-left fa-fw"></i>「Java 8 函数式编程」读书笔记——类库</a>
+<a href=/java_8_lambdas_functional_programming_note_parallel/ class=next rel=next title="「Java 8 函数式编程」读书笔记——数据并行化">「Java 8 函数式编程」读书笔记——数据并行化<i class="fas fa-angle-right fa-fw"></i></a></div></div><div id=comments><div id=valine class=comment></div><noscript>Please enable JavaScript to view the comments powered by <a href=https://valine.js.org/>Valine</a>.</noscript></div></article></div></main><footer class=footer><div class=footer-container><div class=footer-line>由 <a href=https://gohugo.io/ target=_blank rel="noopener noreffer" title="Hugo 0.127.0">Hugo</a> 强力驱动 | 主题 - <a href=https://github.com/dillonzq/LoveIt target=_blank rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a></div><div class=footer-line><i class="far fa-copyright fa-fw"></i><span itemprop=copyrightYear>2016 - 2024</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=https://blog.gaoyuexiang.cn/about target=_blank>无糖拿铁</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span><span class=icp-splitter>&nbsp;|&nbsp;</span><br class=icp-br><span class=icp><a href=https://beian.miit.gov.cn/ target=_blank>蜀ICP备15031888号-2</a></span></div></div></footer></div><div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title=回到顶部><i class="fas fa-arrow-up fa-fw"></i>
+</a><a href=# id=view-comments class=fixed-button title=查看评论><i class="fas fa-comment fa-fw"></i></a></div><link rel=stylesheet href=/lib/valine/valine.min.css><script type=text/javascript src=https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/autocomplete.js@0.37.1/dist/autocomplete.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/lunr@2.3.8/lunr.min.js></script><script type=text/javascript src=/lib/lunr/lunr.stemmer.support.min.js></script><script type=text/javascript src=/lib/lunr/lunr.zh.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/lazysizes@5.2.2/lazysizes.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/sharer.js@0.4.0/sharer.min.js></script><script type=text/javascript>window.config={code:{copyTitle:"复制到剪贴板",maxShownLines:100},comment:{valine:{appId:"Voz5TpLaiKvWLiVk63CrRybt-gzGzoHsz",appKey:"xzDAABvBBG6vK7iwgd1VKUnw",avatar:"mm",el:"#valine",emojiCDN:"https://cdn.jsdelivr.net/npm/emoji-datasource-google@5.0.1/img/google/64/",emojiMaps:{100:"1f4af.png",alien:"1f47d.png",anger:"1f4a2.png",angry:"1f620.png",anguished:"1f627.png",astonished:"1f632.png",black_heart:"1f5a4.png",blue_heart:"1f499.png",blush:"1f60a.png",bomb:"1f4a3.png",boom:"1f4a5.png",broken_heart:"1f494.png",brown_heart:"1f90e.png",clown_face:"1f921.png",cold_face:"1f976.png",cold_sweat:"1f630.png",confounded:"1f616.png",confused:"1f615.png",cry:"1f622.png",crying_cat_face:"1f63f.png",cupid:"1f498.png",dash:"1f4a8.png",disappointed:"1f61e.png",disappointed_relieved:"1f625.png",dizzy:"1f4ab.png",dizzy_face:"1f635.png",drooling_face:"1f924.png",exploding_head:"1f92f.png",expressionless:"1f611.png",face_vomiting:"1f92e.png",face_with_cowboy_hat:"1f920.png",face_with_hand_over_mouth:"1f92d.png",face_with_head_bandage:"1f915.png",face_with_monocle:"1f9d0.png",face_with_raised_eyebrow:"1f928.png",face_with_rolling_eyes:"1f644.png",face_with_symbols_on_mouth:"1f92c.png",face_with_thermometer:"1f912.png",fearful:"1f628.png",flushed:"1f633.png",frowning:"1f626.png",ghost:"1f47b.png",gift_heart:"1f49d.png",green_heart:"1f49a.png",grimacing:"1f62c.png",grin:"1f601.png",grinning:"1f600.png",hankey:"1f4a9.png",hear_no_evil:"1f649.png",heart:"2764-fe0f.png",heart_decoration:"1f49f.png",heart_eyes:"1f60d.png",heart_eyes_cat:"1f63b.png",heartbeat:"1f493.png",heartpulse:"1f497.png",heavy_heart_exclamation_mark_ornament:"2763-fe0f.png",hole:"1f573-fe0f.png",hot_face:"1f975.png",hugging_face:"1f917.png",hushed:"1f62f.png",imp:"1f47f.png",innocent:"1f607.png",japanese_goblin:"1f47a.png",japanese_ogre:"1f479.png",joy:"1f602.png",joy_cat:"1f639.png",kiss:"1f48b.png",kissing:"1f617.png",kissing_cat:"1f63d.png",kissing_closed_eyes:"1f61a.png",kissing_heart:"1f618.png",kissing_smiling_eyes:"1f619.png",laughing:"1f606.png",left_speech_bubble:"1f5e8-fe0f.png",love_letter:"1f48c.png",lying_face:"1f925.png",mask:"1f637.png",money_mouth_face:"1f911.png",nauseated_face:"1f922.png",nerd_face:"1f913.png",neutral_face:"1f610.png",no_mouth:"1f636.png",open_mouth:"1f62e.png",orange_heart:"1f9e1.png",partying_face:"1f973.png",pensive:"1f614.png",persevere:"1f623.png",pleading_face:"1f97a.png",pouting_cat:"1f63e.png",purple_heart:"1f49c.png",rage:"1f621.png",relaxed:"263a-fe0f.png",relieved:"1f60c.png",revolving_hearts:"1f49e.png",right_anger_bubble:"1f5ef-fe0f.png",robot_face:"1f916.png",rolling_on_the_floor_laughing:"1f923.png",scream:"1f631.png",scream_cat:"1f640.png",see_no_evil:"1f648.png",shushing_face:"1f92b.png",skull:"1f480.png",skull_and_crossbones:"2620-fe0f.png",sleeping:"1f634.png",sleepy:"1f62a.png",slightly_frowning_face:"1f641.png",slightly_smiling_face:"1f642.png",smile:"1f604.png",smile_cat:"1f638.png",smiley:"1f603.png",smiley_cat:"1f63a.png",smiling_face_with_3_hearts:"1f970.png",smiling_imp:"1f608.png",smirk:"1f60f.png",smirk_cat:"1f63c.png",sneezing_face:"1f927.png",sob:"1f62d.png",space_invader:"1f47e.png",sparkling_heart:"1f496.png",speak_no_evil:"1f64a.png",speech_balloon:"1f4ac.png","star-struck":"1f929.png",stuck_out_tongue:"1f61b.png",stuck_out_tongue_closed_eyes:"1f61d.png",stuck_out_tongue_winking_eye:"1f61c.png",sunglasses:"1f60e.png",sweat:"1f613.png",sweat_drops:"1f4a6.png",sweat_smile:"1f605.png",thinking_face:"1f914.png",thought_balloon:"1f4ad.png",tired_face:"1f62b.png",triumph:"1f624.png",two_hearts:"1f495.png",unamused:"1f612.png",upside_down_face:"1f643.png",weary:"1f629.png",white_frowning_face:"2639-fe0f.png",white_heart:"1f90d.png",wink:"1f609.png",woozy_face:"1f974.png",worried:"1f61f.png",yawning_face:"1f971.png",yellow_heart:"1f49b.png",yum:"1f60b.png",zany_face:"1f92a.png",zipper_mouth_face:"1f910.png",zzz:"1f4a4.png"},enableQQ:!1,highlight:!0,lang:"zh-cn",pageSize:10,placeholder:"你的评论 ...",recordIP:!0,serverURLs:"https://leancloud.gaoyuexiang.cn",visitor:!0}},search:{highlightTag:"em",lunrIndexURL:"/index.json",lunrLanguageCode:"zh",lunrSegmentitURL:"/lib/lunr/lunr.segmentit.js",maxResultLength:10,noResultsFound:"没有找到结果",snippetLength:50,type:"lunr"}}</script><script type=text/javascript src=/js/theme.min.js></script></body></html>

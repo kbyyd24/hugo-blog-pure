@@ -1,131 +1,30 @@
-<!doctype html><html lang=zh-cn>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<meta name=robots content="noodp">
-<meta http-equiv=x-ua-compatible content="IE=edge, chrome=1">
-<title>「Java 8 函数式编程」读书笔记——流 - 无糖拿铁，谢谢</title><meta name=Description content="学习、记录、分享"><meta property="og:title" content="「Java 8 函数式编程」读书笔记——流">
-<meta property="og:description" content="本文是「Java 8 函数式编程」第三章的读书笔记，章名为流。本章主要介绍了外部迭代与内部迭代以及常用的高阶函数。 外部迭代与内部迭代 外部迭代 过去">
-<meta property="og:type" content="article">
-<meta property="og:url" content="https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_stream/"><meta property="og:image" content="https://blog.gaoyuexiang.cn/logo.png"><meta property="article:section" content="posts">
-<meta property="article:published_time" content="2017-02-06T00:00:00+00:00">
-<meta property="article:modified_time" content="2022-01-31T20:10:51+08:00">
-<meta name=twitter:card content="summary_large_image">
-<meta name=twitter:image content="https://blog.gaoyuexiang.cn/logo.png">
-<meta name=twitter:title content="「Java 8 函数式编程」读书笔记——流">
-<meta name=twitter:description content="本文是「Java 8 函数式编程」第三章的读书笔记，章名为流。本章主要介绍了外部迭代与内部迭代以及常用的高阶函数。 外部迭代与内部迭代 外部迭代 过去">
-<meta name=application-name content="LoveIt">
-<meta name=apple-mobile-web-app-title content="LoveIt"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel="shortcut icon" type=image/x-icon href=/favicon.ico>
-<link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
-<link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_stream/><link rel=prev href=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_lambda_expression/><link rel=next href=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_lib/><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css><link rel=stylesheet href=/css/style.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"「Java 8 函数式编程」读书笔记——流","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/blog.gaoyuexiang.cn\/java_8_lambdas_functional_programming_note_stream\/"},"image":["https:\/\/blog.gaoyuexiang.cn\/images\/Apple-Devices-Preview.png"],"genre":"posts","keywords":"java, lambda, Java Lambda, Java 8, 函数式编程","wordcount":1256,"url":"https:\/\/blog.gaoyuexiang.cn\/java_8_lambdas_functional_programming_note_stream\/","datePublished":"2017-02-06T00:00:00+00:00","dateModified":"2022-01-31T20:10:51+08:00","license":"CC BY-NC 4.0 CN","publisher":{"@type":"Organization","name":"无糖拿铁","logo":"https:\/\/blog.gaoyuexiang.cn\/images\/avatar.png"},"author":{"@type":"Person","name":"无糖拿铁"},"description":""}</script></head>
-<body header-desktop=fixed header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem('theme')?localStorage.getItem('theme')==='dark':'auto'==='auto'?window.matchMedia('(prefers-color-scheme: dark)').matches:'auto'==='dark')&&document.body.setAttribute('theme','dark')</script>
-<div id=mask></div><div class=wrapper><header class=desktop id=header-desktop>
-<div class=header-wrapper>
-<div class=header-title>
-<a href=/ title=无糖拿铁，谢谢><span class=header-title-pre><i class="far fa-kiss-wink-heart fa-fw"></i></span>无糖拿铁，谢谢</a>
-</div>
-<div class=menu>
-<div class=menu-inner><a class=menu-item href=/posts/> 所有文章 </a><a class=menu-item href=/tags/> 标签 </a><a class=menu-item href=/categories/> 分类 </a><a class=menu-item href=/series-index/> 系列 </a><a class=menu-item href=/about/> 关于 </a><a class=menu-item href=https://github.com/kbyyd24/ title=GitHub rel="noopener noreffer" target=_blank><i class="fab fa-github fa-fw"></i> </a><span class="menu-item delimiter"></span><span class="menu-item search" id=search-desktop>
+<!doctype html><html lang=zh-CN><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><meta http-equiv=X-UA-Compatible content="IE=edge, chrome=1"><title>「Java 8 函数式编程」读书笔记——流 - 无糖拿铁，谢谢</title><meta name=Description content="学习、记录、分享"><meta property="og:url" content="https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_stream/">
+<meta property="og:site_name" content="无糖拿铁，谢谢"><meta property="og:title" content="「Java 8 函数式编程」读书笔记——流"><meta property="og:description" content="本文是「Java 8 函数式编程」第三章的读书笔记，章名为流。本章主要介绍了外部迭代与内部迭代以及常用的高阶函数。 外部迭代与内部迭代 外部迭代 过去"><meta property="og:locale" content="zh_CN"><meta property="og:type" content="article"><meta property="article:section" content="posts"><meta property="article:published_time" content="2017-02-06T00:00:00+00:00"><meta property="article:modified_time" content="2022-01-31T20:10:51+08:00"><meta property="article:tag" content="Java"><meta property="article:tag" content="Lambda"><meta property="article:tag" content="Java Lambda"><meta property="article:tag" content="Java 8"><meta property="article:tag" content="函数式编程"><meta property="og:image" content="https://blog.gaoyuexiang.cn/logo.png"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://blog.gaoyuexiang.cn/logo.png"><meta name=twitter:title content="「Java 8 函数式编程」读书笔记——流"><meta name=twitter:description content="本文是「Java 8 函数式编程」第三章的读书笔记，章名为流。本章主要介绍了外部迭代与内部迭代以及常用的高阶函数。 外部迭代与内部迭代 外部迭代 过去"><meta name=application-name content="LoveIt"><meta name=apple-mobile-web-app-title content="LoveIt"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel="shortcut icon" type=image/x-icon href=/favicon.ico><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_stream/><link rel=prev href=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_lambda_expression/><link rel=next href=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_lib/><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css><link rel=stylesheet href=/css/style.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"「Java 8 函数式编程」读书笔记——流","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/blog.gaoyuexiang.cn\/java_8_lambdas_functional_programming_note_stream\/"},"image":["https:\/\/blog.gaoyuexiang.cn\/images\/Apple-Devices-Preview.png"],"genre":"posts","keywords":"java, lambda, Java Lambda, Java 8, 函数式编程","wordcount":1256,"url":"https:\/\/blog.gaoyuexiang.cn\/java_8_lambdas_functional_programming_note_stream\/","datePublished":"2017-02-06T00:00:00+00:00","dateModified":"2022-01-31T20:10:51+08:00","license":"CC BY-NC 4.0 CN","publisher":{"@type":"Organization","name":"无糖拿铁","logo":"https:\/\/blog.gaoyuexiang.cn\/images\/avatar.png"},"author":{"@type":"Person","name":"无糖拿铁"},"description":""}</script></head><body header-desktop=fixed header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem("theme")?localStorage.getItem("theme")==="dark":"auto"==="auto"?window.matchMedia("(prefers-color-scheme: dark)").matches:"auto"==="dark")&&document.body.setAttribute("theme","dark")</script><div id=mask></div><div class=wrapper><header class=desktop id=header-desktop><div class=header-wrapper><div class=header-title><a href=/ title=无糖拿铁，谢谢><span class=header-title-pre><i class='far fa-kiss-wink-heart fa-fw'></i></span>无糖拿铁，谢谢</a></div><div class=menu><div class=menu-inner><a class=menu-item href=/posts/>所有文章 </a><a class=menu-item href=/tags/>标签 </a><a class=menu-item href=/categories/>分类 </a><a class=menu-item href=/series-index/>系列 </a><a class=menu-item href=/about/>关于 </a><a class=menu-item href=https://github.com/kbyyd24/ title=GitHub rel="noopener noreffer" target=_blank><i class='fab fa-github fa-fw'></i> </a><span class="menu-item delimiter"></span><span class="menu-item search" id=search-desktop>
 <input type=text placeholder=搜索文章标题或内容... id=search-input-desktop>
-<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-desktop title=搜索>
-<i class="fas fa-search fa-fw"></i>
-</a>
-<a href=javascript:void(0); class="search-button search-clear" id=search-clear-desktop title=清空>
-<i class="fas fa-times-circle fa-fw"></i>
-</a>
-<span class="search-button search-loading" id=search-loading-desktop>
-<i class="fas fa-spinner fa-fw fa-spin"></i>
-</span>
-</span><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
-<i class="fas fa-adjust fa-fw"></i>
-</a>
-</div>
-</div>
-</div>
-</header><header class=mobile id=header-mobile>
-<div class=header-container>
-<div class=header-wrapper>
-<div class=header-title>
-<a href=/ title=无糖拿铁，谢谢><span class=header-title-pre><i class="far fa-kiss-wink-heart fa-fw"></i></span>无糖拿铁，谢谢</a>
-</div>
-<div class=menu-toggle id=menu-toggle-mobile>
-<span></span><span></span><span></span>
-</div>
-</div>
-<div class=menu id=menu-mobile><div class=search-wrapper>
-<div class="search mobile" id=search-mobile>
-<input type=text placeholder=搜索文章标题或内容... id=search-input-mobile>
-<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-mobile title=搜索>
-<i class="fas fa-search fa-fw"></i>
-</a>
-<a href=javascript:void(0); class="search-button search-clear" id=search-clear-mobile title=清空>
-<i class="fas fa-times-circle fa-fw"></i>
-</a>
-<span class="search-button search-loading" id=search-loading-mobile>
-<i class="fas fa-spinner fa-fw fa-spin"></i>
-</span>
-</div>
-<a href=javascript:void(0); class=search-cancel id=search-cancel-mobile>
-取消
-</a>
-</div><a class=menu-item href=/posts/ title>所有文章</a><a class=menu-item href=/tags/ title>标签</a><a class=menu-item href=/categories/ title>分类</a><a class=menu-item href=/series-index/ title>系列</a><a class=menu-item href=/about/ title>关于</a><a class=menu-item href=https://github.com/kbyyd24/ title=GitHub rel="noopener noreffer" target=_blank><i class="fab fa-github fa-fw"></i></a><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
-<i class="fas fa-adjust fa-fw"></i>
-</a></div>
-</div>
-</header>
-<div class="search-dropdown desktop">
-<div id=search-dropdown-desktop></div>
-</div>
-<div class="search-dropdown mobile">
-<div id=search-dropdown-mobile></div>
-</div>
-<main class=main>
-<div class=container><div class=toc id=toc-auto>
-<h2 class=toc-title>目录</h2>
-<div class="toc-content always-active" id=toc-content-auto></div>
-</div><article class="page single"><h1 class="single-title animated flipInX">「Java 8 函数式编程」读书笔记——流</h1><div class=post-meta>
-<div class=post-meta-line><span class=post-author><a href=https://blog.gaoyuexiang.cn/about title=Author target=_blank rel="noopener noreffer author" class=author><i class="fas fa-user-circle fa-fw"></i>无糖拿铁</a></span></div>
-<div class=post-meta-line><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime=2017-02-06>2017-02-06</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1256 字&nbsp;
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-desktop title=搜索><i class="fas fa-search fa-fw"></i>
+</a><a href=javascript:void(0); class="search-button search-clear" id=search-clear-desktop title=清空><i class="fas fa-times-circle fa-fw"></i>
+</a><span class="search-button search-loading" id=search-loading-desktop><i class="fas fa-spinner fa-fw fa-spin"></i>
+</span></span><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题><i class="fas fa-adjust fa-fw"></i></a></div></div></div></header><header class=mobile id=header-mobile><div class=header-container><div class=header-wrapper><div class=header-title><a href=/ title=无糖拿铁，谢谢><span class=header-title-pre><i class='far fa-kiss-wink-heart fa-fw'></i></span>无糖拿铁，谢谢</a></div><div class=menu-toggle id=menu-toggle-mobile><span></span><span></span><span></span></div></div><div class=menu id=menu-mobile><div class=search-wrapper><div class="search mobile" id=search-mobile><input type=text placeholder=搜索文章标题或内容... id=search-input-mobile>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-mobile title=搜索><i class="fas fa-search fa-fw"></i>
+</a><a href=javascript:void(0); class="search-button search-clear" id=search-clear-mobile title=清空><i class="fas fa-times-circle fa-fw"></i>
+</a><span class="search-button search-loading" id=search-loading-mobile><i class="fas fa-spinner fa-fw fa-spin"></i></span></div><a href=javascript:void(0); class=search-cancel id=search-cancel-mobile>取消</a></div><a class=menu-item href=/posts/ title>所有文章</a><a class=menu-item href=/tags/ title>标签</a><a class=menu-item href=/categories/ title>分类</a><a class=menu-item href=/series-index/ title>系列</a><a class=menu-item href=/about/ title>关于</a><a class=menu-item href=https://github.com/kbyyd24/ title=GitHub rel="noopener noreffer" target=_blank><i class='fab fa-github fa-fw'></i></a><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
+<i class="fas fa-adjust fa-fw"></i></a></div></div></header><div class="search-dropdown desktop"><div id=search-dropdown-desktop></div></div><div class="search-dropdown mobile"><div id=search-dropdown-mobile></div></div><main class=main><div class=container><div class=toc id=toc-auto><h2 class=toc-title>目录</h2><div class="toc-content always-active" id=toc-content-auto></div></div><article class="page single"><h1 class="single-title animated flipInX">「Java 8 函数式编程」读书笔记——流</h1><div class=post-meta><div class=post-meta-line><span class=post-author><a href=https://blog.gaoyuexiang.cn/about title=Author target=_blank rel="noopener noreffer author" class=author><i class="fas fa-user-circle fa-fw"></i>无糖拿铁</a></span></div><div class=post-meta-line><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime=2017-02-06>2017-02-06</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1256 字&nbsp;
 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 3 分钟&nbsp;<span id=/java_8_lambdas_functional_programming_note_stream/ class=leancloud_visitors data-flag-title="「Java 8 函数式编程」读书笔记——流">
 <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
-</span>&nbsp;</div>
-</div><div class="details toc" id=toc-static kept>
-<div class="details-summary toc-title">
-<span>目录</span>
-<span><i class="details-icon fas fa-angle-right"></i></span>
-</div>
-<div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents>
-<ul>
-<li><a href=#外部迭代>外部迭代</a></li>
-<li><a href=#内部迭代>内部迭代</a></li>
-</ul>
-</nav></div>
-</div><div class=content id=content><p>本文是「Java 8 函数式编程」第三章的读书笔记，章名为流。本章主要介绍了外部迭代与内部迭代以及常用的高阶函数。</p>
-<h1 id=外部迭代与内部迭代>外部迭代与内部迭代</h1>
-<h2 id=外部迭代>外部迭代</h2>
-<p>过去我们要对一个<code>List</code>进行迭代时，往往会采用如下方式：</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span>&nbsp;</div></div><div class="details toc" id=toc-static kept><div class="details-summary toc-title"><span>目录</span>
+<span><i class="details-icon fas fa-angle-right"></i></span></div><div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents><ul><li><a href=#外部迭代>外部迭代</a></li><li><a href=#内部迭代>内部迭代</a></li></ul></nav></div></div><div class=content id=content><p>本文是「Java 8 函数式编程」第三章的读书笔记，章名为流。本章主要介绍了外部迭代与内部迭代以及常用的高阶函数。</p><h1 id=外部迭代与内部迭代>外部迭代与内部迭代</h1><h2 id=外部迭代>外部迭代</h2><p>过去我们要对一个<code>List</code>进行迭代时，往往会采用如下方式：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
 </span><span class=lnt>5
 </span><span class=lnt>6
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=kt>int</span> <span class=n>count</span> <span class=o>=</span> <span class=n>0</span><span class=o>;</span>
-<span class=k>for</span> <span class=o>(</span><span class=n>Artist</span> <span class=n>artist</span> <span class=o>:</span> <span class=n>artists</span><span class=o>)</span> <span class=o>{</span>
-  <span class=k>if</span> <span class=o>(</span><span class=n>artist</span><span class=o>.</span><span class=na>isFrom</span><span class=o>(</span><span class=s>&#34;London&#34;</span><span class=o>))</span> <span class=o>{</span>
-    <span class=n>count</span><span class=o>++;</span>
-  <span class=o>}</span>
-<span class=o>}</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>而这种方法的原理，其实是先调用<code>iterator</code>方法，然后再迭代，等效于如下代码：</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=kt>int</span><span class=w> </span><span class=n>count</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>0</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>for</span><span class=w> </span><span class=p>(</span><span class=n>Artist</span><span class=w> </span><span class=n>artist</span><span class=w> </span><span class=p>:</span><span class=w> </span><span class=n>artists</span><span class=p>)</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=k>if</span><span class=w> </span><span class=p>(</span><span class=n>artist</span><span class=p>.</span><span class=na>isFrom</span><span class=p>(</span><span class=s>&#34;London&#34;</span><span class=p>))</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>count</span><span class=o>++</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=p>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>}</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>而这种方法的原理，其实是先调用<code>iterator</code>方法，然后再迭代，等效于如下代码：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
@@ -133,151 +32,45 @@
 </span><span class=lnt>6
 </span><span class=lnt>7
 </span><span class=lnt>8
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=kt>int</span> <span class=n>count</span> <span class=o>=</span> <span class=n>0</span><span class=o>;</span>
-<span class=n>Iterator</span><span class=o>&lt;</span><span class=n>Artist</span><span class=o>&gt;</span> <span class=n>iterator</span> <span class=o>=</span> <span class=n>artists</span><span class=o>.</span><span class=na>iterator</span><span class=o>();</span>
-<span class=k>while</span> <span class=o>(</span><span class=n>iterator</span><span class=o>.</span><span class=na>hasNext</span><span class=o>())</span> <span class=o>{</span>
-  <span class=n>Artist</span> <span class=n>artist</span> <span class=o>=</span> <span class=n>iterator</span><span class=o>.</span><span class=na>next</span><span class=o>();</span>
-  <span class=k>if</span> <span class=o>(</span><span class=n>artist</span><span class=o>.</span><span class=na>isFrom</span><span class=o>(</span><span class=s>&#34;London&#34;</span><span class=o>))</span> <span class=o>{</span>
-    <span class=n>count</span><span class=o>++;</span>
-  <span class=o>}</span>
-<span class=o>}</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>这样的迭代方式，把迭代的控制权交给了<code>iterator</code>对象，让其控制整个迭代过程，这就叫做<code>外部迭代</code>。</p>
-<p>外部迭代需要我们自己编写迭代的控制代码，显得十分繁琐。特别是对于<code>Map</code>对象，繁琐到我都不想给出例子。</p>
-<p>外部迭代将行为和方法混为一谈，难以对代码进行重构操作。</p>
-<h2 id=内部迭代>内部迭代</h2>
-<p>与之相对的就是内部迭代了。<strong>内部迭代就是把迭代的控制权交给了集合本身，让集合自己实现相应的迭代，而调用者并不需要关心如何迭代</strong>。</p>
-<p>要使用内部迭代，需要使用<code>Java 8</code>中新增的接口<code>Stream</code>。而集合框架都已经包含了一个<code>stream()</code>方法，用于获得<code>Stream</code>对象。</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=kt>int</span><span class=w> </span><span class=n>count</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>0</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>Iterator</span><span class=o>&lt;</span><span class=n>Artist</span><span class=o>&gt;</span><span class=w> </span><span class=n>iterator</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>artists</span><span class=p>.</span><span class=na>iterator</span><span class=p>();</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>while</span><span class=w> </span><span class=p>(</span><span class=n>iterator</span><span class=p>.</span><span class=na>hasNext</span><span class=p>())</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=n>Artist</span><span class=w> </span><span class=n>artist</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>iterator</span><span class=p>.</span><span class=na>next</span><span class=p>();</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=k>if</span><span class=w> </span><span class=p>(</span><span class=n>artist</span><span class=p>.</span><span class=na>isFrom</span><span class=p>(</span><span class=s>&#34;London&#34;</span><span class=p>))</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>count</span><span class=o>++</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=p>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>}</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>这样的迭代方式，把迭代的控制权交给了<code>iterator</code>对象，让其控制整个迭代过程，这就叫做<code>外部迭代</code>。</p><p>外部迭代需要我们自己编写迭代的控制代码，显得十分繁琐。特别是对于<code>Map</code>对象，繁琐到我都不想给出例子。</p><p>外部迭代将行为和方法混为一谈，难以对代码进行重构操作。</p><h2 id=内部迭代>内部迭代</h2><p>与之相对的就是内部迭代了。<strong>内部迭代就是把迭代的控制权交给了集合本身，让集合自己实现相应的迭代，而调用者并不需要关心如何迭代</strong>。</p><p>要使用内部迭代，需要使用<code>Java 8</code>中新增的接口<code>Stream</code>。而集合框架都已经包含了一个<code>stream()</code>方法，用于获得<code>Stream</code>对象。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=kt>long</span> <span class=n>count</span> <span class=o>=</span> <span class=n>artists</span><span class=o>.</span><span class=na>stream</span><span class=o>()</span>
-  <span class=o>.</span><span class=na>filter</span><span class=o>(</span><span class=n>artist</span> <span class=o>-&gt;</span> <span class=n>artist</span><span class=o>.</span><span class=na>isFrom</span><span class=o>(</span><span class=s>&#34;London&#34;</span><span class=o>))</span>
-  <span class=o>.</span><span class=na>count</span><span class=o>();</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>这个例子就是使用的内部迭代。先获取<code>stream</code>对象，然后调用<code>filter</code>方法过滤，最后统计符合条件的个数。</p>
-<h1 id=实现机制>实现机制</h1>
-<p>在<code>Java</code>中调用一个方法，通常会立即执行操作。然而<code>Stream</code>里的一些方法却不太一样，它们返回的对象不是新的集合，而是创建新集合的配方。我们通过一个例子说明：</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=kt>long</span><span class=w> </span><span class=n>count</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>artists</span><span class=p>.</span><span class=na>stream</span><span class=p>()</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=p>.</span><span class=na>filter</span><span class=p>(</span><span class=n>artist</span><span class=w> </span><span class=o>-&gt;</span><span class=w> </span><span class=n>artist</span><span class=p>.</span><span class=na>isFrom</span><span class=p>(</span><span class=s>&#34;London&#34;</span><span class=p>))</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=p>.</span><span class=na>count</span><span class=p>();</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>这个例子就是使用的内部迭代。先获取<code>stream</code>对象，然后调用<code>filter</code>方法过滤，最后统计符合条件的个数。</p><h1 id=实现机制>实现机制</h1><p>在<code>Java</code>中调用一个方法，通常会立即执行操作。然而<code>Stream</code>里的一些方法却不太一样，它们返回的对象不是新的集合，而是创建新集合的配方。我们通过一个例子说明：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
 </span><span class=lnt>5
 </span><span class=lnt>6
 </span><span class=lnt>7
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=n>Stream</span><span class=o>&lt;</span><span class=n>String</span><span class=o>&gt;</span> <span class=n>names</span> <span class=o>=</span> <span class=n>Stream</span><span class=o>.</span><span class=na>of</span><span class=o>(</span><span class=s>&#34;Bryant&#34;</span><span class=o>,</span> <span class=s>&#34;Jordon&#34;</span><span class=o>,</span> <span class=s>&#34;James&#34;</span><span class=o>)</span>
-  <span class=o>.</span><span class=na>filter</span><span class=o>(</span><span class=n>name</span> <span class=o>-&gt;</span> <span class=o>{</span>
-    <span class=n>System</span><span class=o>.</span><span class=na>out</span><span class=o>.</span><span class=na>println</span><span class=o>(</span><span class=n>name</span><span class=o>);</span>
-    <span class=k>return</span> <span class=n>name</span><span class=o>.</span><span class=na>length</span><span class=o>()</span> <span class=o>==</span> <span class=n>6</span><span class=o>;</span>
-  <span class=o>});</span>
-<span class=n>System</span><span class=o>.</span><span class=na>out</span><span class=o>.</span><span class=na>println</span><span class=o>(</span><span class=s>&#34;counting&#34;</span><span class=o>);</span>
-<span class=n>System</span><span class=o>.</span><span class=na>out</span><span class=o>.</span><span class=na>println</span><span class=o>(</span><span class=n>names</span><span class=o>.</span><span class=na>count</span><span class=o>());</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>最终会得到如下输出：</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=n>Stream</span><span class=o>&lt;</span><span class=n>String</span><span class=o>&gt;</span><span class=w> </span><span class=n>names</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>Stream</span><span class=p>.</span><span class=na>of</span><span class=p>(</span><span class=s>&#34;Bryant&#34;</span><span class=p>,</span><span class=w> </span><span class=s>&#34;Jordon&#34;</span><span class=p>,</span><span class=w> </span><span class=s>&#34;James&#34;</span><span class=p>)</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=p>.</span><span class=na>filter</span><span class=p>(</span><span class=n>name</span><span class=w> </span><span class=o>-&gt;</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>System</span><span class=p>.</span><span class=na>out</span><span class=p>.</span><span class=na>println</span><span class=p>(</span><span class=n>name</span><span class=p>);</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=k>return</span><span class=w> </span><span class=n>name</span><span class=p>.</span><span class=na>length</span><span class=p>()</span><span class=w> </span><span class=o>==</span><span class=w> </span><span class=n>6</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=p>});</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>System</span><span class=p>.</span><span class=na>out</span><span class=p>.</span><span class=na>println</span><span class=p>(</span><span class=s>&#34;counting&#34;</span><span class=p>);</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>System</span><span class=p>.</span><span class=na>out</span><span class=p>.</span><span class=na>println</span><span class=p>(</span><span class=n>names</span><span class=p>.</span><span class=na>count</span><span class=p>());</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>最终会得到如下输出：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
 </span><span class=lnt>5
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>counting
-Bryant
-Jordon
-James
-2
-</code></pre></td></tr></table>
-</div>
-</div><p>出现这样的结果，原因是</p>
-<ul>
-<li>像<code>filter</code>这样的方法，只会描述<code>Stream</code>，最终不会产生新集合的方法叫做<code>惰性求值方法</code></li>
-<li>像<code>count</code>这样会从<code>Stream</code>中产生值或集合等结果的方法叫做<code>及早求值方法</code></li>
-</ul>
-<p>判断一个操作是惰性求值还是及早求值，只需要看它的返回值</p>
-<ul>
-<li>如果返回值是<code>Stream</code>，则是惰性求值</li>
-<li>返回的是一个值或<code>null</code>，则是及早求值</li>
-</ul>
-<p>在对集合使用流操作时，使用惰性求值方法形成一个惰性求值的链，最后用及早求值方法得到结果，而集合只需要迭代一次。</p>
-<h1 id=常用流操作>常用流操作</h1>
-<ul>
-<li>collect：及早求值，常用于生成<code>List</code> <code>Map</code>或其他复杂的数据结构</li>
-<li>map：惰性求值，将一种类型的数据转换成另一种类型，将一个流中的值转化成一个新的流，类似于<code>Hadoop</code>里的<code>map</code></li>
-<li>filter：惰性求值，过滤不符合条件的元素</li>
-<li>flatMap：惰性求值，类似于<code>map</code>，只是<code>Function</code>参数的返回值限定为<code>Stream</code>，用于连接多个<code>Stream</code>成为一个<code>Stream</code></li>
-<li>max & min：及早求值，<code>reduce</code>方法的特例，返回<code>Optional</code>（第四章介绍）对象</li>
-<li>reduce：及早求值，从一组值中生成一个值，类似于<code>Hadoop</code>中的<code>reduce</code></li>
-</ul>
-<h1 id=高阶函数>高阶函数</h1>
-<p>高阶函数 👉 接收一个函数作为参数，或者返回一个函数的函数。</p>
-<h1 id=正确使用lambda表达式>正确使用<code>Lambda</code>表达式</h1>
-<ul>
-<li>明确要达成<strong>什么转化</strong>，而不是说明<strong>如何转化</strong></li>
-<li>没有副作用：
-<ul>
-<li>只通过函数的返回值就能充分理解函数的全部作用</li>
-<li>函数不会修改程序或外界的状态</li>
-<li>获取值而不是变量（避免使用数组逃过<code>JVM</code>的追杀，应该考虑优化逻辑）</li>
-</ul>
-</li>
-</ul>
-</div><div class=post-footer id=post-footer>
-<div class=post-info>
-<div class=post-info-line>
-<div class=post-info-mod>
-<span>更新于 2022-01-31&nbsp;<a class=git-hash href=https://github.com/kbyyd24/LoveItAgain/commit/8309bc020e867fcafd813c9ce7a1508339eaedeb target=_blank title="commit by kbyyd24(melo@gaoyuexiang.cn) 8309bc020e867fcafd813c9ce7a1508339eaedeb: reorg posts">
-<i class="fas fa-hashtag fa-fw"></i>8309bc0</a></span>
-</div>
-<div class=post-info-license></div>
-</div>
-<div class=post-info-line>
-<div class=post-info-md><span>
-<a class=link-to-markdown href=/java_8_lambdas_functional_programming_note_stream/index.md target=_blank>阅读原始文档</a>
-</span></div>
-<div class=post-info-share>
-<span><a href=javascript:void(0); title="分享到 Twitter" data-sharer=twitter data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_stream/ data-title="「Java 8 函数式编程」读书笔记——流" data-hashtags="java,lambda,Java Lambda,Java 8,函数式编程"><i class="fab fa-twitter fa-fw"></i></a><a href=javascript:void(0); title="分享到 Facebook" data-sharer=facebook data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_stream/ data-hashtag=java><i class="fab fa-facebook-square fa-fw"></i></a><a href=javascript:void(0); title="分享到 Linkedin" data-sharer=linkedin data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_stream/><i class="fab fa-linkedin fa-fw"></i></a><a href=javascript:void(0); title="分享到 WhatsApp" data-sharer=whatsapp data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_stream/ data-title="「Java 8 函数式编程」读书笔记——流" data-web><i class="fab fa-whatsapp fa-fw"></i></a><a href=javascript:void(0); title="分享到 Hacker News" data-sharer=hackernews data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_stream/ data-title="「Java 8 函数式编程」读书笔记——流"><i class="fab fa-hacker-news fa-fw"></i></a><a href=javascript:void(0); title="分享到 Reddit" data-sharer=reddit data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_stream/><i class="fab fa-reddit fa-fw"></i></a><a href=javascript:void(0); title="分享到 Line" data-sharer=line data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_stream/ data-title="「Java 8 函数式编程」读书笔记——流"><i data-svg-src=https://cdn.jsdelivr.net/npm/simple-icons@2.14.0/icons/line.svg></i></a><a href=javascript:void(0); title="分享到 Pocket" data-sharer=pocket data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_stream/><i class="fab fa-get-pocket fa-fw"></i></a><a href=javascript:void(0); title="分享到 微博" data-sharer=weibo data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_stream/ data-title="「Java 8 函数式编程」读书笔记——流"><i class="fab fa-weibo fa-fw"></i></a><a href=javascript:void(0); title="分享到 人人" data-sharer=renren data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_stream/><i class="fab fa-renren fa-fw"></i></a><a href=javascript:void(0); title="分享到 Evernote" data-sharer=evernote data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_stream/ data-title="「Java 8 函数式编程」读书笔记——流"><i class="fab fa-evernote fa-fw"></i></a><a href=javascript:void(0); title="分享到 Skype" data-sharer=skype data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_stream/ data-title="「Java 8 函数式编程」读书笔记——流"><i class="fab fa-skype fa-fw"></i></a><a href=javascript:void(0); title="分享到 Trello" data-sharer=trello data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_stream/ data-title="「Java 8 函数式编程」读书笔记——流" data-description><i class="fab fa-trello fa-fw"></i></a></span>
-</div>
-</div>
-</div>
-<div class=post-info-more>
-<section class=post-tags><i class="fas fa-tags fa-fw"></i>&nbsp;<a href=/tags/java/>Java</a>,&nbsp;<a href=/tags/lambda/>lambda</a>,&nbsp;<a href=/tags/java-lambda/>Java Lambda</a>,&nbsp;<a href=/tags/java-8/>Java 8</a>,&nbsp;<a href=/tags/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/>函数式编程</a></section>
-<section>
-<span><a href=javascript:void(0); onclick=window.history.back()>返回</a></span>&nbsp;|&nbsp;<span><a href=/>主页</a></span>
-</section>
-</div>
-<div class=post-nav><a href=/java_8_lambdas_functional_programming_note_lambda_expression/ class=prev rel=prev title="「Java 8 函数式编程」读书笔记——lambda表达式"><i class="fas fa-angle-left fa-fw"></i>「Java 8 函数式编程」读书笔记——lambda表达式</a>
-<a href=/java_8_lambdas_functional_programming_note_lib/ class=next rel=next title="「Java 8 函数式编程」读书笔记——类库">「Java 8 函数式编程」读书笔记——类库<i class="fas fa-angle-right fa-fw"></i></a></div>
-</div>
-<div id=comments><div id=valine class=comment></div><noscript>
-Please enable JavaScript to view the comments powered by <a href=https://valine.js.org/>Valine</a>.
-</noscript></div></article></div>
-</main><footer class=footer>
-<div class=footer-container><div class=footer-line>由 <a href=https://gohugo.io/ target=_blank rel="noopener noreffer" title="Hugo 0.92.1">Hugo</a> 强力驱动 | 主题 - <a href=https://github.com/dillonzq/LoveIt target=_blank rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
-</div><div class=footer-line><i class="far fa-copyright fa-fw"></i><span itemprop=copyrightYear>2016 - 2024</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=https://blog.gaoyuexiang.cn/about target=_blank>无糖拿铁</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span><span class=icp-splitter>&nbsp;|&nbsp;</span><br class=icp-br>
-<span class=icp><a href=https://beian.miit.gov.cn/ target=_blank>蜀ICP备15031888号-2</a></span></div>
-</div>
-</footer></div>
-<div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title=回到顶部>
-<i class="fas fa-arrow-up fa-fw"></i>
-</a><a href=# id=view-comments class=fixed-button title=查看评论>
-<i class="fas fa-comment fa-fw"></i>
-</a>
-</div>
-<link rel=stylesheet href=/lib/valine/valine.min.css><script type=text/javascript src=https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/autocomplete.js@0.37.1/dist/autocomplete.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/lunr@2.3.8/lunr.min.js></script><script type=text/javascript src=/lib/lunr/lunr.stemmer.support.min.js></script><script type=text/javascript src=/lib/lunr/lunr.zh.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/lazysizes@5.2.2/lazysizes.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/sharer.js@0.4.0/sharer.min.js></script><script type=text/javascript>window.config={code:{copyTitle:"复制到剪贴板",maxShownLines:100},comment:{valine:{appId:"Voz5TpLaiKvWLiVk63CrRybt-gzGzoHsz",appKey:"xzDAABvBBG6vK7iwgd1VKUnw",avatar:"mm",el:"#valine",emojiCDN:"https://cdn.jsdelivr.net/npm/emoji-datasource-google@5.0.1/img/google/64/",emojiMaps:{100:"1f4af.png",alien:"1f47d.png",anger:"1f4a2.png",angry:"1f620.png",anguished:"1f627.png",astonished:"1f632.png",black_heart:"1f5a4.png",blue_heart:"1f499.png",blush:"1f60a.png",bomb:"1f4a3.png",boom:"1f4a5.png",broken_heart:"1f494.png",brown_heart:"1f90e.png",clown_face:"1f921.png",cold_face:"1f976.png",cold_sweat:"1f630.png",confounded:"1f616.png",confused:"1f615.png",cry:"1f622.png",crying_cat_face:"1f63f.png",cupid:"1f498.png",dash:"1f4a8.png",disappointed:"1f61e.png",disappointed_relieved:"1f625.png",dizzy:"1f4ab.png",dizzy_face:"1f635.png",drooling_face:"1f924.png",exploding_head:"1f92f.png",expressionless:"1f611.png",face_vomiting:"1f92e.png",face_with_cowboy_hat:"1f920.png",face_with_hand_over_mouth:"1f92d.png",face_with_head_bandage:"1f915.png",face_with_monocle:"1f9d0.png",face_with_raised_eyebrow:"1f928.png",face_with_rolling_eyes:"1f644.png",face_with_symbols_on_mouth:"1f92c.png",face_with_thermometer:"1f912.png",fearful:"1f628.png",flushed:"1f633.png",frowning:"1f626.png",ghost:"1f47b.png",gift_heart:"1f49d.png",green_heart:"1f49a.png",grimacing:"1f62c.png",grin:"1f601.png",grinning:"1f600.png",hankey:"1f4a9.png",hear_no_evil:"1f649.png",heart:"2764-fe0f.png",heart_decoration:"1f49f.png",heart_eyes:"1f60d.png",heart_eyes_cat:"1f63b.png",heartbeat:"1f493.png",heartpulse:"1f497.png",heavy_heart_exclamation_mark_ornament:"2763-fe0f.png",hole:"1f573-fe0f.png",hot_face:"1f975.png",hugging_face:"1f917.png",hushed:"1f62f.png",imp:"1f47f.png",innocent:"1f607.png",japanese_goblin:"1f47a.png",japanese_ogre:"1f479.png",joy:"1f602.png",joy_cat:"1f639.png",kiss:"1f48b.png",kissing:"1f617.png",kissing_cat:"1f63d.png",kissing_closed_eyes:"1f61a.png",kissing_heart:"1f618.png",kissing_smiling_eyes:"1f619.png",laughing:"1f606.png",left_speech_bubble:"1f5e8-fe0f.png",love_letter:"1f48c.png",lying_face:"1f925.png",mask:"1f637.png",money_mouth_face:"1f911.png",nauseated_face:"1f922.png",nerd_face:"1f913.png",neutral_face:"1f610.png",no_mouth:"1f636.png",open_mouth:"1f62e.png",orange_heart:"1f9e1.png",partying_face:"1f973.png",pensive:"1f614.png",persevere:"1f623.png",pleading_face:"1f97a.png",pouting_cat:"1f63e.png",purple_heart:"1f49c.png",rage:"1f621.png",relaxed:"263a-fe0f.png",relieved:"1f60c.png",revolving_hearts:"1f49e.png",right_anger_bubble:"1f5ef-fe0f.png",robot_face:"1f916.png",rolling_on_the_floor_laughing:"1f923.png",scream:"1f631.png",scream_cat:"1f640.png",see_no_evil:"1f648.png",shushing_face:"1f92b.png",skull:"1f480.png",skull_and_crossbones:"2620-fe0f.png",sleeping:"1f634.png",sleepy:"1f62a.png",slightly_frowning_face:"1f641.png",slightly_smiling_face:"1f642.png",smile:"1f604.png",smile_cat:"1f638.png",smiley:"1f603.png",smiley_cat:"1f63a.png",smiling_face_with_3_hearts:"1f970.png",smiling_imp:"1f608.png",smirk:"1f60f.png",smirk_cat:"1f63c.png",sneezing_face:"1f927.png",sob:"1f62d.png",space_invader:"1f47e.png",sparkling_heart:"1f496.png",speak_no_evil:"1f64a.png",speech_balloon:"1f4ac.png","star-struck":"1f929.png",stuck_out_tongue:"1f61b.png",stuck_out_tongue_closed_eyes:"1f61d.png",stuck_out_tongue_winking_eye:"1f61c.png",sunglasses:"1f60e.png",sweat:"1f613.png",sweat_drops:"1f4a6.png",sweat_smile:"1f605.png",thinking_face:"1f914.png",thought_balloon:"1f4ad.png",tired_face:"1f62b.png",triumph:"1f624.png",two_hearts:"1f495.png",unamused:"1f612.png",upside_down_face:"1f643.png",weary:"1f629.png",white_frowning_face:"2639-fe0f.png",white_heart:"1f90d.png",wink:"1f609.png",woozy_face:"1f974.png",worried:"1f61f.png",yawning_face:"1f971.png",yellow_heart:"1f49b.png",yum:"1f60b.png",zany_face:"1f92a.png",zipper_mouth_face:"1f910.png",zzz:"1f4a4.png"},enableQQ:!1,highlight:!0,lang:"zh-cn",pageSize:10,placeholder:"你的评论 ...",recordIP:!0,serverURLs:"https://leancloud.gaoyuexiang.cn",visitor:!0}},search:{highlightTag:"em",lunrIndexURL:"/index.json",lunrLanguageCode:"zh",lunrSegmentitURL:"/lib/lunr/lunr.segmentit.js",maxResultLength:10,noResultsFound:"没有找到结果",snippetLength:50,type:"lunr"}}</script><script type=text/javascript src=/js/theme.min.js></script>
-</body>
-</html>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>counting
+</span></span><span class=line><span class=cl>Bryant
+</span></span><span class=line><span class=cl>Jordon
+</span></span><span class=line><span class=cl>James
+</span></span><span class=line><span class=cl>2
+</span></span></code></pre></td></tr></table></div></div><p>出现这样的结果，原因是</p><ul><li>像<code>filter</code>这样的方法，只会描述<code>Stream</code>，最终不会产生新集合的方法叫做<code>惰性求值方法</code></li><li>像<code>count</code>这样会从<code>Stream</code>中产生值或集合等结果的方法叫做<code>及早求值方法</code></li></ul><p>判断一个操作是惰性求值还是及早求值，只需要看它的返回值</p><ul><li>如果返回值是<code>Stream</code>，则是惰性求值</li><li>返回的是一个值或<code>null</code>，则是及早求值</li></ul><p>在对集合使用流操作时，使用惰性求值方法形成一个惰性求值的链，最后用及早求值方法得到结果，而集合只需要迭代一次。</p><h1 id=常用流操作>常用流操作</h1><ul><li>collect：及早求值，常用于生成<code>List</code> <code>Map</code>或其他复杂的数据结构</li><li>map：惰性求值，将一种类型的数据转换成另一种类型，将一个流中的值转化成一个新的流，类似于<code>Hadoop</code>里的<code>map</code></li><li>filter：惰性求值，过滤不符合条件的元素</li><li>flatMap：惰性求值，类似于<code>map</code>，只是<code>Function</code>参数的返回值限定为<code>Stream</code>，用于连接多个<code>Stream</code>成为一个<code>Stream</code></li><li>max & min：及早求值，<code>reduce</code>方法的特例，返回<code>Optional</code>（第四章介绍）对象</li><li>reduce：及早求值，从一组值中生成一个值，类似于<code>Hadoop</code>中的<code>reduce</code></li></ul><h1 id=高阶函数>高阶函数</h1><p>高阶函数 &#x1f449; 接收一个函数作为参数，或者返回一个函数的函数。</p><h1 id=正确使用lambda表达式>正确使用<code>Lambda</code>表达式</h1><ul><li>明确要达成<strong>什么转化</strong>，而不是说明<strong>如何转化</strong></li><li>没有副作用：<ul><li>只通过函数的返回值就能充分理解函数的全部作用</li><li>函数不会修改程序或外界的状态</li><li>获取值而不是变量（避免使用数组逃过<code>JVM</code>的追杀，应该考虑优化逻辑）</li></ul></li></ul></div><div class=post-footer id=post-footer><div class=post-info><div class=post-info-line><div class=post-info-mod><span>更新于 2022-01-31&nbsp;<a class=git-hash href=https://github.com/kbyyd24/LoveItAgain/commit/8309bc020e867fcafd813c9ce7a1508339eaedeb target=_blank title="commit by kbyyd24(melo@gaoyuexiang.cn) 8309bc020e867fcafd813c9ce7a1508339eaedeb: reorg posts">
+<i class="fas fa-hashtag fa-fw"></i>8309bc0</a></span></div><div class=post-info-license></div></div><div class=post-info-line><div class=post-info-md><span><a class=link-to-markdown href=/java_8_lambdas_functional_programming_note_stream/index.md target=_blank>阅读原始文档</a></span></div><div class=post-info-share><span><a href=javascript:void(0); title="分享到 Twitter" data-sharer=twitter data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_stream/ data-title="「Java 8 函数式编程」读书笔记——流" data-hashtags="java,lambda,Java Lambda,Java 8,函数式编程"><i class="fab fa-twitter fa-fw"></i></a><a href=javascript:void(0); title="分享到 Facebook" data-sharer=facebook data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_stream/ data-hashtag=java><i class="fab fa-facebook-square fa-fw"></i></a><a href=javascript:void(0); title="分享到 Linkedin" data-sharer=linkedin data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_stream/><i class="fab fa-linkedin fa-fw"></i></a><a href=javascript:void(0); title="分享到 WhatsApp" data-sharer=whatsapp data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_stream/ data-title="「Java 8 函数式编程」读书笔记——流" data-web><i class="fab fa-whatsapp fa-fw"></i></a><a href=javascript:void(0); title="分享到 Hacker News" data-sharer=hackernews data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_stream/ data-title="「Java 8 函数式编程」读书笔记——流"><i class="fab fa-hacker-news fa-fw"></i></a><a href=javascript:void(0); title="分享到 Reddit" data-sharer=reddit data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_stream/><i class="fab fa-reddit fa-fw"></i></a><a href=javascript:void(0); title="分享到 Line" data-sharer=line data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_stream/ data-title="「Java 8 函数式编程」读书笔记——流"><i data-svg-src=https://cdn.jsdelivr.net/npm/simple-icons@2.14.0/icons/line.svg></i></a><a href=javascript:void(0); title="分享到 Pocket" data-sharer=pocket data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_stream/><i class="fab fa-get-pocket fa-fw"></i></a><a href=javascript:void(0); title="分享到 微博" data-sharer=weibo data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_stream/ data-title="「Java 8 函数式编程」读书笔记——流"><i class="fab fa-weibo fa-fw"></i></a><a href=javascript:void(0); title="分享到 人人" data-sharer=renren data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_stream/><i class="fab fa-renren fa-fw"></i></a><a href=javascript:void(0); title="分享到 Evernote" data-sharer=evernote data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_stream/ data-title="「Java 8 函数式编程」读书笔记——流"><i class="fab fa-evernote fa-fw"></i></a><a href=javascript:void(0); title="分享到 Skype" data-sharer=skype data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_stream/ data-title="「Java 8 函数式编程」读书笔记——流"><i class="fab fa-skype fa-fw"></i></a><a href=javascript:void(0); title="分享到 Trello" data-sharer=trello data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_stream/ data-title="「Java 8 函数式编程」读书笔记——流" data-description><i class="fab fa-trello fa-fw"></i></a></span></div></div></div><div class=post-info-more><section class=post-tags><i class="fas fa-tags fa-fw"></i>&nbsp;<a href=/tags/java/>Java</a>,&nbsp;<a href=/tags/lambda/>Lambda</a>,&nbsp;<a href=/tags/java-lambda/>Java Lambda</a>,&nbsp;<a href=/tags/java-8/>Java 8</a>,&nbsp;<a href=/tags/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/>函数式编程</a></section><section><span><a href=javascript:void(0); onclick=window.history.back()>返回</a></span>&nbsp;|&nbsp;<span><a href=/>主页</a></span></section></div><div class=post-nav><a href=/java_8_lambdas_functional_programming_note_lambda_expression/ class=prev rel=prev title="「Java 8 函数式编程」读书笔记——lambda表达式"><i class="fas fa-angle-left fa-fw"></i>「Java 8 函数式编程」读书笔记——lambda表达式</a>
+<a href=/java_8_lambdas_functional_programming_note_lib/ class=next rel=next title="「Java 8 函数式编程」读书笔记——类库">「Java 8 函数式编程」读书笔记——类库<i class="fas fa-angle-right fa-fw"></i></a></div></div><div id=comments><div id=valine class=comment></div><noscript>Please enable JavaScript to view the comments powered by <a href=https://valine.js.org/>Valine</a>.</noscript></div></article></div></main><footer class=footer><div class=footer-container><div class=footer-line>由 <a href=https://gohugo.io/ target=_blank rel="noopener noreffer" title="Hugo 0.127.0">Hugo</a> 强力驱动 | 主题 - <a href=https://github.com/dillonzq/LoveIt target=_blank rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a></div><div class=footer-line><i class="far fa-copyright fa-fw"></i><span itemprop=copyrightYear>2016 - 2024</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=https://blog.gaoyuexiang.cn/about target=_blank>无糖拿铁</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span><span class=icp-splitter>&nbsp;|&nbsp;</span><br class=icp-br><span class=icp><a href=https://beian.miit.gov.cn/ target=_blank>蜀ICP备15031888号-2</a></span></div></div></footer></div><div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title=回到顶部><i class="fas fa-arrow-up fa-fw"></i>
+</a><a href=# id=view-comments class=fixed-button title=查看评论><i class="fas fa-comment fa-fw"></i></a></div><link rel=stylesheet href=/lib/valine/valine.min.css><script type=text/javascript src=https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/autocomplete.js@0.37.1/dist/autocomplete.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/lunr@2.3.8/lunr.min.js></script><script type=text/javascript src=/lib/lunr/lunr.stemmer.support.min.js></script><script type=text/javascript src=/lib/lunr/lunr.zh.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/lazysizes@5.2.2/lazysizes.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/sharer.js@0.4.0/sharer.min.js></script><script type=text/javascript>window.config={code:{copyTitle:"复制到剪贴板",maxShownLines:100},comment:{valine:{appId:"Voz5TpLaiKvWLiVk63CrRybt-gzGzoHsz",appKey:"xzDAABvBBG6vK7iwgd1VKUnw",avatar:"mm",el:"#valine",emojiCDN:"https://cdn.jsdelivr.net/npm/emoji-datasource-google@5.0.1/img/google/64/",emojiMaps:{100:"1f4af.png",alien:"1f47d.png",anger:"1f4a2.png",angry:"1f620.png",anguished:"1f627.png",astonished:"1f632.png",black_heart:"1f5a4.png",blue_heart:"1f499.png",blush:"1f60a.png",bomb:"1f4a3.png",boom:"1f4a5.png",broken_heart:"1f494.png",brown_heart:"1f90e.png",clown_face:"1f921.png",cold_face:"1f976.png",cold_sweat:"1f630.png",confounded:"1f616.png",confused:"1f615.png",cry:"1f622.png",crying_cat_face:"1f63f.png",cupid:"1f498.png",dash:"1f4a8.png",disappointed:"1f61e.png",disappointed_relieved:"1f625.png",dizzy:"1f4ab.png",dizzy_face:"1f635.png",drooling_face:"1f924.png",exploding_head:"1f92f.png",expressionless:"1f611.png",face_vomiting:"1f92e.png",face_with_cowboy_hat:"1f920.png",face_with_hand_over_mouth:"1f92d.png",face_with_head_bandage:"1f915.png",face_with_monocle:"1f9d0.png",face_with_raised_eyebrow:"1f928.png",face_with_rolling_eyes:"1f644.png",face_with_symbols_on_mouth:"1f92c.png",face_with_thermometer:"1f912.png",fearful:"1f628.png",flushed:"1f633.png",frowning:"1f626.png",ghost:"1f47b.png",gift_heart:"1f49d.png",green_heart:"1f49a.png",grimacing:"1f62c.png",grin:"1f601.png",grinning:"1f600.png",hankey:"1f4a9.png",hear_no_evil:"1f649.png",heart:"2764-fe0f.png",heart_decoration:"1f49f.png",heart_eyes:"1f60d.png",heart_eyes_cat:"1f63b.png",heartbeat:"1f493.png",heartpulse:"1f497.png",heavy_heart_exclamation_mark_ornament:"2763-fe0f.png",hole:"1f573-fe0f.png",hot_face:"1f975.png",hugging_face:"1f917.png",hushed:"1f62f.png",imp:"1f47f.png",innocent:"1f607.png",japanese_goblin:"1f47a.png",japanese_ogre:"1f479.png",joy:"1f602.png",joy_cat:"1f639.png",kiss:"1f48b.png",kissing:"1f617.png",kissing_cat:"1f63d.png",kissing_closed_eyes:"1f61a.png",kissing_heart:"1f618.png",kissing_smiling_eyes:"1f619.png",laughing:"1f606.png",left_speech_bubble:"1f5e8-fe0f.png",love_letter:"1f48c.png",lying_face:"1f925.png",mask:"1f637.png",money_mouth_face:"1f911.png",nauseated_face:"1f922.png",nerd_face:"1f913.png",neutral_face:"1f610.png",no_mouth:"1f636.png",open_mouth:"1f62e.png",orange_heart:"1f9e1.png",partying_face:"1f973.png",pensive:"1f614.png",persevere:"1f623.png",pleading_face:"1f97a.png",pouting_cat:"1f63e.png",purple_heart:"1f49c.png",rage:"1f621.png",relaxed:"263a-fe0f.png",relieved:"1f60c.png",revolving_hearts:"1f49e.png",right_anger_bubble:"1f5ef-fe0f.png",robot_face:"1f916.png",rolling_on_the_floor_laughing:"1f923.png",scream:"1f631.png",scream_cat:"1f640.png",see_no_evil:"1f648.png",shushing_face:"1f92b.png",skull:"1f480.png",skull_and_crossbones:"2620-fe0f.png",sleeping:"1f634.png",sleepy:"1f62a.png",slightly_frowning_face:"1f641.png",slightly_smiling_face:"1f642.png",smile:"1f604.png",smile_cat:"1f638.png",smiley:"1f603.png",smiley_cat:"1f63a.png",smiling_face_with_3_hearts:"1f970.png",smiling_imp:"1f608.png",smirk:"1f60f.png",smirk_cat:"1f63c.png",sneezing_face:"1f927.png",sob:"1f62d.png",space_invader:"1f47e.png",sparkling_heart:"1f496.png",speak_no_evil:"1f64a.png",speech_balloon:"1f4ac.png","star-struck":"1f929.png",stuck_out_tongue:"1f61b.png",stuck_out_tongue_closed_eyes:"1f61d.png",stuck_out_tongue_winking_eye:"1f61c.png",sunglasses:"1f60e.png",sweat:"1f613.png",sweat_drops:"1f4a6.png",sweat_smile:"1f605.png",thinking_face:"1f914.png",thought_balloon:"1f4ad.png",tired_face:"1f62b.png",triumph:"1f624.png",two_hearts:"1f495.png",unamused:"1f612.png",upside_down_face:"1f643.png",weary:"1f629.png",white_frowning_face:"2639-fe0f.png",white_heart:"1f90d.png",wink:"1f609.png",woozy_face:"1f974.png",worried:"1f61f.png",yawning_face:"1f971.png",yellow_heart:"1f49b.png",yum:"1f60b.png",zany_face:"1f92a.png",zipper_mouth_face:"1f910.png",zzz:"1f4a4.png"},enableQQ:!1,highlight:!0,lang:"zh-cn",pageSize:10,placeholder:"你的评论 ...",recordIP:!0,serverURLs:"https://leancloud.gaoyuexiang.cn",visitor:!0}},search:{highlightTag:"em",lunrIndexURL:"/index.json",lunrLanguageCode:"zh",lunrSegmentitURL:"/lib/lunr/lunr.segmentit.js",maxResultLength:10,noResultsFound:"没有找到结果",snippetLength:50,type:"lunr"}}</script><script type=text/javascript src=/js/theme.min.js></script></body></html>

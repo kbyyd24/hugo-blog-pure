@@ -1,114 +1,18 @@
-<!doctype html><html lang=zh-cn>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<meta name=robots content="noodp">
-<meta http-equiv=x-ua-compatible content="IE=edge, chrome=1">
-<title>「Java 8 函数式编程」读书笔记——lambda表达式 - 无糖拿铁，谢谢</title><meta name=Description content="学习、记录、分享"><meta property="og:title" content="「Java 8 函数式编程」读书笔记——lambda表达式">
-<meta property="og:description" content="本文是「Java 8 函数式编程」第二章的读书笔记。 Lambda引入的变化 Lambda表达式，是一种紧凑的、传递行为的方式，从编程思想上来讲，就">
-<meta property="og:type" content="article">
-<meta property="og:url" content="https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_lambda_expression/"><meta property="og:image" content="https://blog.gaoyuexiang.cn/logo.png"><meta property="article:section" content="posts">
-<meta property="article:published_time" content="2017-02-05T00:00:00+00:00">
-<meta property="article:modified_time" content="2022-01-31T20:10:51+08:00">
-<meta name=twitter:card content="summary_large_image">
-<meta name=twitter:image content="https://blog.gaoyuexiang.cn/logo.png">
-<meta name=twitter:title content="「Java 8 函数式编程」读书笔记——lambda表达式">
-<meta name=twitter:description content="本文是「Java 8 函数式编程」第二章的读书笔记。 Lambda引入的变化 Lambda表达式，是一种紧凑的、传递行为的方式，从编程思想上来讲，就">
-<meta name=application-name content="LoveIt">
-<meta name=apple-mobile-web-app-title content="LoveIt"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel="shortcut icon" type=image/x-icon href=/favicon.ico>
-<link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
-<link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_lambda_expression/><link rel=prev href=https://blog.gaoyuexiang.cn/get_requestbody_by_aop/><link rel=next href=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_stream/><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css><link rel=stylesheet href=/css/style.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"「Java 8 函数式编程」读书笔记——lambda表达式","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/blog.gaoyuexiang.cn\/java_8_lambdas_functional_programming_note_lambda_expression\/"},"image":["https:\/\/blog.gaoyuexiang.cn\/images\/Apple-Devices-Preview.png"],"genre":"posts","keywords":"java, lambda, Java Lambda, Java 8, 函数式编程","wordcount":1099,"url":"https:\/\/blog.gaoyuexiang.cn\/java_8_lambdas_functional_programming_note_lambda_expression\/","datePublished":"2017-02-05T00:00:00+00:00","dateModified":"2022-01-31T20:10:51+08:00","license":"CC BY-NC 4.0 CN","publisher":{"@type":"Organization","name":"无糖拿铁","logo":"https:\/\/blog.gaoyuexiang.cn\/images\/avatar.png"},"author":{"@type":"Person","name":"无糖拿铁"},"description":""}</script></head>
-<body header-desktop=fixed header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem('theme')?localStorage.getItem('theme')==='dark':'auto'==='auto'?window.matchMedia('(prefers-color-scheme: dark)').matches:'auto'==='dark')&&document.body.setAttribute('theme','dark')</script>
-<div id=mask></div><div class=wrapper><header class=desktop id=header-desktop>
-<div class=header-wrapper>
-<div class=header-title>
-<a href=/ title=无糖拿铁，谢谢><span class=header-title-pre><i class="far fa-kiss-wink-heart fa-fw"></i></span>无糖拿铁，谢谢</a>
-</div>
-<div class=menu>
-<div class=menu-inner><a class=menu-item href=/posts/> 所有文章 </a><a class=menu-item href=/tags/> 标签 </a><a class=menu-item href=/categories/> 分类 </a><a class=menu-item href=/series-index/> 系列 </a><a class=menu-item href=/about/> 关于 </a><a class=menu-item href=https://github.com/kbyyd24/ title=GitHub rel="noopener noreffer" target=_blank><i class="fab fa-github fa-fw"></i> </a><span class="menu-item delimiter"></span><span class="menu-item search" id=search-desktop>
+<!doctype html><html lang=zh-CN><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><meta http-equiv=X-UA-Compatible content="IE=edge, chrome=1"><title>「Java 8 函数式编程」读书笔记——lambda表达式 - 无糖拿铁，谢谢</title><meta name=Description content="学习、记录、分享"><meta property="og:url" content="https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_lambda_expression/">
+<meta property="og:site_name" content="无糖拿铁，谢谢"><meta property="og:title" content="「Java 8 函数式编程」读书笔记——lambda表达式"><meta property="og:description" content="本文是「Java 8 函数式编程」第二章的读书笔记。 Lambda引入的变化 Lambda表达式，是一种紧凑的、传递行为的方式，从编程思想上来讲，就"><meta property="og:locale" content="zh_CN"><meta property="og:type" content="article"><meta property="article:section" content="posts"><meta property="article:published_time" content="2017-02-05T00:00:00+00:00"><meta property="article:modified_time" content="2022-01-31T20:10:51+08:00"><meta property="article:tag" content="Java"><meta property="article:tag" content="Lambda"><meta property="article:tag" content="Java Lambda"><meta property="article:tag" content="Java 8"><meta property="article:tag" content="函数式编程"><meta property="og:image" content="https://blog.gaoyuexiang.cn/logo.png"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://blog.gaoyuexiang.cn/logo.png"><meta name=twitter:title content="「Java 8 函数式编程」读书笔记——lambda表达式"><meta name=twitter:description content="本文是「Java 8 函数式编程」第二章的读书笔记。 Lambda引入的变化 Lambda表达式，是一种紧凑的、传递行为的方式，从编程思想上来讲，就"><meta name=application-name content="LoveIt"><meta name=apple-mobile-web-app-title content="LoveIt"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel="shortcut icon" type=image/x-icon href=/favicon.ico><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_lambda_expression/><link rel=prev href=https://blog.gaoyuexiang.cn/get_requestbody_by_aop/><link rel=next href=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_stream/><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css><link rel=stylesheet href=/css/style.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"「Java 8 函数式编程」读书笔记——lambda表达式","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/blog.gaoyuexiang.cn\/java_8_lambdas_functional_programming_note_lambda_expression\/"},"image":["https:\/\/blog.gaoyuexiang.cn\/images\/Apple-Devices-Preview.png"],"genre":"posts","keywords":"java, lambda, Java Lambda, Java 8, 函数式编程","wordcount":1099,"url":"https:\/\/blog.gaoyuexiang.cn\/java_8_lambdas_functional_programming_note_lambda_expression\/","datePublished":"2017-02-05T00:00:00+00:00","dateModified":"2022-01-31T20:10:51+08:00","license":"CC BY-NC 4.0 CN","publisher":{"@type":"Organization","name":"无糖拿铁","logo":"https:\/\/blog.gaoyuexiang.cn\/images\/avatar.png"},"author":{"@type":"Person","name":"无糖拿铁"},"description":""}</script></head><body header-desktop=fixed header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem("theme")?localStorage.getItem("theme")==="dark":"auto"==="auto"?window.matchMedia("(prefers-color-scheme: dark)").matches:"auto"==="dark")&&document.body.setAttribute("theme","dark")</script><div id=mask></div><div class=wrapper><header class=desktop id=header-desktop><div class=header-wrapper><div class=header-title><a href=/ title=无糖拿铁，谢谢><span class=header-title-pre><i class='far fa-kiss-wink-heart fa-fw'></i></span>无糖拿铁，谢谢</a></div><div class=menu><div class=menu-inner><a class=menu-item href=/posts/>所有文章 </a><a class=menu-item href=/tags/>标签 </a><a class=menu-item href=/categories/>分类 </a><a class=menu-item href=/series-index/>系列 </a><a class=menu-item href=/about/>关于 </a><a class=menu-item href=https://github.com/kbyyd24/ title=GitHub rel="noopener noreffer" target=_blank><i class='fab fa-github fa-fw'></i> </a><span class="menu-item delimiter"></span><span class="menu-item search" id=search-desktop>
 <input type=text placeholder=搜索文章标题或内容... id=search-input-desktop>
-<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-desktop title=搜索>
-<i class="fas fa-search fa-fw"></i>
-</a>
-<a href=javascript:void(0); class="search-button search-clear" id=search-clear-desktop title=清空>
-<i class="fas fa-times-circle fa-fw"></i>
-</a>
-<span class="search-button search-loading" id=search-loading-desktop>
-<i class="fas fa-spinner fa-fw fa-spin"></i>
-</span>
-</span><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
-<i class="fas fa-adjust fa-fw"></i>
-</a>
-</div>
-</div>
-</div>
-</header><header class=mobile id=header-mobile>
-<div class=header-container>
-<div class=header-wrapper>
-<div class=header-title>
-<a href=/ title=无糖拿铁，谢谢><span class=header-title-pre><i class="far fa-kiss-wink-heart fa-fw"></i></span>无糖拿铁，谢谢</a>
-</div>
-<div class=menu-toggle id=menu-toggle-mobile>
-<span></span><span></span><span></span>
-</div>
-</div>
-<div class=menu id=menu-mobile><div class=search-wrapper>
-<div class="search mobile" id=search-mobile>
-<input type=text placeholder=搜索文章标题或内容... id=search-input-mobile>
-<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-mobile title=搜索>
-<i class="fas fa-search fa-fw"></i>
-</a>
-<a href=javascript:void(0); class="search-button search-clear" id=search-clear-mobile title=清空>
-<i class="fas fa-times-circle fa-fw"></i>
-</a>
-<span class="search-button search-loading" id=search-loading-mobile>
-<i class="fas fa-spinner fa-fw fa-spin"></i>
-</span>
-</div>
-<a href=javascript:void(0); class=search-cancel id=search-cancel-mobile>
-取消
-</a>
-</div><a class=menu-item href=/posts/ title>所有文章</a><a class=menu-item href=/tags/ title>标签</a><a class=menu-item href=/categories/ title>分类</a><a class=menu-item href=/series-index/ title>系列</a><a class=menu-item href=/about/ title>关于</a><a class=menu-item href=https://github.com/kbyyd24/ title=GitHub rel="noopener noreffer" target=_blank><i class="fab fa-github fa-fw"></i></a><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
-<i class="fas fa-adjust fa-fw"></i>
-</a></div>
-</div>
-</header>
-<div class="search-dropdown desktop">
-<div id=search-dropdown-desktop></div>
-</div>
-<div class="search-dropdown mobile">
-<div id=search-dropdown-mobile></div>
-</div>
-<main class=main>
-<div class=container><div class=toc id=toc-auto>
-<h2 class=toc-title>目录</h2>
-<div class="toc-content always-active" id=toc-content-auto></div>
-</div><article class="page single"><h1 class="single-title animated flipInX">「Java 8 函数式编程」读书笔记——lambda表达式</h1><div class=post-meta>
-<div class=post-meta-line><span class=post-author><a href=https://blog.gaoyuexiang.cn/about title=Author target=_blank rel="noopener noreffer author" class=author><i class="fas fa-user-circle fa-fw"></i>无糖拿铁</a></span></div>
-<div class=post-meta-line><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime=2017-02-05>2017-02-05</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1099 字&nbsp;
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-desktop title=搜索><i class="fas fa-search fa-fw"></i>
+</a><a href=javascript:void(0); class="search-button search-clear" id=search-clear-desktop title=清空><i class="fas fa-times-circle fa-fw"></i>
+</a><span class="search-button search-loading" id=search-loading-desktop><i class="fas fa-spinner fa-fw fa-spin"></i>
+</span></span><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题><i class="fas fa-adjust fa-fw"></i></a></div></div></div></header><header class=mobile id=header-mobile><div class=header-container><div class=header-wrapper><div class=header-title><a href=/ title=无糖拿铁，谢谢><span class=header-title-pre><i class='far fa-kiss-wink-heart fa-fw'></i></span>无糖拿铁，谢谢</a></div><div class=menu-toggle id=menu-toggle-mobile><span></span><span></span><span></span></div></div><div class=menu id=menu-mobile><div class=search-wrapper><div class="search mobile" id=search-mobile><input type=text placeholder=搜索文章标题或内容... id=search-input-mobile>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-mobile title=搜索><i class="fas fa-search fa-fw"></i>
+</a><a href=javascript:void(0); class="search-button search-clear" id=search-clear-mobile title=清空><i class="fas fa-times-circle fa-fw"></i>
+</a><span class="search-button search-loading" id=search-loading-mobile><i class="fas fa-spinner fa-fw fa-spin"></i></span></div><a href=javascript:void(0); class=search-cancel id=search-cancel-mobile>取消</a></div><a class=menu-item href=/posts/ title>所有文章</a><a class=menu-item href=/tags/ title>标签</a><a class=menu-item href=/categories/ title>分类</a><a class=menu-item href=/series-index/ title>系列</a><a class=menu-item href=/about/ title>关于</a><a class=menu-item href=https://github.com/kbyyd24/ title=GitHub rel="noopener noreffer" target=_blank><i class='fab fa-github fa-fw'></i></a><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
+<i class="fas fa-adjust fa-fw"></i></a></div></div></header><div class="search-dropdown desktop"><div id=search-dropdown-desktop></div></div><div class="search-dropdown mobile"><div id=search-dropdown-mobile></div></div><main class=main><div class=container><div class=toc id=toc-auto><h2 class=toc-title>目录</h2><div class="toc-content always-active" id=toc-content-auto></div></div><article class="page single"><h1 class="single-title animated flipInX">「Java 8 函数式编程」读书笔记——lambda表达式</h1><div class=post-meta><div class=post-meta-line><span class=post-author><a href=https://blog.gaoyuexiang.cn/about title=Author target=_blank rel="noopener noreffer author" class=author><i class="fas fa-user-circle fa-fw"></i>无糖拿铁</a></span></div><div class=post-meta-line><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime=2017-02-05>2017-02-05</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1099 字&nbsp;
 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 3 分钟&nbsp;<span id=/java_8_lambdas_functional_programming_note_lambda_expression/ class=leancloud_visitors data-flag-title="「Java 8 函数式编程」读书笔记——lambda表达式">
 <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
-</span>&nbsp;</div>
-</div><div class="details toc" id=toc-static kept>
-<div class="details-summary toc-title">
-<span>目录</span>
-<span><i class="details-icon fas fa-angle-right"></i></span>
-</div>
-<div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents>
-<ul>
-<li><a href=#参数的形式>参数的形式</a></li>
-<li><a href=#表达式主体的形式>表达式主体的形式</a></li>
-</ul>
-</nav></div>
-</div><div class=content id=content><p>本文是「Java 8 函数式编程」第二章的读书笔记。</p>
-<h1 id=lambda引入的变化><code>Lambda</code>引入的变化</h1>
-<p><code>Lambda</code>表达式，是<strong>一种紧凑的、传递行为的方式</strong>，从编程思想上来讲，就是<strong>代码即数据</strong>。</p>
-<p>过去的<code>Java</code>中，存在大量的匿名内部类的使用，会新建一个匿名内部类传入调用的方法中。这种传统的方式，会造成冗余的、不易阅读的代码。</p>
-<p>于是<code>Lambda</code>诞生了。<code>Lambda</code>的语法简化了使用匿名内部类时的模板代码，让程序员专注于编写想要执行的行为，也让代码更加简洁易读。</p>
-<h1 id=lambda表达式的形式><code>Lambda</code>表达式的形式</h1>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span>&nbsp;</div></div><div class="details toc" id=toc-static kept><div class="details-summary toc-title"><span>目录</span>
+<span><i class="details-icon fas fa-angle-right"></i></span></div><div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents><ul><li><a href=#参数的形式>参数的形式</a></li><li><a href=#表达式主体的形式>表达式主体的形式</a></li></ul></nav></div></div><div class=content id=content><p>本文是「Java 8 函数式编程」第二章的读书笔记。</p><h1 id=lambda引入的变化><code>Lambda</code>引入的变化</h1><p><code>Lambda</code>表达式，是<strong>一种紧凑的、传递行为的方式</strong>，从编程思想上来讲，就是<strong>代码即数据</strong>。</p><p>过去的<code>Java</code>中，存在大量的匿名内部类的使用，会新建一个匿名内部类传入调用的方法中。这种传统的方式，会造成冗余的、不易阅读的代码。</p><p>于是<code>Lambda</code>诞生了。<code>Lambda</code>的语法简化了使用匿名内部类时的模板代码，让程序员专注于编写想要执行的行为，也让代码更加简洁易读。</p><h1 id=lambda表达式的形式><code>Lambda</code>表达式的形式</h1><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
@@ -116,155 +20,17 @@
 </span><span class=lnt>6
 </span><span class=lnt>7
 </span><span class=lnt>8
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=n>Runnable</span> <span class=n>runable</span> <span class=o>=</span> <span class=o>()</span> <span class=o>-&gt;</span> <span class=n>System</span><span class=o>.</span><span class=na>out</span><span class=o>.</span><span class=na>println</span><span class=o>(</span><span class=s>&#34;Hello Lambda&#34;</span><span class=o>);</span><span class=c1>//1
-</span><span class=c1></span><span class=n>runable</span> <span class=o>=</span> <span class=o>()</span> <span class=o>-&gt;</span> <span class=o>{</span>
-  <span class=n>System</span><span class=o>.</span><span class=na>out</span><span class=o>.</span><span class=na>print</span><span class=o>(</span><span class=s>&#34;Hello&#34;</span><span class=o>);</span>
-  <span class=n>System</span><span class=o>.</span><span class=na>out</span><span class=o>.</span><span class=na>println</span><span class=o>(</span><span class=s>&#34; Lambda&#34;</span><span class=o>);</span>
-<span class=o>};</span><span class=c1>//2
-</span><span class=c1></span><span class=n>ActionListener</span> <span class=n>listener</span> <span class=o>=</span> <span class=n>event</span> <span class=o>-&gt;</span> <span class=n>System</span><span class=o>.</span><span class=na>out</span><span class=o>.</span><span class=na>println</span><span class=o>(</span><span class=s>&#34;get event&#34;</span><span class=o>);</span><span class=c1>//3
-</span><span class=c1></span><span class=n>BinaryOperator</span><span class=o>&lt;</span><span class=n>Long</span><span class=o>&gt;</span> <span class=n>add</span> <span class=o>=</span> <span class=o>(</span><span class=n>x</span><span class=o>,</span> <span class=n>y</span><span class=o>)</span> <span class=o>-&gt;</span> <span class=n>x</span> <span class=o>+</span> <span class=n>y</span><span class=o>;</span><span class=c1>//4
-</span><span class=c1></span><span class=n>BinaryOperator</span><span class=o>&lt;</span><span class=n>Long</span><span class=o>&gt;</span> <span class=n>minux</span> <span class=o>=</span> <span class=o>(</span><span class=n>Long</span> <span class=n>x</span><span class=o>,</span> <span class=n>Long</span> <span class=n>y</span><span class=o>)</span> <span class=o>-&gt;</span> <span class=n>x</span> <span class=o>-</span> <span class=n>y</span><span class=o>;</span><span class=c1>//5
-</span></code></pre></td></tr></table>
-</div>
-</div><p>常见的<code>Lambda</code>表达式有以上5种，每个<code>Lambda</code>表达式都可以分为三个部分：</p>
-<ul>
-<li>参数部分：<code>()</code> <code>event</code> <code>(x, y)</code> <code>(Long x, Long y)</code></li>
-<li>将参数和表达式主体分开的符号：<code>-></code></li>
-<li>表达式主体</li>
-</ul>
-<h2 id=参数的形式>参数的形式</h2>
-<p><code>Lambda</code>表达式可以看作是匿名内部类的简写形式，参数也就是使用匿名内部类时实现的方法的参数。</p>
-<ul>
-<li>有的方法不需要参数，如<code>Runnable</code>的<code>run</code>方法，所以使用<code>()</code>代表参数部分。</li>
-<li>有的方法只需要一个参数且类型确定，如<code>ActionListener.actionPerformed</code>方法，可以直接使用参数，不需要指定类型，也不需要加括号。</li>
-<li>有多个参数时，必须要加上括号，把参数扩起来</li>
-<li>当声明参数类型时，无论有多少个参数，都需要加括号</li>
-</ul>
-<h2 id=表达式主体的形式>表达式主体的形式</h2>
-<p>表达式可以只有一行代码，也可以有多行代码；有的表达式有返回值，有的没有。</p>
-<ul>
-<li>只有一行代码的表达式不需要<code>{}</code>
-<ul>
-<li>如果有返回值，不用写<code>return</code>，表达式会把这行代码的返回值作为返回值</li>
-<li>如果使用了<code>{}</code>，则需要显式的写出<code>return</code></li>
-</ul>
-</li>
-<li>有多行代码的表达式必须使用<code>{}</code>
-<ul>
-<li>如果有返回值，需要显式的写<code>return</code></li>
-</ul>
-</li>
-</ul>
-<h1 id=引用值而不是变量>引用值，而不是变量</h1>
-<p>匿名内部类中，如果想要引用其所在方法中的变量，需要将其声明为<code>final</code>。这意味着你实际引用的是一个值，而不是变量。</p>
-<p>在<code>Java 8 </code>中，虽然可以引用非<code>final</code>的变量，但这个变量必须是<strong>既成事实上的<code>final</code></strong>，如果对变量进行修改，将无法通过编译。这意味着<code>Lambda</code>表达式仍然是引用的一个值，而不是变量。</p>
-<p>实际上可以通过使用数组来绕开编译器，但是这样做之前应该考虑一下你的代码逻辑是否正确。</p>
-<h1 id=函数接口>函数接口</h1>
-<p>只有一个抽象方法的接口叫做函数接口。</p>
-<p>JDK中最重要的函数接口：</p>
-<table>
-<thead>
-<tr>
-<th style=text-align:center>Interface</th>
-<th style=text-align:center>Argument</th>
-<th style=text-align:center>Return</th>
-<th style=text-align:center>e.g.</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style=text-align:center>Predicate<t></td>
-<td style=text-align:center>T</td>
-<td style=text-align:center>boolean</td>
-<td style=text-align:center>fliter</td>
-</tr>
-<tr>
-<td style=text-align:center>Consumer<t></td>
-<td style=text-align:center>T</td>
-<td style=text-align:center>void</td>
-<td style=text-align:center>forEach</td>
-</tr>
-<tr>
-<td style=text-align:center>Function&lt;T, R></td>
-<td style=text-align:center>T</td>
-<td style=text-align:center>R</td>
-<td style=text-align:center>map</td>
-</tr>
-<tr>
-<td style=text-align:center>Supplier<t></td>
-<td style=text-align:center>None</td>
-<td style=text-align:center>T</td>
-<td style=text-align:center>factory function</td>
-</tr>
-<tr>
-<td style=text-align:center>UnaryOperator<t></td>
-<td style=text-align:center>T</td>
-<td style=text-align:center>T</td>
-<td style=text-align:center>modify String</td>
-</tr>
-<tr>
-<td style=text-align:center>BinaryOperator<t></td>
-<td style=text-align:center>(T, T)</td>
-<td style=text-align:center>T</td>
-<td style=text-align:center>add two instances</td>
-</tr>
-</tbody>
-</table>
-<h1 id=类型推断>类型推断</h1>
-<p><code>Java 8</code>为新成员<code>Lambda</code>表达式提供了类型推断的支持，在不需要声明参数类型的<code>Lambda</code>表达式中表现的有为明显。形如：</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=n>BinaryOperator</span><span class=o>&lt;</span><span class=n>Integer</span><span class=o>&gt;</span> <span class=n>add</span> <span class=o>=</span> <span class=o>(</span><span class=n>x</span><span class=o>,</span> <span class=n>y</span><span class=o>)</span> <span class=o>-&gt;</span> <span class=n>x</span> <span class=o>+</span> <span class=n>y</span><span class=o>;</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>的表达式得以通过编译并正确执行，就是因为<code>JVM</code>通过泛型参数<code>Integer</code>推断出了方法参数的类型。</p>
-</div><div class=post-footer id=post-footer>
-<div class=post-info>
-<div class=post-info-line>
-<div class=post-info-mod>
-<span>更新于 2022-01-31&nbsp;<a class=git-hash href=https://github.com/kbyyd24/LoveItAgain/commit/8309bc020e867fcafd813c9ce7a1508339eaedeb target=_blank title="commit by kbyyd24(melo@gaoyuexiang.cn) 8309bc020e867fcafd813c9ce7a1508339eaedeb: reorg posts">
-<i class="fas fa-hashtag fa-fw"></i>8309bc0</a></span>
-</div>
-<div class=post-info-license></div>
-</div>
-<div class=post-info-line>
-<div class=post-info-md><span>
-<a class=link-to-markdown href=/java_8_lambdas_functional_programming_note_lambda_expression/index.md target=_blank>阅读原始文档</a>
-</span></div>
-<div class=post-info-share>
-<span><a href=javascript:void(0); title="分享到 Twitter" data-sharer=twitter data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_lambda_expression/ data-title="「Java 8 函数式编程」读书笔记——lambda表达式" data-hashtags="java,lambda,Java Lambda,Java 8,函数式编程"><i class="fab fa-twitter fa-fw"></i></a><a href=javascript:void(0); title="分享到 Facebook" data-sharer=facebook data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_lambda_expression/ data-hashtag=java><i class="fab fa-facebook-square fa-fw"></i></a><a href=javascript:void(0); title="分享到 Linkedin" data-sharer=linkedin data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_lambda_expression/><i class="fab fa-linkedin fa-fw"></i></a><a href=javascript:void(0); title="分享到 WhatsApp" data-sharer=whatsapp data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_lambda_expression/ data-title="「Java 8 函数式编程」读书笔记——lambda表达式" data-web><i class="fab fa-whatsapp fa-fw"></i></a><a href=javascript:void(0); title="分享到 Hacker News" data-sharer=hackernews data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_lambda_expression/ data-title="「Java 8 函数式编程」读书笔记——lambda表达式"><i class="fab fa-hacker-news fa-fw"></i></a><a href=javascript:void(0); title="分享到 Reddit" data-sharer=reddit data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_lambda_expression/><i class="fab fa-reddit fa-fw"></i></a><a href=javascript:void(0); title="分享到 Line" data-sharer=line data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_lambda_expression/ data-title="「Java 8 函数式编程」读书笔记——lambda表达式"><i data-svg-src=https://cdn.jsdelivr.net/npm/simple-icons@2.14.0/icons/line.svg></i></a><a href=javascript:void(0); title="分享到 Pocket" data-sharer=pocket data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_lambda_expression/><i class="fab fa-get-pocket fa-fw"></i></a><a href=javascript:void(0); title="分享到 微博" data-sharer=weibo data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_lambda_expression/ data-title="「Java 8 函数式编程」读书笔记——lambda表达式"><i class="fab fa-weibo fa-fw"></i></a><a href=javascript:void(0); title="分享到 人人" data-sharer=renren data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_lambda_expression/><i class="fab fa-renren fa-fw"></i></a><a href=javascript:void(0); title="分享到 Evernote" data-sharer=evernote data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_lambda_expression/ data-title="「Java 8 函数式编程」读书笔记——lambda表达式"><i class="fab fa-evernote fa-fw"></i></a><a href=javascript:void(0); title="分享到 Skype" data-sharer=skype data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_lambda_expression/ data-title="「Java 8 函数式编程」读书笔记——lambda表达式"><i class="fab fa-skype fa-fw"></i></a><a href=javascript:void(0); title="分享到 Trello" data-sharer=trello data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_lambda_expression/ data-title="「Java 8 函数式编程」读书笔记——lambda表达式" data-description><i class="fab fa-trello fa-fw"></i></a></span>
-</div>
-</div>
-</div>
-<div class=post-info-more>
-<section class=post-tags><i class="fas fa-tags fa-fw"></i>&nbsp;<a href=/tags/java/>Java</a>,&nbsp;<a href=/tags/lambda/>lambda</a>,&nbsp;<a href=/tags/java-lambda/>Java Lambda</a>,&nbsp;<a href=/tags/java-8/>Java 8</a>,&nbsp;<a href=/tags/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/>函数式编程</a></section>
-<section>
-<span><a href=javascript:void(0); onclick=window.history.back()>返回</a></span>&nbsp;|&nbsp;<span><a href=/>主页</a></span>
-</section>
-</div>
-<div class=post-nav><a href=/get_requestbody_by_aop/ class=prev rel=prev title=使用AOP获取RequestBody><i class="fas fa-angle-left fa-fw"></i>使用AOP获取RequestBody</a>
-<a href=/java_8_lambdas_functional_programming_note_stream/ class=next rel=next title="「Java 8 函数式编程」读书笔记——流">「Java 8 函数式编程」读书笔记——流<i class="fas fa-angle-right fa-fw"></i></a></div>
-</div>
-<div id=comments><div id=valine class=comment></div><noscript>
-Please enable JavaScript to view the comments powered by <a href=https://valine.js.org/>Valine</a>.
-</noscript></div></article></div>
-</main><footer class=footer>
-<div class=footer-container><div class=footer-line>由 <a href=https://gohugo.io/ target=_blank rel="noopener noreffer" title="Hugo 0.92.1">Hugo</a> 强力驱动 | 主题 - <a href=https://github.com/dillonzq/LoveIt target=_blank rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
-</div><div class=footer-line><i class="far fa-copyright fa-fw"></i><span itemprop=copyrightYear>2016 - 2024</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=https://blog.gaoyuexiang.cn/about target=_blank>无糖拿铁</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span><span class=icp-splitter>&nbsp;|&nbsp;</span><br class=icp-br>
-<span class=icp><a href=https://beian.miit.gov.cn/ target=_blank>蜀ICP备15031888号-2</a></span></div>
-</div>
-</footer></div>
-<div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title=回到顶部>
-<i class="fas fa-arrow-up fa-fw"></i>
-</a><a href=# id=view-comments class=fixed-button title=查看评论>
-<i class="fas fa-comment fa-fw"></i>
-</a>
-</div>
-<link rel=stylesheet href=/lib/valine/valine.min.css><script type=text/javascript src=https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/autocomplete.js@0.37.1/dist/autocomplete.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/lunr@2.3.8/lunr.min.js></script><script type=text/javascript src=/lib/lunr/lunr.stemmer.support.min.js></script><script type=text/javascript src=/lib/lunr/lunr.zh.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/lazysizes@5.2.2/lazysizes.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/sharer.js@0.4.0/sharer.min.js></script><script type=text/javascript>window.config={code:{copyTitle:"复制到剪贴板",maxShownLines:100},comment:{valine:{appId:"Voz5TpLaiKvWLiVk63CrRybt-gzGzoHsz",appKey:"xzDAABvBBG6vK7iwgd1VKUnw",avatar:"mm",el:"#valine",emojiCDN:"https://cdn.jsdelivr.net/npm/emoji-datasource-google@5.0.1/img/google/64/",emojiMaps:{100:"1f4af.png",alien:"1f47d.png",anger:"1f4a2.png",angry:"1f620.png",anguished:"1f627.png",astonished:"1f632.png",black_heart:"1f5a4.png",blue_heart:"1f499.png",blush:"1f60a.png",bomb:"1f4a3.png",boom:"1f4a5.png",broken_heart:"1f494.png",brown_heart:"1f90e.png",clown_face:"1f921.png",cold_face:"1f976.png",cold_sweat:"1f630.png",confounded:"1f616.png",confused:"1f615.png",cry:"1f622.png",crying_cat_face:"1f63f.png",cupid:"1f498.png",dash:"1f4a8.png",disappointed:"1f61e.png",disappointed_relieved:"1f625.png",dizzy:"1f4ab.png",dizzy_face:"1f635.png",drooling_face:"1f924.png",exploding_head:"1f92f.png",expressionless:"1f611.png",face_vomiting:"1f92e.png",face_with_cowboy_hat:"1f920.png",face_with_hand_over_mouth:"1f92d.png",face_with_head_bandage:"1f915.png",face_with_monocle:"1f9d0.png",face_with_raised_eyebrow:"1f928.png",face_with_rolling_eyes:"1f644.png",face_with_symbols_on_mouth:"1f92c.png",face_with_thermometer:"1f912.png",fearful:"1f628.png",flushed:"1f633.png",frowning:"1f626.png",ghost:"1f47b.png",gift_heart:"1f49d.png",green_heart:"1f49a.png",grimacing:"1f62c.png",grin:"1f601.png",grinning:"1f600.png",hankey:"1f4a9.png",hear_no_evil:"1f649.png",heart:"2764-fe0f.png",heart_decoration:"1f49f.png",heart_eyes:"1f60d.png",heart_eyes_cat:"1f63b.png",heartbeat:"1f493.png",heartpulse:"1f497.png",heavy_heart_exclamation_mark_ornament:"2763-fe0f.png",hole:"1f573-fe0f.png",hot_face:"1f975.png",hugging_face:"1f917.png",hushed:"1f62f.png",imp:"1f47f.png",innocent:"1f607.png",japanese_goblin:"1f47a.png",japanese_ogre:"1f479.png",joy:"1f602.png",joy_cat:"1f639.png",kiss:"1f48b.png",kissing:"1f617.png",kissing_cat:"1f63d.png",kissing_closed_eyes:"1f61a.png",kissing_heart:"1f618.png",kissing_smiling_eyes:"1f619.png",laughing:"1f606.png",left_speech_bubble:"1f5e8-fe0f.png",love_letter:"1f48c.png",lying_face:"1f925.png",mask:"1f637.png",money_mouth_face:"1f911.png",nauseated_face:"1f922.png",nerd_face:"1f913.png",neutral_face:"1f610.png",no_mouth:"1f636.png",open_mouth:"1f62e.png",orange_heart:"1f9e1.png",partying_face:"1f973.png",pensive:"1f614.png",persevere:"1f623.png",pleading_face:"1f97a.png",pouting_cat:"1f63e.png",purple_heart:"1f49c.png",rage:"1f621.png",relaxed:"263a-fe0f.png",relieved:"1f60c.png",revolving_hearts:"1f49e.png",right_anger_bubble:"1f5ef-fe0f.png",robot_face:"1f916.png",rolling_on_the_floor_laughing:"1f923.png",scream:"1f631.png",scream_cat:"1f640.png",see_no_evil:"1f648.png",shushing_face:"1f92b.png",skull:"1f480.png",skull_and_crossbones:"2620-fe0f.png",sleeping:"1f634.png",sleepy:"1f62a.png",slightly_frowning_face:"1f641.png",slightly_smiling_face:"1f642.png",smile:"1f604.png",smile_cat:"1f638.png",smiley:"1f603.png",smiley_cat:"1f63a.png",smiling_face_with_3_hearts:"1f970.png",smiling_imp:"1f608.png",smirk:"1f60f.png",smirk_cat:"1f63c.png",sneezing_face:"1f927.png",sob:"1f62d.png",space_invader:"1f47e.png",sparkling_heart:"1f496.png",speak_no_evil:"1f64a.png",speech_balloon:"1f4ac.png","star-struck":"1f929.png",stuck_out_tongue:"1f61b.png",stuck_out_tongue_closed_eyes:"1f61d.png",stuck_out_tongue_winking_eye:"1f61c.png",sunglasses:"1f60e.png",sweat:"1f613.png",sweat_drops:"1f4a6.png",sweat_smile:"1f605.png",thinking_face:"1f914.png",thought_balloon:"1f4ad.png",tired_face:"1f62b.png",triumph:"1f624.png",two_hearts:"1f495.png",unamused:"1f612.png",upside_down_face:"1f643.png",weary:"1f629.png",white_frowning_face:"2639-fe0f.png",white_heart:"1f90d.png",wink:"1f609.png",woozy_face:"1f974.png",worried:"1f61f.png",yawning_face:"1f971.png",yellow_heart:"1f49b.png",yum:"1f60b.png",zany_face:"1f92a.png",zipper_mouth_face:"1f910.png",zzz:"1f4a4.png"},enableQQ:!1,highlight:!0,lang:"zh-cn",pageSize:10,placeholder:"你的评论 ...",recordIP:!0,serverURLs:"https://leancloud.gaoyuexiang.cn",visitor:!0}},search:{highlightTag:"em",lunrIndexURL:"/index.json",lunrLanguageCode:"zh",lunrSegmentitURL:"/lib/lunr/lunr.segmentit.js",maxResultLength:10,noResultsFound:"没有找到结果",snippetLength:50,type:"lunr"}}</script><script type=text/javascript src=/js/theme.min.js></script>
-</body>
-</html>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=n>Runnable</span><span class=w> </span><span class=n>runable</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=p>()</span><span class=w> </span><span class=o>-&gt;</span><span class=w> </span><span class=n>System</span><span class=p>.</span><span class=na>out</span><span class=p>.</span><span class=na>println</span><span class=p>(</span><span class=s>&#34;Hello Lambda&#34;</span><span class=p>);</span><span class=c1>//1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>runable</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=p>()</span><span class=w> </span><span class=o>-&gt;</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=n>System</span><span class=p>.</span><span class=na>out</span><span class=p>.</span><span class=na>print</span><span class=p>(</span><span class=s>&#34;Hello&#34;</span><span class=p>);</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=n>System</span><span class=p>.</span><span class=na>out</span><span class=p>.</span><span class=na>println</span><span class=p>(</span><span class=s>&#34; Lambda&#34;</span><span class=p>);</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>};</span><span class=c1>//2</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>ActionListener</span><span class=w> </span><span class=n>listener</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>event</span><span class=w> </span><span class=o>-&gt;</span><span class=w> </span><span class=n>System</span><span class=p>.</span><span class=na>out</span><span class=p>.</span><span class=na>println</span><span class=p>(</span><span class=s>&#34;get event&#34;</span><span class=p>);</span><span class=c1>//3</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>BinaryOperator</span><span class=o>&lt;</span><span class=n>Long</span><span class=o>&gt;</span><span class=w> </span><span class=n>add</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=p>(</span><span class=n>x</span><span class=p>,</span><span class=w> </span><span class=n>y</span><span class=p>)</span><span class=w> </span><span class=o>-&gt;</span><span class=w> </span><span class=n>x</span><span class=w> </span><span class=o>+</span><span class=w> </span><span class=n>y</span><span class=p>;</span><span class=c1>//4</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>BinaryOperator</span><span class=o>&lt;</span><span class=n>Long</span><span class=o>&gt;</span><span class=w> </span><span class=n>minux</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=p>(</span><span class=n>Long</span><span class=w> </span><span class=n>x</span><span class=p>,</span><span class=w> </span><span class=n>Long</span><span class=w> </span><span class=n>y</span><span class=p>)</span><span class=w> </span><span class=o>-&gt;</span><span class=w> </span><span class=n>x</span><span class=w> </span><span class=o>-</span><span class=w> </span><span class=n>y</span><span class=p>;</span><span class=c1>//5</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>常见的<code>Lambda</code>表达式有以上5种，每个<code>Lambda</code>表达式都可以分为三个部分：</p><ul><li>参数部分：<code>()</code> <code>event</code> <code>(x, y)</code> <code>(Long x, Long y)</code></li><li>将参数和表达式主体分开的符号：<code>-></code></li><li>表达式主体</li></ul><h2 id=参数的形式>参数的形式</h2><p><code>Lambda</code>表达式可以看作是匿名内部类的简写形式，参数也就是使用匿名内部类时实现的方法的参数。</p><ul><li>有的方法不需要参数，如<code>Runnable</code>的<code>run</code>方法，所以使用<code>()</code>代表参数部分。</li><li>有的方法只需要一个参数且类型确定，如<code>ActionListener.actionPerformed</code>方法，可以直接使用参数，不需要指定类型，也不需要加括号。</li><li>有多个参数时，必须要加上括号，把参数扩起来</li><li>当声明参数类型时，无论有多少个参数，都需要加括号</li></ul><h2 id=表达式主体的形式>表达式主体的形式</h2><p>表达式可以只有一行代码，也可以有多行代码；有的表达式有返回值，有的没有。</p><ul><li>只有一行代码的表达式不需要<code>{}</code><ul><li>如果有返回值，不用写<code>return</code>，表达式会把这行代码的返回值作为返回值</li><li>如果使用了<code>{}</code>，则需要显式的写出<code>return</code></li></ul></li><li>有多行代码的表达式必须使用<code>{}</code><ul><li>如果有返回值，需要显式的写<code>return</code></li></ul></li></ul><h1 id=引用值而不是变量>引用值，而不是变量</h1><p>匿名内部类中，如果想要引用其所在方法中的变量，需要将其声明为<code>final</code>。这意味着你实际引用的是一个值，而不是变量。</p><p>在<code>Java 8 </code>中，虽然可以引用非<code>final</code>的变量，但这个变量必须是<strong>既成事实上的<code>final</code></strong>，如果对变量进行修改，将无法通过编译。这意味着<code>Lambda</code>表达式仍然是引用的一个值，而不是变量。</p><p>实际上可以通过使用数组来绕开编译器，但是这样做之前应该考虑一下你的代码逻辑是否正确。</p><h1 id=函数接口>函数接口</h1><p>只有一个抽象方法的接口叫做函数接口。</p><p>JDK中最重要的函数接口：</p><table><thead><tr><th style=text-align:center>Interface</th><th style=text-align:center>Argument</th><th style=text-align:center>Return</th><th style=text-align:center>e.g.</th></tr></thead><tbody><tr><td style=text-align:center>Predicate<t></td><td style=text-align:center>T</td><td style=text-align:center>boolean</td><td style=text-align:center>fliter</td></tr><tr><td style=text-align:center>Consumer<t></td><td style=text-align:center>T</td><td style=text-align:center>void</td><td style=text-align:center>forEach</td></tr><tr><td style=text-align:center>Function&lt;T, R></td><td style=text-align:center>T</td><td style=text-align:center>R</td><td style=text-align:center>map</td></tr><tr><td style=text-align:center>Supplier<t></td><td style=text-align:center>None</td><td style=text-align:center>T</td><td style=text-align:center>factory function</td></tr><tr><td style=text-align:center>UnaryOperator<t></td><td style=text-align:center>T</td><td style=text-align:center>T</td><td style=text-align:center>modify String</td></tr><tr><td style=text-align:center>BinaryOperator<t></td><td style=text-align:center>(T, T)</td><td style=text-align:center>T</td><td style=text-align:center>add two instances</td></tr></tbody></table><h1 id=类型推断>类型推断</h1><p><code>Java 8</code>为新成员<code>Lambda</code>表达式提供了类型推断的支持，在不需要声明参数类型的<code>Lambda</code>表达式中表现的有为明显。形如：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=n>BinaryOperator</span><span class=o>&lt;</span><span class=n>Integer</span><span class=o>&gt;</span><span class=w> </span><span class=n>add</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=p>(</span><span class=n>x</span><span class=p>,</span><span class=w> </span><span class=n>y</span><span class=p>)</span><span class=w> </span><span class=o>-&gt;</span><span class=w> </span><span class=n>x</span><span class=w> </span><span class=o>+</span><span class=w> </span><span class=n>y</span><span class=p>;</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>的表达式得以通过编译并正确执行，就是因为<code>JVM</code>通过泛型参数<code>Integer</code>推断出了方法参数的类型。</p></div><div class=post-footer id=post-footer><div class=post-info><div class=post-info-line><div class=post-info-mod><span>更新于 2022-01-31&nbsp;<a class=git-hash href=https://github.com/kbyyd24/LoveItAgain/commit/8309bc020e867fcafd813c9ce7a1508339eaedeb target=_blank title="commit by kbyyd24(melo@gaoyuexiang.cn) 8309bc020e867fcafd813c9ce7a1508339eaedeb: reorg posts">
+<i class="fas fa-hashtag fa-fw"></i>8309bc0</a></span></div><div class=post-info-license></div></div><div class=post-info-line><div class=post-info-md><span><a class=link-to-markdown href=/java_8_lambdas_functional_programming_note_lambda_expression/index.md target=_blank>阅读原始文档</a></span></div><div class=post-info-share><span><a href=javascript:void(0); title="分享到 Twitter" data-sharer=twitter data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_lambda_expression/ data-title="「Java 8 函数式编程」读书笔记——lambda表达式" data-hashtags="java,lambda,Java Lambda,Java 8,函数式编程"><i class="fab fa-twitter fa-fw"></i></a><a href=javascript:void(0); title="分享到 Facebook" data-sharer=facebook data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_lambda_expression/ data-hashtag=java><i class="fab fa-facebook-square fa-fw"></i></a><a href=javascript:void(0); title="分享到 Linkedin" data-sharer=linkedin data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_lambda_expression/><i class="fab fa-linkedin fa-fw"></i></a><a href=javascript:void(0); title="分享到 WhatsApp" data-sharer=whatsapp data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_lambda_expression/ data-title="「Java 8 函数式编程」读书笔记——lambda表达式" data-web><i class="fab fa-whatsapp fa-fw"></i></a><a href=javascript:void(0); title="分享到 Hacker News" data-sharer=hackernews data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_lambda_expression/ data-title="「Java 8 函数式编程」读书笔记——lambda表达式"><i class="fab fa-hacker-news fa-fw"></i></a><a href=javascript:void(0); title="分享到 Reddit" data-sharer=reddit data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_lambda_expression/><i class="fab fa-reddit fa-fw"></i></a><a href=javascript:void(0); title="分享到 Line" data-sharer=line data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_lambda_expression/ data-title="「Java 8 函数式编程」读书笔记——lambda表达式"><i data-svg-src=https://cdn.jsdelivr.net/npm/simple-icons@2.14.0/icons/line.svg></i></a><a href=javascript:void(0); title="分享到 Pocket" data-sharer=pocket data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_lambda_expression/><i class="fab fa-get-pocket fa-fw"></i></a><a href=javascript:void(0); title="分享到 微博" data-sharer=weibo data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_lambda_expression/ data-title="「Java 8 函数式编程」读书笔记——lambda表达式"><i class="fab fa-weibo fa-fw"></i></a><a href=javascript:void(0); title="分享到 人人" data-sharer=renren data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_lambda_expression/><i class="fab fa-renren fa-fw"></i></a><a href=javascript:void(0); title="分享到 Evernote" data-sharer=evernote data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_lambda_expression/ data-title="「Java 8 函数式编程」读书笔记——lambda表达式"><i class="fab fa-evernote fa-fw"></i></a><a href=javascript:void(0); title="分享到 Skype" data-sharer=skype data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_lambda_expression/ data-title="「Java 8 函数式编程」读书笔记——lambda表达式"><i class="fab fa-skype fa-fw"></i></a><a href=javascript:void(0); title="分享到 Trello" data-sharer=trello data-url=https://blog.gaoyuexiang.cn/java_8_lambdas_functional_programming_note_lambda_expression/ data-title="「Java 8 函数式编程」读书笔记——lambda表达式" data-description><i class="fab fa-trello fa-fw"></i></a></span></div></div></div><div class=post-info-more><section class=post-tags><i class="fas fa-tags fa-fw"></i>&nbsp;<a href=/tags/java/>Java</a>,&nbsp;<a href=/tags/lambda/>Lambda</a>,&nbsp;<a href=/tags/java-lambda/>Java Lambda</a>,&nbsp;<a href=/tags/java-8/>Java 8</a>,&nbsp;<a href=/tags/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/>函数式编程</a></section><section><span><a href=javascript:void(0); onclick=window.history.back()>返回</a></span>&nbsp;|&nbsp;<span><a href=/>主页</a></span></section></div><div class=post-nav><a href=/get_requestbody_by_aop/ class=prev rel=prev title=使用AOP获取RequestBody><i class="fas fa-angle-left fa-fw"></i>使用AOP获取RequestBody</a>
+<a href=/java_8_lambdas_functional_programming_note_stream/ class=next rel=next title="「Java 8 函数式编程」读书笔记——流">「Java 8 函数式编程」读书笔记——流<i class="fas fa-angle-right fa-fw"></i></a></div></div><div id=comments><div id=valine class=comment></div><noscript>Please enable JavaScript to view the comments powered by <a href=https://valine.js.org/>Valine</a>.</noscript></div></article></div></main><footer class=footer><div class=footer-container><div class=footer-line>由 <a href=https://gohugo.io/ target=_blank rel="noopener noreffer" title="Hugo 0.127.0">Hugo</a> 强力驱动 | 主题 - <a href=https://github.com/dillonzq/LoveIt target=_blank rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a></div><div class=footer-line><i class="far fa-copyright fa-fw"></i><span itemprop=copyrightYear>2016 - 2024</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=https://blog.gaoyuexiang.cn/about target=_blank>无糖拿铁</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span><span class=icp-splitter>&nbsp;|&nbsp;</span><br class=icp-br><span class=icp><a href=https://beian.miit.gov.cn/ target=_blank>蜀ICP备15031888号-2</a></span></div></div></footer></div><div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title=回到顶部><i class="fas fa-arrow-up fa-fw"></i>
+</a><a href=# id=view-comments class=fixed-button title=查看评论><i class="fas fa-comment fa-fw"></i></a></div><link rel=stylesheet href=/lib/valine/valine.min.css><script type=text/javascript src=https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/autocomplete.js@0.37.1/dist/autocomplete.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/lunr@2.3.8/lunr.min.js></script><script type=text/javascript src=/lib/lunr/lunr.stemmer.support.min.js></script><script type=text/javascript src=/lib/lunr/lunr.zh.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/lazysizes@5.2.2/lazysizes.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/sharer.js@0.4.0/sharer.min.js></script><script type=text/javascript>window.config={code:{copyTitle:"复制到剪贴板",maxShownLines:100},comment:{valine:{appId:"Voz5TpLaiKvWLiVk63CrRybt-gzGzoHsz",appKey:"xzDAABvBBG6vK7iwgd1VKUnw",avatar:"mm",el:"#valine",emojiCDN:"https://cdn.jsdelivr.net/npm/emoji-datasource-google@5.0.1/img/google/64/",emojiMaps:{100:"1f4af.png",alien:"1f47d.png",anger:"1f4a2.png",angry:"1f620.png",anguished:"1f627.png",astonished:"1f632.png",black_heart:"1f5a4.png",blue_heart:"1f499.png",blush:"1f60a.png",bomb:"1f4a3.png",boom:"1f4a5.png",broken_heart:"1f494.png",brown_heart:"1f90e.png",clown_face:"1f921.png",cold_face:"1f976.png",cold_sweat:"1f630.png",confounded:"1f616.png",confused:"1f615.png",cry:"1f622.png",crying_cat_face:"1f63f.png",cupid:"1f498.png",dash:"1f4a8.png",disappointed:"1f61e.png",disappointed_relieved:"1f625.png",dizzy:"1f4ab.png",dizzy_face:"1f635.png",drooling_face:"1f924.png",exploding_head:"1f92f.png",expressionless:"1f611.png",face_vomiting:"1f92e.png",face_with_cowboy_hat:"1f920.png",face_with_hand_over_mouth:"1f92d.png",face_with_head_bandage:"1f915.png",face_with_monocle:"1f9d0.png",face_with_raised_eyebrow:"1f928.png",face_with_rolling_eyes:"1f644.png",face_with_symbols_on_mouth:"1f92c.png",face_with_thermometer:"1f912.png",fearful:"1f628.png",flushed:"1f633.png",frowning:"1f626.png",ghost:"1f47b.png",gift_heart:"1f49d.png",green_heart:"1f49a.png",grimacing:"1f62c.png",grin:"1f601.png",grinning:"1f600.png",hankey:"1f4a9.png",hear_no_evil:"1f649.png",heart:"2764-fe0f.png",heart_decoration:"1f49f.png",heart_eyes:"1f60d.png",heart_eyes_cat:"1f63b.png",heartbeat:"1f493.png",heartpulse:"1f497.png",heavy_heart_exclamation_mark_ornament:"2763-fe0f.png",hole:"1f573-fe0f.png",hot_face:"1f975.png",hugging_face:"1f917.png",hushed:"1f62f.png",imp:"1f47f.png",innocent:"1f607.png",japanese_goblin:"1f47a.png",japanese_ogre:"1f479.png",joy:"1f602.png",joy_cat:"1f639.png",kiss:"1f48b.png",kissing:"1f617.png",kissing_cat:"1f63d.png",kissing_closed_eyes:"1f61a.png",kissing_heart:"1f618.png",kissing_smiling_eyes:"1f619.png",laughing:"1f606.png",left_speech_bubble:"1f5e8-fe0f.png",love_letter:"1f48c.png",lying_face:"1f925.png",mask:"1f637.png",money_mouth_face:"1f911.png",nauseated_face:"1f922.png",nerd_face:"1f913.png",neutral_face:"1f610.png",no_mouth:"1f636.png",open_mouth:"1f62e.png",orange_heart:"1f9e1.png",partying_face:"1f973.png",pensive:"1f614.png",persevere:"1f623.png",pleading_face:"1f97a.png",pouting_cat:"1f63e.png",purple_heart:"1f49c.png",rage:"1f621.png",relaxed:"263a-fe0f.png",relieved:"1f60c.png",revolving_hearts:"1f49e.png",right_anger_bubble:"1f5ef-fe0f.png",robot_face:"1f916.png",rolling_on_the_floor_laughing:"1f923.png",scream:"1f631.png",scream_cat:"1f640.png",see_no_evil:"1f648.png",shushing_face:"1f92b.png",skull:"1f480.png",skull_and_crossbones:"2620-fe0f.png",sleeping:"1f634.png",sleepy:"1f62a.png",slightly_frowning_face:"1f641.png",slightly_smiling_face:"1f642.png",smile:"1f604.png",smile_cat:"1f638.png",smiley:"1f603.png",smiley_cat:"1f63a.png",smiling_face_with_3_hearts:"1f970.png",smiling_imp:"1f608.png",smirk:"1f60f.png",smirk_cat:"1f63c.png",sneezing_face:"1f927.png",sob:"1f62d.png",space_invader:"1f47e.png",sparkling_heart:"1f496.png",speak_no_evil:"1f64a.png",speech_balloon:"1f4ac.png","star-struck":"1f929.png",stuck_out_tongue:"1f61b.png",stuck_out_tongue_closed_eyes:"1f61d.png",stuck_out_tongue_winking_eye:"1f61c.png",sunglasses:"1f60e.png",sweat:"1f613.png",sweat_drops:"1f4a6.png",sweat_smile:"1f605.png",thinking_face:"1f914.png",thought_balloon:"1f4ad.png",tired_face:"1f62b.png",triumph:"1f624.png",two_hearts:"1f495.png",unamused:"1f612.png",upside_down_face:"1f643.png",weary:"1f629.png",white_frowning_face:"2639-fe0f.png",white_heart:"1f90d.png",wink:"1f609.png",woozy_face:"1f974.png",worried:"1f61f.png",yawning_face:"1f971.png",yellow_heart:"1f49b.png",yum:"1f60b.png",zany_face:"1f92a.png",zipper_mouth_face:"1f910.png",zzz:"1f4a4.png"},enableQQ:!1,highlight:!0,lang:"zh-cn",pageSize:10,placeholder:"你的评论 ...",recordIP:!0,serverURLs:"https://leancloud.gaoyuexiang.cn",visitor:!0}},search:{highlightTag:"em",lunrIndexURL:"/index.json",lunrLanguageCode:"zh",lunrSegmentitURL:"/lib/lunr/lunr.segmentit.js",maxResultLength:10,noResultsFound:"没有找到结果",snippetLength:50,type:"lunr"}}</script><script type=text/javascript src=/js/theme.min.js></script></body></html>

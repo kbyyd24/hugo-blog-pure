@@ -1,184 +1,34 @@
-<!doctype html><html lang=zh-cn>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<meta name=robots content="noodp">
-<meta http-equiv=x-ua-compatible content="IE=edge, chrome=1">
-<title>使用 Gradle 的 Java 插件构建 Java 项目 - 无糖拿铁，谢谢</title><meta name=Description content="学习、记录、分享"><meta property="og:title" content="使用 Gradle 的 Java 插件构建 Java 项目">
-<meta property="og:description" content="在上一篇文章中，我们在没有使用任何插件的情况下，练习了使用 Gradle 构建 Java 项目，最后得到一个脆弱的构建脚本和不符合约定的目录结构。 对此，Gradle">
-<meta property="og:type" content="article">
-<meta property="og:url" content="https://blog.gaoyuexiang.cn/use-gradle-to-build-java-project/"><meta property="og:image" content="https://blog.gaoyuexiang.cn/logo.png"><meta property="article:section" content="posts">
-<meta property="article:published_time" content="2020-02-24T21:09:31+00:00">
-<meta property="article:modified_time" content="2023-07-14T00:20:19+08:00">
-<meta name=twitter:card content="summary_large_image">
-<meta name=twitter:image content="https://blog.gaoyuexiang.cn/logo.png">
-<meta name=twitter:title content="使用 Gradle 的 Java 插件构建 Java 项目">
-<meta name=twitter:description content="在上一篇文章中，我们在没有使用任何插件的情况下，练习了使用 Gradle 构建 Java 项目，最后得到一个脆弱的构建脚本和不符合约定的目录结构。 对此，Gradle">
-<meta name=application-name content="LoveIt">
-<meta name=apple-mobile-web-app-title content="LoveIt"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel="shortcut icon" type=image/x-icon href=/favicon.ico>
-<link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
-<link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=https://blog.gaoyuexiang.cn/use-gradle-to-build-java-project/><link rel=prev href=https://blog.gaoyuexiang.cn/use-gradle-to-build-java-project-without-plugin/><link rel=next href=https://blog.gaoyuexiang.cn/spring-security-servlet-overview/><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css><link rel=stylesheet href=/css/style.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"使用 Gradle 的 Java 插件构建 Java 项目","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/blog.gaoyuexiang.cn\/use-gradle-to-build-java-project\/"},"image":["https:\/\/blog.gaoyuexiang.cn\/images\/Apple-Devices-Preview.png"],"genre":"posts","keywords":"gradle, java","wordcount":2602,"url":"https:\/\/blog.gaoyuexiang.cn\/use-gradle-to-build-java-project\/","datePublished":"2020-02-24T21:09:31+00:00","dateModified":"2023-07-14T00:20:19+08:00","license":"CC BY-NC 4.0 CN","publisher":{"@type":"Organization","name":"无糖拿铁","logo":"https:\/\/blog.gaoyuexiang.cn\/images\/avatar.png"},"author":{"@type":"Person","name":"无糖拿铁"},"description":""}</script></head>
-<body header-desktop=fixed header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem('theme')?localStorage.getItem('theme')==='dark':'auto'==='auto'?window.matchMedia('(prefers-color-scheme: dark)').matches:'auto'==='dark')&&document.body.setAttribute('theme','dark')</script>
-<div id=mask></div><div class=wrapper><header class=desktop id=header-desktop>
-<div class=header-wrapper>
-<div class=header-title>
-<a href=/ title=无糖拿铁，谢谢><span class=header-title-pre><i class="far fa-kiss-wink-heart fa-fw"></i></span>无糖拿铁，谢谢</a>
-</div>
-<div class=menu>
-<div class=menu-inner><a class=menu-item href=/posts/> 所有文章 </a><a class=menu-item href=/tags/> 标签 </a><a class=menu-item href=/categories/> 分类 </a><a class=menu-item href=/series-index/> 系列 </a><a class=menu-item href=/about/> 关于 </a><a class=menu-item href=https://github.com/kbyyd24/ title=GitHub rel="noopener noreffer" target=_blank><i class="fab fa-github fa-fw"></i> </a><span class="menu-item delimiter"></span><span class="menu-item search" id=search-desktop>
+<!doctype html><html lang=zh-CN><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><meta http-equiv=X-UA-Compatible content="IE=edge, chrome=1"><title>使用 Gradle 的 Java 插件构建 Java 项目 - 无糖拿铁，谢谢</title><meta name=Description content="学习、记录、分享"><meta property="og:url" content="https://blog.gaoyuexiang.cn/use-gradle-to-build-java-project/">
+<meta property="og:site_name" content="无糖拿铁，谢谢"><meta property="og:title" content="使用 Gradle 的 Java 插件构建 Java 项目"><meta property="og:description" content="在上一篇文章中，我们在没有使用任何插件的情况下，练习了使用 Gradle 构建 Java 项目，最后得到一个脆弱的构建脚本和不符合约定的目录结构。 对此，Gradle"><meta property="og:locale" content="zh_CN"><meta property="og:type" content="article"><meta property="article:section" content="posts"><meta property="article:published_time" content="2020-02-24T21:09:31+00:00"><meta property="article:modified_time" content="2023-07-14T00:20:19+08:00"><meta property="article:tag" content="Gradle"><meta property="article:tag" content="Java"><meta property="og:image" content="https://blog.gaoyuexiang.cn/logo.png"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://blog.gaoyuexiang.cn/logo.png"><meta name=twitter:title content="使用 Gradle 的 Java 插件构建 Java 项目"><meta name=twitter:description content="在上一篇文章中，我们在没有使用任何插件的情况下，练习了使用 Gradle 构建 Java 项目，最后得到一个脆弱的构建脚本和不符合约定的目录结构。 对此，Gradle"><meta name=application-name content="LoveIt"><meta name=apple-mobile-web-app-title content="LoveIt"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel="shortcut icon" type=image/x-icon href=/favicon.ico><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=https://blog.gaoyuexiang.cn/use-gradle-to-build-java-project/><link rel=prev href=https://blog.gaoyuexiang.cn/use-gradle-to-build-java-project-without-plugin/><link rel=next href=https://blog.gaoyuexiang.cn/spring-security-servlet-overview/><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css><link rel=stylesheet href=/css/style.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"使用 Gradle 的 Java 插件构建 Java 项目","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/blog.gaoyuexiang.cn\/use-gradle-to-build-java-project\/"},"image":["https:\/\/blog.gaoyuexiang.cn\/images\/Apple-Devices-Preview.png"],"genre":"posts","keywords":"gradle, java","wordcount":2602,"url":"https:\/\/blog.gaoyuexiang.cn\/use-gradle-to-build-java-project\/","datePublished":"2020-02-24T21:09:31+00:00","dateModified":"2023-07-14T00:20:19+08:00","license":"CC BY-NC 4.0 CN","publisher":{"@type":"Organization","name":"无糖拿铁","logo":"https:\/\/blog.gaoyuexiang.cn\/images\/avatar.png"},"author":{"@type":"Person","name":"无糖拿铁"},"description":""}</script></head><body header-desktop=fixed header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem("theme")?localStorage.getItem("theme")==="dark":"auto"==="auto"?window.matchMedia("(prefers-color-scheme: dark)").matches:"auto"==="dark")&&document.body.setAttribute("theme","dark")</script><div id=mask></div><div class=wrapper><header class=desktop id=header-desktop><div class=header-wrapper><div class=header-title><a href=/ title=无糖拿铁，谢谢><span class=header-title-pre><i class='far fa-kiss-wink-heart fa-fw'></i></span>无糖拿铁，谢谢</a></div><div class=menu><div class=menu-inner><a class=menu-item href=/posts/>所有文章 </a><a class=menu-item href=/tags/>标签 </a><a class=menu-item href=/categories/>分类 </a><a class=menu-item href=/series-index/>系列 </a><a class=menu-item href=/about/>关于 </a><a class=menu-item href=https://github.com/kbyyd24/ title=GitHub rel="noopener noreffer" target=_blank><i class='fab fa-github fa-fw'></i> </a><span class="menu-item delimiter"></span><span class="menu-item search" id=search-desktop>
 <input type=text placeholder=搜索文章标题或内容... id=search-input-desktop>
-<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-desktop title=搜索>
-<i class="fas fa-search fa-fw"></i>
-</a>
-<a href=javascript:void(0); class="search-button search-clear" id=search-clear-desktop title=清空>
-<i class="fas fa-times-circle fa-fw"></i>
-</a>
-<span class="search-button search-loading" id=search-loading-desktop>
-<i class="fas fa-spinner fa-fw fa-spin"></i>
-</span>
-</span><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
-<i class="fas fa-adjust fa-fw"></i>
-</a>
-</div>
-</div>
-</div>
-</header><header class=mobile id=header-mobile>
-<div class=header-container>
-<div class=header-wrapper>
-<div class=header-title>
-<a href=/ title=无糖拿铁，谢谢><span class=header-title-pre><i class="far fa-kiss-wink-heart fa-fw"></i></span>无糖拿铁，谢谢</a>
-</div>
-<div class=menu-toggle id=menu-toggle-mobile>
-<span></span><span></span><span></span>
-</div>
-</div>
-<div class=menu id=menu-mobile><div class=search-wrapper>
-<div class="search mobile" id=search-mobile>
-<input type=text placeholder=搜索文章标题或内容... id=search-input-mobile>
-<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-mobile title=搜索>
-<i class="fas fa-search fa-fw"></i>
-</a>
-<a href=javascript:void(0); class="search-button search-clear" id=search-clear-mobile title=清空>
-<i class="fas fa-times-circle fa-fw"></i>
-</a>
-<span class="search-button search-loading" id=search-loading-mobile>
-<i class="fas fa-spinner fa-fw fa-spin"></i>
-</span>
-</div>
-<a href=javascript:void(0); class=search-cancel id=search-cancel-mobile>
-取消
-</a>
-</div><a class=menu-item href=/posts/ title>所有文章</a><a class=menu-item href=/tags/ title>标签</a><a class=menu-item href=/categories/ title>分类</a><a class=menu-item href=/series-index/ title>系列</a><a class=menu-item href=/about/ title>关于</a><a class=menu-item href=https://github.com/kbyyd24/ title=GitHub rel="noopener noreffer" target=_blank><i class="fab fa-github fa-fw"></i></a><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
-<i class="fas fa-adjust fa-fw"></i>
-</a></div>
-</div>
-</header>
-<div class="search-dropdown desktop">
-<div id=search-dropdown-desktop></div>
-</div>
-<div class="search-dropdown mobile">
-<div id=search-dropdown-mobile></div>
-</div>
-<main class=main>
-<div class=container><div class=toc id=toc-auto>
-<h2 class=toc-title>目录</h2>
-<div class="toc-content always-active" id=toc-content-auto></div>
-</div><article class="page single"><h1 class="single-title animated flipInX">使用 Gradle 的 Java 插件构建 Java 项目</h1><div class=post-meta>
-<div class=post-meta-line><span class=post-author><a href=https://blog.gaoyuexiang.cn/about title=Author target=_blank rel="noopener noreffer author" class=author><i class="fas fa-user-circle fa-fw"></i>无糖拿铁</a></span></div>
-<div class=post-meta-line><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime=2020-02-24>2020-02-24</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 2602 字&nbsp;
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-desktop title=搜索><i class="fas fa-search fa-fw"></i>
+</a><a href=javascript:void(0); class="search-button search-clear" id=search-clear-desktop title=清空><i class="fas fa-times-circle fa-fw"></i>
+</a><span class="search-button search-loading" id=search-loading-desktop><i class="fas fa-spinner fa-fw fa-spin"></i>
+</span></span><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题><i class="fas fa-adjust fa-fw"></i></a></div></div></div></header><header class=mobile id=header-mobile><div class=header-container><div class=header-wrapper><div class=header-title><a href=/ title=无糖拿铁，谢谢><span class=header-title-pre><i class='far fa-kiss-wink-heart fa-fw'></i></span>无糖拿铁，谢谢</a></div><div class=menu-toggle id=menu-toggle-mobile><span></span><span></span><span></span></div></div><div class=menu id=menu-mobile><div class=search-wrapper><div class="search mobile" id=search-mobile><input type=text placeholder=搜索文章标题或内容... id=search-input-mobile>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-mobile title=搜索><i class="fas fa-search fa-fw"></i>
+</a><a href=javascript:void(0); class="search-button search-clear" id=search-clear-mobile title=清空><i class="fas fa-times-circle fa-fw"></i>
+</a><span class="search-button search-loading" id=search-loading-mobile><i class="fas fa-spinner fa-fw fa-spin"></i></span></div><a href=javascript:void(0); class=search-cancel id=search-cancel-mobile>取消</a></div><a class=menu-item href=/posts/ title>所有文章</a><a class=menu-item href=/tags/ title>标签</a><a class=menu-item href=/categories/ title>分类</a><a class=menu-item href=/series-index/ title>系列</a><a class=menu-item href=/about/ title>关于</a><a class=menu-item href=https://github.com/kbyyd24/ title=GitHub rel="noopener noreffer" target=_blank><i class='fab fa-github fa-fw'></i></a><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
+<i class="fas fa-adjust fa-fw"></i></a></div></div></header><div class="search-dropdown desktop"><div id=search-dropdown-desktop></div></div><div class="search-dropdown mobile"><div id=search-dropdown-mobile></div></div><main class=main><div class=container><div class=toc id=toc-auto><h2 class=toc-title>目录</h2><div class="toc-content always-active" id=toc-content-auto></div></div><article class="page single"><h1 class="single-title animated flipInX">使用 Gradle 的 Java 插件构建 Java 项目</h1><div class=post-meta><div class=post-meta-line><span class=post-author><a href=https://blog.gaoyuexiang.cn/about title=Author target=_blank rel="noopener noreffer author" class=author><i class="fas fa-user-circle fa-fw"></i>无糖拿铁</a></span></div><div class=post-meta-line><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime=2020-02-24>2020-02-24</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 2602 字&nbsp;
 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 6 分钟&nbsp;<span id=/use-gradle-to-build-java-project/ class=leancloud_visitors data-flag-title="使用 Gradle 的 Java 插件构建 Java 项目">
 <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
-</span>&nbsp;</div>
-</div><div class="details toc" id=toc-static kept>
-<div class="details-summary toc-title">
-<span>目录</span>
-<span><i class="details-icon fas fa-angle-right"></i></span>
-</div>
-<div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents>
-<ul>
-<li><a href=#插件>插件</a></li>
-<li><a href=#改造-hello-world>改造 Hello World</a>
-<ul>
-<li><a href=#import-java-plugin>Import <code>Java</code> Plugin</a></li>
-<li><a href=#sourceset><code>SourceSet</code></a></li>
-<li><a href=#task><code>Task</code></a>
-<ul>
-<li><a href=#java-插件引入的-task><code>Java</code> 插件引入的 <code>Task</code></a></li>
-<li><a href=#改进-hello-world>改进 Hello World</a></li>
-</ul>
-</li>
-<li><a href=#dependency-configuration><code>Dependency Configuration</code></a>
-<ul>
-<li><a href=#java-插件引入的-configuration><code>Java</code> 插件引入的 <code>Configuration</code></a></li>
-<li><a href=#改进-hello-world-1>改进 Hello World</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a href=#总结>总结</a></li>
-</ul>
-</nav></div>
-</div><div class=content id=content><p>在<a href=../use-gradle-to-build-java-project-without-plugin/ rel>上一篇文章</a>中，我们在没有使用任何插件的情况下，练习了使用 <code>Gradle</code> 构建 <code>Java</code> 项目，最后得到一个脆弱的构建脚本和不符合约定的目录结构。</p>
-<p>对此，<code>Gradle</code> 使用了插件来解决这些问题。</p>
-<h2 id=插件>插件</h2>
-<p><code>Gradle</code> 中的插件，可以给我们带来很多好处，包括：</p>
-<ol>
-<li>添加 <code>Task</code></li>
-<li>添加领域对象</li>
-<li>约定优于配置的实现</li>
-<li>扩展 <code>Gradle</code> 的核心类</li>
-</ol>
-<p><code>Gradle</code> 将插件分为两类，<code>Script Plugin</code> & <code>Binary Plugin</code>。</p>
-<p>那些写到单独的 <code>gradle</code> 文件中，并被 <code>build.gradle</code> 文件使用的脚本文件，就是 <code>Script Plugin</code>。常见的实践是将某一插件或某一方面的配置写到单独的文件中，比如 <code>jacoco.gradle</code>，然后通过下面的语法导入到 <code>build.gradle</code> 文件中：</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-gradle data-lang=gradle><span class=n>apply</span> <span class=nl>from:</span> <span class=n>file</span><span class=o>(</span><span class=s2>&#34;$projectDir/gradle/jacoco.gradle&#34;</span><span class=o>)</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>而常见的 <code>java</code>、<code>idea</code> 这样的 <code>core Plugin</code> 和 <code>org.springframework.boot</code> 等可以在 <a href=https://plugins.gradle.org/ target=_blank rel="noopener noreffer">https://plugins.gradle.org/</a> 找到的插件，就是 <code>Binary Plugin</code>，它们通过 <code>plugins{}</code> 语法块引入：</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span>&nbsp;</div></div><div class="details toc" id=toc-static kept><div class="details-summary toc-title"><span>目录</span>
+<span><i class="details-icon fas fa-angle-right"></i></span></div><div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents><ul><li><a href=#插件>插件</a></li><li><a href=#改造-hello-world>改造 Hello World</a><ul><li><a href=#import-java-plugin>Import <code>Java</code> Plugin</a></li><li><a href=#sourceset><code>SourceSet</code></a></li><li><a href=#task><code>Task</code></a><ul><li><a href=#java-插件引入的-task><code>Java</code> 插件引入的 <code>Task</code></a></li><li><a href=#改进-hello-world>改进 Hello World</a></li></ul></li><li><a href=#dependency-configuration><code>Dependency Configuration</code></a><ul><li><a href=#java-插件引入的-configuration><code>Java</code> 插件引入的 <code>Configuration</code></a></li><li><a href=#改进-hello-world-1>改进 Hello World</a></li></ul></li></ul></li><li><a href=#总结>总结</a></li></ul></nav></div></div><div class=content id=content><p>在<a href=../use-gradle-to-build-java-project-without-plugin/ rel>上一篇文章</a>中，我们在没有使用任何插件的情况下，练习了使用 <code>Gradle</code> 构建 <code>Java</code> 项目，最后得到一个脆弱的构建脚本和不符合约定的目录结构。</p><p>对此，<code>Gradle</code> 使用了插件来解决这些问题。</p><h2 id=插件>插件</h2><p><code>Gradle</code> 中的插件，可以给我们带来很多好处，包括：</p><ol><li>添加 <code>Task</code></li><li>添加领域对象</li><li>约定优于配置的实现</li><li>扩展 <code>Gradle</code> 的核心类</li></ol><p><code>Gradle</code> 将插件分为两类，<code>Script Plugin</code> & <code>Binary Plugin</code>。</p><p>那些写到单独的 <code>gradle</code> 文件中，并被 <code>build.gradle</code> 文件使用的脚本文件，就是 <code>Script Plugin</code>。常见的实践是将某一插件或某一方面的配置写到单独的文件中，比如 <code>jacoco.gradle</code>，然后通过下面的语法导入到 <code>build.gradle</code> 文件中：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-gradle data-lang=gradle><span class=line><span class=cl><span class=n>apply</span> <span class=nl>from:</span> <span class=n>file</span><span class=o>(</span><span class=s2>&#34;$projectDir/gradle/jacoco.gradle&#34;</span><span class=o>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>而常见的 <code>java</code>、<code>idea</code> 这样的 <code>core Plugin</code> 和 <code>org.springframework.boot</code> 等可以在 <a href=https://plugins.gradle.org/ target=_blank rel="noopener noreffer">https://plugins.gradle.org/</a> 找到的插件，就是 <code>Binary Plugin</code>，它们通过 <code>plugins{}</code> 语法块引入：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-gradle data-lang=gradle><span class=n>plugins</span> <span class=o>{</span>
-  <span class=n>id</span> <span class=s1>&#39;java&#39;</span>
-  <span class=n>id</span> <span class=s1>&#39;org.springframework.boot&#39;</span> <span class=n>version</span> <span class=s1>&#39;2.2.4.RELEASE&#39;</span>
-<span class=o>}</span>
-</code></pre></td></tr></table>
-</div>
-</div><hr>
-<p>接下来，我们接着上一篇文章的例子，使用 <code>Java Plugin</code> 来改造我们的构建脚本。</p>
-<h2 id=改造-hello-world>改造 Hello World</h2>
-<p><code>Java</code> 插件的文档：https://docs.gradle.org/current/userguide/java_plugin.html</p>
-<h3 id=import-java-plugin>Import <code>Java</code> Plugin</h3>
-<p>如上所述，我们使用 <code>Java Plugin</code> 需要先导入它：</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-gradle data-lang=gradle><span class=line><span class=cl><span class=n>plugins</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>  <span class=n>id</span> <span class=s1>&#39;java&#39;</span>
+</span></span><span class=line><span class=cl>  <span class=n>id</span> <span class=s1>&#39;org.springframework.boot&#39;</span> <span class=n>version</span> <span class=s1>&#39;2.2.4.RELEASE&#39;</span>
+</span></span><span class=line><span class=cl><span class=o>}</span>
+</span></span></code></pre></td></tr></table></div></div><hr><p>接下来，我们接着上一篇文章的例子，使用 <code>Java Plugin</code> 来改造我们的构建脚本。</p><h2 id=改造-hello-world>改造 Hello World</h2><p><code>Java</code> 插件的文档：https://docs.gradle.org/current/userguide/java_plugin.html</p><h3 id=import-java-plugin>Import <code>Java</code> Plugin</h3><p>如上所述，我们使用 <code>Java Plugin</code> 需要先导入它：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-gradle data-lang=gradle><span class=n>plugins</span> <span class=o>{</span>
-  <span class=n>id</span> <span class=s1>&#39;java&#39;</span>
-<span class=o>}</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>因为 <code>Java</code> 插件是 <code>Gradle</code> 提供的核心插件，它是和 <code>Gradle</code> 版本绑定的，所以不需要使用 <code>version</code> 参数。</p>
-<h3 id=sourceset><code>SourceSet</code></h3>
-<p>引入 <code>Java</code> 插件后，我们先来了解一个核心概念：<code>SourceSet</code>。这是 <code>Java</code> 插件引入的概念，每一个 <code>SourceSet</code> 都包含了一组相关的资源。默认情况下，一个 <code>SourceSet</code> 对应 <code>src</code> 目录下的一个目录，目录名称就是 <code>SourceSet</code> 的名称；目录下会有一个 <code>java</code> 目录和一个 <code>resources</code> 目录。根据约定，这两个目录分别是存放 <code>java</code> 文件的目录和存放配置等资源文件的目录。</p>
-<p><code>SourceSet</code> 还有更多的信息可以配置，参见：https://docs.gradle.org/current/userguide/building_java_projects.html#sec:java_source_sets</p>
-<p><code>Java</code> 插件还默认配置好了两个 <code>SourceSet</code>，分别是 <code>main</code> & <code>test</code>。所以在使用 <code>Java</code> 插件后，无需任何配置，就可以得到约定的目录结构：</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-gradle data-lang=gradle><span class=line><span class=cl><span class=n>plugins</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>  <span class=n>id</span> <span class=s1>&#39;java&#39;</span>
+</span></span><span class=line><span class=cl><span class=o>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>因为 <code>Java</code> 插件是 <code>Gradle</code> 提供的核心插件，它是和 <code>Gradle</code> 版本绑定的，所以不需要使用 <code>version</code> 参数。</p><h3 id=sourceset><code>SourceSet</code></h3><p>引入 <code>Java</code> 插件后，我们先来了解一个核心概念：<code>SourceSet</code>。这是 <code>Java</code> 插件引入的概念，每一个 <code>SourceSet</code> 都包含了一组相关的资源。默认情况下，一个 <code>SourceSet</code> 对应 <code>src</code> 目录下的一个目录，目录名称就是 <code>SourceSet</code> 的名称；目录下会有一个 <code>java</code> 目录和一个 <code>resources</code> 目录。根据约定，这两个目录分别是存放 <code>java</code> 文件的目录和存放配置等资源文件的目录。</p><p><code>SourceSet</code> 还有更多的信息可以配置，参见：https://docs.gradle.org/current/userguide/building_java_projects.html#sec:java_source_sets</p><p><code>Java</code> 插件还默认配置好了两个 <code>SourceSet</code>，分别是 <code>main</code> & <code>test</code>。所以在使用 <code>Java</code> 插件后，无需任何配置，就可以得到约定的目录结构：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
@@ -186,62 +36,25 @@
 </span><span class=lnt>6
 </span><span class=lnt>7
 </span><span class=lnt>8
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-shell data-lang=shell>❯ tree src
-src
-├── main
-│   ├── java
-│   └── resources
-└── <span class=nb>test</span>
-    ├── java
-    └── resources
-</code></pre></td></tr></table>
-</div>
-</div><p>所以，我们需要将 <code>HelloWorld.java</code> 从 <code>src</code> 目录移动到符合约定的 <code>src/main/java</code> 目录下：</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>❯ tree src
+</span></span><span class=line><span class=cl>src
+</span></span><span class=line><span class=cl>├── main
+</span></span><span class=line><span class=cl>│   ├── java
+</span></span><span class=line><span class=cl>│   └── resources
+</span></span><span class=line><span class=cl>└── <span class=nb>test</span>
+</span></span><span class=line><span class=cl>    ├── java
+</span></span><span class=line><span class=cl>    └── resources
+</span></span></code></pre></td></tr></table></div></div><p>所以，我们需要将 <code>HelloWorld.java</code> 从 <code>src</code> 目录移动到符合约定的 <code>src/main/java</code> 目录下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
 </span><span class=lnt>5
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-shell data-lang=shell>❯ tree src
-src
-└── main
-    └── java
-        └── HelloWorld.java
-</code></pre></td></tr></table>
-</div>
-</div><h3 id=task><code>Task</code></h3>
-<h4 id=java-插件引入的-task><code>Java</code> 插件引入的 <code>Task</code></h4>
-<p>接着我们来看看 <code>Task</code> 需要做哪些修改。</p>
-<p><code>Java</code> 插件引入了下面的这些 <code>Task</code>，并且添加了依赖关系：</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=javaPluginTasks.png data-srcset="/use-gradle-to-build-java-project/javaPluginTasks.png, javaPluginTasks.png 1.5x, /use-gradle-to-build-java-project/javaPluginTasks.png 2x" data-sizes=auto alt=/use-gradle-to-build-java-project/javaPluginTasks.png title=/use-gradle-to-build-java-project/javaPluginTasks.png></p>
-<p>其中有四个 <code>task</code> 是由 <code>base plugin</code> 添加的：<code>clean</code>, <code>check</code>, <code>assemble</code> 和 <code>build</code>。</p>
-<p>其中，<code>check</code>, <code>assemble</code> 和 <code>build</code> 是 <code>lifecycle task</code>，本身不执行任务，只是定义了执行它们时应该执行什么样的任务：</p>
-<ul>
-<li><code>check</code>：聚合所有进行验证操作的 <code>task</code> ，比如测试</li>
-<li><code>assemble</code>：聚合所有会产生项目产出物的 <code>task</code>，比如打包</li>
-<li><code>build</code>：聚合前面两个 <code>task</code></li>
-</ul>
-<p>其他的 <code>task</code> 中，很容易发现，<code>compileJava</code> 与 <code>compileTestJava</code>、<code>processResources</code> 与 <code>processTestResources</code>、<code>classes</code> 与 <code>testClasses</code> 命名类似。实际上，每一对 <code>task</code> 表达的是同样的含义，只是一个针对 <code>main sourceSet</code>，一个针对 <code>test sourceSet</code> 而已。如果你创建了一个自定义的 <code>SourceSet</code>，那 <code>Java</code> 插件会自动的添加 <code>compileSourceSetJava</code>、<code>processSourceSetResources</code> 和 <code>sourceSetClasses</code>，其中的 <code>sourceSet</code> 就是 <code>SourceSet.name</code>。</p>
-<ul>
-<li><code>compileJava</code>：编译该 <code>sourceSet</code>下的 <code>java</code> 文件</li>
-<li><code>processResource</code>：将该 <code>sourceSet</code> 中的资源文件复制到 <code>build</code> 目录中</li>
-<li><code>classes</code>：准备打包和执行需要的 <code>class</code> 文件和资源文件</li>
-</ul>
-<blockquote>
-<p>注意，执行测试是 <code>test</code> 任务，它没有因为添加 <code>sourceSet</code> 而自动添加 <code>sourceSetTest</code> 方法。因为自定义的 <code>SourceSet</code> 不一定是组件测试之类的不同类别的测试。所以，如果你添加了这样的 <code>SourceSet</code>，需要自己手动编写 <code>Test</code> 类型的测试 <code>task</code>。</p>
-</blockquote>
-<h4 id=改进-hello-world>改进 Hello World</h4>
-<p>由上面的了解可知，<code>Java</code> 插件已经为我们添加了 <code>compileJava</code> 和 <code>jar</code> 这两个 <code>task</code>，所以我们不需要再创建这样的 <code>task</code>。但是我们还是可以对这些 <code>task</code> 进行配置。</p>
-<p>比如，我们仍然希望控制 <code>jar</code> 产出的文件名，那我们的脚本就可以改成这样：</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>❯ tree src
+</span></span><span class=line><span class=cl>src
+</span></span><span class=line><span class=cl>└── main
+</span></span><span class=line><span class=cl>    └── java
+</span></span><span class=line><span class=cl>        └── HelloWorld.java
+</span></span></code></pre></td></tr></table></div></div><h3 id=task><code>Task</code></h3><h4 id=java-插件引入的-task><code>Java</code> 插件引入的 <code>Task</code></h4><p>接着我们来看看 <code>Task</code> 需要做哪些修改。</p><p><code>Java</code> 插件引入了下面的这些 <code>Task</code>，并且添加了依赖关系：</p><p><img class=lazyload src=/svg/loading.min.svg data-src=javaPluginTasks.png data-srcset="/use-gradle-to-build-java-project/javaPluginTasks.png, javaPluginTasks.png 1.5x, /use-gradle-to-build-java-project/javaPluginTasks.png 2x" data-sizes=auto alt=/use-gradle-to-build-java-project/javaPluginTasks.png title=/use-gradle-to-build-java-project/javaPluginTasks.png></p><p>其中有四个 <code>task</code> 是由 <code>base plugin</code> 添加的：<code>clean</code>, <code>check</code>, <code>assemble</code> 和 <code>build</code>。</p><p>其中，<code>check</code>, <code>assemble</code> 和 <code>build</code> 是 <code>lifecycle task</code>，本身不执行任务，只是定义了执行它们时应该执行什么样的任务：</p><ul><li><code>check</code>：聚合所有进行验证操作的 <code>task</code> ，比如测试</li><li><code>assemble</code>：聚合所有会产生项目产出物的 <code>task</code>，比如打包</li><li><code>build</code>：聚合前面两个 <code>task</code></li></ul><p>其他的 <code>task</code> 中，很容易发现，<code>compileJava</code> 与 <code>compileTestJava</code>、<code>processResources</code> 与 <code>processTestResources</code>、<code>classes</code> 与 <code>testClasses</code> 命名类似。实际上，每一对 <code>task</code> 表达的是同样的含义，只是一个针对 <code>main sourceSet</code>，一个针对 <code>test sourceSet</code> 而已。如果你创建了一个自定义的 <code>SourceSet</code>，那 <code>Java</code> 插件会自动的添加 <code>compileSourceSetJava</code>、<code>processSourceSetResources</code> 和 <code>sourceSetClasses</code>，其中的 <code>sourceSet</code> 就是 <code>SourceSet.name</code>。</p><ul><li><code>compileJava</code>：编译该 <code>sourceSet</code>下的 <code>java</code> 文件</li><li><code>processResource</code>：将该 <code>sourceSet</code> 中的资源文件复制到 <code>build</code> 目录中</li><li><code>classes</code>：准备打包和执行需要的 <code>class</code> 文件和资源文件</li></ul><blockquote><p>注意，执行测试是 <code>test</code> 任务，它没有因为添加 <code>sourceSet</code> 而自动添加 <code>sourceSetTest</code> 方法。因为自定义的 <code>SourceSet</code> 不一定是组件测试之类的不同类别的测试。所以，如果你添加了这样的 <code>SourceSet</code>，需要自己手动编写 <code>Test</code> 类型的测试 <code>task</code>。</p></blockquote><h4 id=改进-hello-world>改进 Hello World</h4><p>由上面的了解可知，<code>Java</code> 插件已经为我们添加了 <code>compileJava</code> 和 <code>jar</code> 这两个 <code>task</code>，所以我们不需要再创建这样的 <code>task</code>。但是我们还是可以对这些 <code>task</code> 进行配置。</p><p>比如，我们仍然希望控制 <code>jar</code> 产出的文件名，那我们的脚本就可以改成这样：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -263,68 +76,31 @@ src
 </span><span class=lnt>20
 </span><span class=lnt>21
 </span><span class=lnt>22
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-gradle data-lang=gradle><span class=c1>// task compileJava(type: JavaCompile) {
-</span><span class=c1>//   source fileTree(&#34;$projectDir/src&#34;)
-</span><span class=c1>//   include &#34;**/*.java&#34;
-</span><span class=c1>//   destinationDir = file(&#34;${buildDir}/classes&#34;)
-</span><span class=c1>//   sourceCompatibility = &#39;1.8&#39;
-</span><span class=c1>//   targetCompatibility = &#39;1.8&#39;
-</span><span class=c1>//   classpath = files(&#34;${buildDir}/classes&#34;, configurations.forHelloWorld)
-</span><span class=c1>// }
-</span><span class=c1></span>
-<span class=c1>// tasks.create(&#39;jar&#39;, Jar)
-</span><span class=c1></span>
-<span class=n>jar</span> <span class=o>{</span>
-  <span class=n>archiveBaseName</span> <span class=o>=</span> <span class=s1>&#39;base-name&#39;</span>
-  <span class=n>archiveAppendix</span> <span class=o>=</span> <span class=s1>&#39;appendix&#39;</span>
-  <span class=n>archiveVersion</span> <span class=o>=</span> <span class=s1>&#39;0.0.1&#39;</span>
-<span class=c1>//   from compileJava.outputs
-</span><span class=c1>//   include &#34;**/*.class&#34;
-</span><span class=c1></span>  <span class=n>manifest</span> <span class=o>{</span>
-    <span class=n>attributes</span><span class=o>(</span><span class=s2>&#34;something&#34;</span><span class=o>:</span> <span class=s2>&#34;value&#34;</span><span class=o>)</span>
-  <span class=o>}</span>
-<span class=c1>//   setDestinationDir file(&#34;$buildDir/lib&#34;)
-</span><span class=c1></span><span class=o>}</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>其中注释的部分可以删除，这里仅仅作为修改前后的对比。</p>
-<p>根据 <code>assemble</code> 的定义，我们的 <code>fatJar</code> 的输出应当看作项目的产出物，所以需要让 <code>assemble</code> 依赖于 <code>fatJar</code> ：</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-gradle data-lang=gradle><span class=n>assemble</span><span class=o>.</span><span class=na>dependsOn</span> <span class=n>fatJar</span>
-</code></pre></td></tr></table>
-</div>
-</div><h3 id=dependency-configuration><code>Dependency Configuration</code></h3>
-<h4 id=java-插件引入的-configuration><code>Java</code> 插件引入的 <code>Configuration</code></h4>
-<p>上一篇文章讲到，在 <code>Gradle</code> 中声明依赖，需要关联到 <code>configuration</code>。<code>Java</code> 插件也提前为我们设计了一些 <code>configuration</code>，他们的主要关系可以通过两幅图来表示。</p>
-<p>与 <code>main sourceSet</code> 相关的：</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=java-main-configurations.png data-srcset="/use-gradle-to-build-java-project/java-main-configurations.png, java-main-configurations.png 1.5x, /use-gradle-to-build-java-project/java-main-configurations.png 2x" data-sizes=auto alt=/use-gradle-to-build-java-project/java-main-configurations.png title=/use-gradle-to-build-java-project/java-main-configurations.png></p>
-<p>其中：</p>
-<ol>
-<li>灰色文字表示已经被废弃的 <code>configuration</code></li>
-<li>绿色表示用于声明依赖的 <code>configuration</code></li>
-<li>蓝灰色表示给 <code>task</code> 使用的 <code>configuration</code></li>
-<li>浅蓝色表示 <code>task</code></li>
-</ol>
-<p>由这个图，我们就能看出声明到不同 <code>configuration</code> 中的依赖最终会在什么地方使用到。</p>
-<p>与 <code>test sourceSet</code> 相关的：</p>
-<p><img class=lazyload src=/svg/loading.min.svg data-src=java-test-configurations.png data-srcset="/use-gradle-to-build-java-project/java-test-configurations.png, java-test-configurations.png 1.5x, /use-gradle-to-build-java-project/java-test-configurations.png 2x" data-sizes=auto alt=/use-gradle-to-build-java-project/java-test-configurations.png title=/use-gradle-to-build-java-project/java-test-configurations.png></p>
-<p>其中的字体和颜色与上一张图一致。</p>
-<p>我们可以看到，除去 <code>compile</code>, <code>implementation</code>, <code>runtime</code> 和 <code>rumtimeOnly</code>，其他的 <code>configuration</code> 与上图几乎一致。这里画出他们，仅仅是为了展示出扩展关系而已。</p>
-<blockquote>
-<p>如果你使用过以前版本的 <code>Gradle</code>，想必会比较好奇为什么 <code>Compile</code> 会被废弃。这其实是出于构建工具的性能的考虑，关闭掉不必要的传递依赖。</p>
-</blockquote>
-<p>你也许也发现了，和 <code>task</code> 一样，有一些名称相近的 <code>configuration</code>，所以很自然的推测：添加了自定义的 <code>SourceSet</code> 后，<code>Java</code> 插件会自动的添加一些 <code>configuration</code>。这些 <code>sourceSet configuration</code> 都可以在 <code>Java</code> 插件的页面上找到。</p>
-<h4 id=改进-hello-world-1>改进 Hello World</h4>
-<p>首先，我们可以直接使用 <code>Java</code> 插件提供的 <code>implementation</code>，而不需要自己创建任何 <code>configuration</code>:</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-gradle data-lang=gradle><span class=line><span class=cl><span class=c1>// task compileJava(type: JavaCompile) {
+</span></span></span><span class=line><span class=cl><span class=c1>//   source fileTree(&#34;$projectDir/src&#34;)
+</span></span></span><span class=line><span class=cl><span class=c1>//   include &#34;**/*.java&#34;
+</span></span></span><span class=line><span class=cl><span class=c1>//   destinationDir = file(&#34;${buildDir}/classes&#34;)
+</span></span></span><span class=line><span class=cl><span class=c1>//   sourceCompatibility = &#39;1.8&#39;
+</span></span></span><span class=line><span class=cl><span class=c1>//   targetCompatibility = &#39;1.8&#39;
+</span></span></span><span class=line><span class=cl><span class=c1>//   classpath = files(&#34;${buildDir}/classes&#34;, configurations.forHelloWorld)
+</span></span></span><span class=line><span class=cl><span class=c1>// }
+</span></span></span><span class=line><span class=cl><span class=c1></span>
+</span></span><span class=line><span class=cl><span class=c1>// tasks.create(&#39;jar&#39;, Jar)
+</span></span></span><span class=line><span class=cl><span class=c1></span>
+</span></span><span class=line><span class=cl><span class=n>jar</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>  <span class=n>archiveBaseName</span> <span class=o>=</span> <span class=s1>&#39;base-name&#39;</span>
+</span></span><span class=line><span class=cl>  <span class=n>archiveAppendix</span> <span class=o>=</span> <span class=s1>&#39;appendix&#39;</span>
+</span></span><span class=line><span class=cl>  <span class=n>archiveVersion</span> <span class=o>=</span> <span class=s1>&#39;0.0.1&#39;</span>
+</span></span><span class=line><span class=cl><span class=c1>//   from compileJava.outputs
+</span></span></span><span class=line><span class=cl><span class=c1>//   include &#34;**/*.class&#34;
+</span></span></span><span class=line><span class=cl><span class=c1></span>  <span class=n>manifest</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>attributes</span><span class=o>(</span><span class=s2>&#34;something&#34;</span><span class=o>:</span> <span class=s2>&#34;value&#34;</span><span class=o>)</span>
+</span></span><span class=line><span class=cl>  <span class=o>}</span>
+</span></span><span class=line><span class=cl><span class=c1>//   setDestinationDir file(&#34;$buildDir/lib&#34;)
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=o>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>其中注释的部分可以删除，这里仅仅作为修改前后的对比。</p><p>根据 <code>assemble</code> 的定义，我们的 <code>fatJar</code> 的输出应当看作项目的产出物，所以需要让 <code>assemble</code> 依赖于 <code>fatJar</code> ：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-gradle data-lang=gradle><span class=line><span class=cl><span class=n>assemble</span><span class=o>.</span><span class=na>dependsOn</span> <span class=n>fatJar</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=dependency-configuration><code>Dependency Configuration</code></h3><h4 id=java-插件引入的-configuration><code>Java</code> 插件引入的 <code>Configuration</code></h4><p>上一篇文章讲到，在 <code>Gradle</code> 中声明依赖，需要关联到 <code>configuration</code>。<code>Java</code> 插件也提前为我们设计了一些 <code>configuration</code>，他们的主要关系可以通过两幅图来表示。</p><p>与 <code>main sourceSet</code> 相关的：</p><p><img class=lazyload src=/svg/loading.min.svg data-src=java-main-configurations.png data-srcset="/use-gradle-to-build-java-project/java-main-configurations.png, java-main-configurations.png 1.5x, /use-gradle-to-build-java-project/java-main-configurations.png 2x" data-sizes=auto alt=/use-gradle-to-build-java-project/java-main-configurations.png title=/use-gradle-to-build-java-project/java-main-configurations.png></p><p>其中：</p><ol><li>灰色文字表示已经被废弃的 <code>configuration</code></li><li>绿色表示用于声明依赖的 <code>configuration</code></li><li>蓝灰色表示给 <code>task</code> 使用的 <code>configuration</code></li><li>浅蓝色表示 <code>task</code></li></ol><p>由这个图，我们就能看出声明到不同 <code>configuration</code> 中的依赖最终会在什么地方使用到。</p><p>与 <code>test sourceSet</code> 相关的：</p><p><img class=lazyload src=/svg/loading.min.svg data-src=java-test-configurations.png data-srcset="/use-gradle-to-build-java-project/java-test-configurations.png, java-test-configurations.png 1.5x, /use-gradle-to-build-java-project/java-test-configurations.png 2x" data-sizes=auto alt=/use-gradle-to-build-java-project/java-test-configurations.png title=/use-gradle-to-build-java-project/java-test-configurations.png></p><p>其中的字体和颜色与上一张图一致。</p><p>我们可以看到，除去 <code>compile</code>, <code>implementation</code>, <code>runtime</code> 和 <code>rumtimeOnly</code>，其他的 <code>configuration</code> 与上图几乎一致。这里画出他们，仅仅是为了展示出扩展关系而已。</p><blockquote><p>如果你使用过以前版本的 <code>Gradle</code>，想必会比较好奇为什么 <code>Compile</code> 会被废弃。这其实是出于构建工具的性能的考虑，关闭掉不必要的传递依赖。</p></blockquote><p>你也许也发现了，和 <code>task</code> 一样，有一些名称相近的 <code>configuration</code>，所以很自然的推测：添加了自定义的 <code>SourceSet</code> 后，<code>Java</code> 插件会自动的添加一些 <code>configuration</code>。这些 <code>sourceSet configuration</code> 都可以在 <code>Java</code> 插件的页面上找到。</p><h4 id=改进-hello-world-1>改进 Hello World</h4><p>首先，我们可以直接使用 <code>Java</code> 插件提供的 <code>implementation</code>，而不需要自己创建任何 <code>configuration</code>:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
@@ -332,23 +108,15 @@ src
 </span><span class=lnt>6
 </span><span class=lnt>7
 </span><span class=lnt>8
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-gradle data-lang=gradle><span class=c1>// configurations {
-</span><span class=c1>//   forHelloWorld
-</span><span class=c1>// }
-</span><span class=c1></span>
-<span class=n>dependencies</span> <span class=o>{</span>
-  <span class=c1>// forHelloWorld group: &#39;com.google.guava&#39;, name: &#39;guava&#39;, version: &#39;28.2-jre&#39;
-</span><span class=c1></span>  <span class=n>implementation</span> <span class=nl>group:</span> <span class=s1>&#39;com.google.guava&#39;</span><span class=o>,</span> <span class=nl>name:</span> <span class=s1>&#39;guava&#39;</span><span class=o>,</span> <span class=nl>version:</span> <span class=s1>&#39;28.2-jre&#39;</span>
-<span class=o>}</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>同样，注释只是为了对比。</p>
-<p>接着，我们的 <code>fatJar</code> 也不能再使用 <code>forHelloWorld</code> 这个 <code>configuration</code>，但也不能直接使用 <code>implementation</code>，而应该使用 <code>runtimeClasspath</code> 这个给 <code>task</code> 消费的、语义更符合我们使用目标的 <code>configuration</code>：</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-gradle data-lang=gradle><span class=line><span class=cl><span class=c1>// configurations {
+</span></span></span><span class=line><span class=cl><span class=c1>//   forHelloWorld
+</span></span></span><span class=line><span class=cl><span class=c1>// }
+</span></span></span><span class=line><span class=cl><span class=c1></span>
+</span></span><span class=line><span class=cl><span class=n>dependencies</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>  <span class=c1>// forHelloWorld group: &#39;com.google.guava&#39;, name: &#39;guava&#39;, version: &#39;28.2-jre&#39;
+</span></span></span><span class=line><span class=cl><span class=c1></span>  <span class=n>implementation</span> <span class=nl>group:</span> <span class=s1>&#39;com.google.guava&#39;</span><span class=o>,</span> <span class=nl>name:</span> <span class=s1>&#39;guava&#39;</span><span class=o>,</span> <span class=nl>version:</span> <span class=s1>&#39;28.2-jre&#39;</span>
+</span></span><span class=line><span class=cl><span class=o>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>同样，注释只是为了对比。</p><p>接着，我们的 <code>fatJar</code> 也不能再使用 <code>forHelloWorld</code> 这个 <code>configuration</code>，但也不能直接使用 <code>implementation</code>，而应该使用 <code>runtimeClasspath</code> 这个给 <code>task</code> 消费的、语义更符合我们使用目标的 <code>configuration</code>：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -363,31 +131,22 @@ src
 </span><span class=lnt>13
 </span><span class=lnt>14
 </span><span class=lnt>15
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-gradle data-lang=gradle><span class=n>task</span><span class=o>(</span><span class=s1>&#39;fatJar&#39;</span><span class=o>,</span> <span class=nl>type:</span> <span class=n>Jar</span><span class=o>)</span> <span class=o>{</span>
-  <span class=n>archiveBaseName</span> <span class=o>=</span> <span class=s1>&#39;base-name&#39;</span>
-  <span class=n>archiveAppendix</span> <span class=o>=</span> <span class=s1>&#39;appendix&#39;</span>
-  <span class=n>archiveVersion</span> <span class=o>=</span> <span class=s1>&#39;0.0.1&#39;</span>
-  <span class=n>archiveClassifier</span> <span class=o>=</span> <span class=s1>&#39;boot&#39;</span>
-  <span class=n>from</span> <span class=n>compileJava</span>
-  <span class=c1>// from configurations.forHelloWorld.collect {
-</span><span class=c1></span>  <span class=n>from</span> <span class=n>configurations</span><span class=o>.</span><span class=na>rumtimeClasspath</span><span class=o>.</span><span class=na>collect</span> <span class=o>{</span>
-    <span class=n>it</span><span class=o>.</span><span class=na>isDirectory</span><span class=o>()</span> <span class=o>?</span> <span class=n>it</span> <span class=o>:</span> <span class=n>zipTree</span><span class=o>(</span><span class=n>it</span><span class=o>)</span>
-  <span class=o>}</span>
-  <span class=n>manifest</span> <span class=o>{</span>
-    <span class=n>attributes</span> <span class=s2>&#34;Main-Class&#34;</span><span class=o>:</span> <span class=s2>&#34;HelloWorld&#34;</span>
-  <span class=o>}</span>
-  <span class=n>setDestinationDir</span> <span class=nf>file</span><span class=o>(</span><span class=s2>&#34;$buildDir/libs&#34;</span><span class=o>)</span>
-<span class=o>}</span>
-</code></pre></td></tr></table>
-</div>
-</div><h2 id=总结>总结</h2>
-<p>经过使用 <code>Java</code> 插件，并对构建脚本的修改，我们得到了更具有鲁棒性、实现了约定优于配置的构建脚本。</p>
-<p>完整的脚本如下：</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-gradle data-lang=gradle><span class=line><span class=cl><span class=n>task</span><span class=o>(</span><span class=s1>&#39;fatJar&#39;</span><span class=o>,</span> <span class=nl>type:</span> <span class=n>Jar</span><span class=o>)</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>  <span class=n>archiveBaseName</span> <span class=o>=</span> <span class=s1>&#39;base-name&#39;</span>
+</span></span><span class=line><span class=cl>  <span class=n>archiveAppendix</span> <span class=o>=</span> <span class=s1>&#39;appendix&#39;</span>
+</span></span><span class=line><span class=cl>  <span class=n>archiveVersion</span> <span class=o>=</span> <span class=s1>&#39;0.0.1&#39;</span>
+</span></span><span class=line><span class=cl>  <span class=n>archiveClassifier</span> <span class=o>=</span> <span class=s1>&#39;boot&#39;</span>
+</span></span><span class=line><span class=cl>  <span class=n>from</span> <span class=n>compileJava</span>
+</span></span><span class=line><span class=cl>  <span class=c1>// from configurations.forHelloWorld.collect {
+</span></span></span><span class=line><span class=cl><span class=c1></span>  <span class=n>from</span> <span class=n>configurations</span><span class=o>.</span><span class=na>rumtimeClasspath</span><span class=o>.</span><span class=na>collect</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>it</span><span class=o>.</span><span class=na>isDirectory</span><span class=o>()</span> <span class=o>?</span> <span class=n>it</span> <span class=o>:</span> <span class=n>zipTree</span><span class=o>(</span><span class=n>it</span><span class=o>)</span>
+</span></span><span class=line><span class=cl>  <span class=o>}</span>
+</span></span><span class=line><span class=cl>  <span class=n>manifest</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>attributes</span> <span class=s2>&#34;Main-Class&#34;</span><span class=o>:</span> <span class=s2>&#34;HelloWorld&#34;</span>
+</span></span><span class=line><span class=cl>  <span class=o>}</span>
+</span></span><span class=line><span class=cl>  <span class=n>setDestinationDir</span> <span class=nf>file</span><span class=o>(</span><span class=s2>&#34;$buildDir/libs&#34;</span><span class=o>)</span>
+</span></span><span class=line><span class=cl><span class=o>}</span>
+</span></span></code></pre></td></tr></table></div></div><h2 id=总结>总结</h2><p>经过使用 <code>Java</code> 插件，并对构建脚本的修改，我们得到了更具有鲁棒性、实现了约定优于配置的构建脚本。</p><p>完整的脚本如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -428,93 +187,48 @@ src
 </span><span class=lnt>39
 </span><span class=lnt>40
 </span><span class=lnt>41
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-gradle data-lang=gradle><span class=n>plugins</span> <span class=o>{</span>
-  <span class=n>id</span> <span class=s1>&#39;java&#39;</span>
-<span class=o>}</span>
-
-<span class=n>repositories</span> <span class=o>{</span>
-  <span class=n>mavenCentral</span><span class=o>()</span>
-<span class=o>}</span>
-
-<span class=n>dependencies</span> <span class=o>{</span>
-  <span class=n>implementation</span> <span class=nl>group:</span> <span class=s1>&#39;com.google.guava&#39;</span><span class=o>,</span> <span class=nl>name:</span> <span class=s1>&#39;guava&#39;</span><span class=o>,</span> <span class=nl>version:</span> <span class=s1>&#39;28.2-jre&#39;</span>
-<span class=o>}</span>
-
-<span class=n>compileJava</span><span class=o>.</span><span class=na>doLast</span> <span class=o>{</span>
-  <span class=n>println</span> <span class=s1>&#39;compile success!&#39;</span>
-<span class=o>}</span>
-
-<span class=n>jar</span> <span class=o>{</span>
-  <span class=n>archiveBaseName</span> <span class=o>=</span> <span class=s1>&#39;base-name&#39;</span>
-  <span class=n>archiveAppendix</span> <span class=o>=</span> <span class=s1>&#39;appendix&#39;</span>
-  <span class=n>archiveVersion</span> <span class=o>=</span> <span class=s1>&#39;0.0.1&#39;</span>
-  <span class=n>manifest</span> <span class=o>{</span>
-    <span class=n>attributes</span><span class=o>(</span><span class=s2>&#34;something&#34;</span><span class=o>:</span> <span class=s2>&#34;value&#34;</span><span class=o>)</span>
-  <span class=o>}</span>
-<span class=o>}</span>
-
-<span class=n>task</span><span class=o>(</span><span class=s1>&#39;fatJar&#39;</span><span class=o>,</span> <span class=nl>type:</span> <span class=n>Jar</span><span class=o>)</span> <span class=o>{</span>
-  <span class=n>archiveBaseName</span> <span class=o>=</span> <span class=s1>&#39;base-name&#39;</span>
-  <span class=n>archiveAppendix</span> <span class=o>=</span> <span class=s1>&#39;appendix&#39;</span>
-  <span class=n>archiveVersion</span> <span class=o>=</span> <span class=s1>&#39;0.0.1&#39;</span>
-  <span class=n>archiveClassifier</span> <span class=o>=</span> <span class=s1>&#39;boot&#39;</span>
-  <span class=n>from</span> <span class=n>compileJava</span>
-  <span class=n>from</span> <span class=n>configurations</span><span class=o>.</span><span class=na>runtimeClasspath</span><span class=o>.</span><span class=na>collect</span> <span class=o>{</span>
-    <span class=n>it</span><span class=o>.</span><span class=na>isDirectory</span><span class=o>()</span> <span class=o>?</span> <span class=n>it</span> <span class=o>:</span> <span class=n>zipTree</span><span class=o>(</span><span class=n>it</span><span class=o>)</span>
-  <span class=o>}</span>
-  <span class=n>manifest</span> <span class=o>{</span>
-    <span class=n>attributes</span> <span class=s2>&#34;Main-Class&#34;</span><span class=o>:</span> <span class=s2>&#34;HelloWorld&#34;</span>
-  <span class=o>}</span>
-  <span class=n>setDestinationDir</span> <span class=nf>file</span><span class=o>(</span><span class=s2>&#34;$buildDir/libs&#34;</span><span class=o>)</span>
-<span class=o>}</span>
-
-<span class=n>assemble</span><span class=o>.</span><span class=na>dependsOn</span><span class=o>(</span><span class=n>fatJar</span><span class=o>)</span>
-</code></pre></td></tr></table>
-</div>
-</div></div><div class=post-footer id=post-footer>
-<div class=post-info>
-<div class=post-info-line>
-<div class=post-info-mod>
-<span>更新于 2023-07-14&nbsp;<a class=git-hash href=https://github.com/kbyyd24/LoveItAgain/commit/913db54d0bedb493700c829afb7d0374a7195a22 target=_blank title="commit by kbyyd24(melo@gaoyuexiang.cn) 913db54d0bedb493700c829afb7d0374a7195a22: fix render issues">
-<i class="fas fa-hashtag fa-fw"></i>913db54</a></span>
-</div>
-<div class=post-info-license></div>
-</div>
-<div class=post-info-line>
-<div class=post-info-md><span>
-<a class=link-to-markdown href=/use-gradle-to-build-java-project/index.md target=_blank>阅读原始文档</a>
-</span></div>
-<div class=post-info-share>
-<span><a href=javascript:void(0); title="分享到 Twitter" data-sharer=twitter data-url=https://blog.gaoyuexiang.cn/use-gradle-to-build-java-project/ data-title="使用 Gradle 的 Java 插件构建 Java 项目" data-hashtags=gradle,java><i class="fab fa-twitter fa-fw"></i></a><a href=javascript:void(0); title="分享到 Facebook" data-sharer=facebook data-url=https://blog.gaoyuexiang.cn/use-gradle-to-build-java-project/ data-hashtag=gradle><i class="fab fa-facebook-square fa-fw"></i></a><a href=javascript:void(0); title="分享到 Linkedin" data-sharer=linkedin data-url=https://blog.gaoyuexiang.cn/use-gradle-to-build-java-project/><i class="fab fa-linkedin fa-fw"></i></a><a href=javascript:void(0); title="分享到 WhatsApp" data-sharer=whatsapp data-url=https://blog.gaoyuexiang.cn/use-gradle-to-build-java-project/ data-title="使用 Gradle 的 Java 插件构建 Java 项目" data-web><i class="fab fa-whatsapp fa-fw"></i></a><a href=javascript:void(0); title="分享到 Hacker News" data-sharer=hackernews data-url=https://blog.gaoyuexiang.cn/use-gradle-to-build-java-project/ data-title="使用 Gradle 的 Java 插件构建 Java 项目"><i class="fab fa-hacker-news fa-fw"></i></a><a href=javascript:void(0); title="分享到 Reddit" data-sharer=reddit data-url=https://blog.gaoyuexiang.cn/use-gradle-to-build-java-project/><i class="fab fa-reddit fa-fw"></i></a><a href=javascript:void(0); title="分享到 Line" data-sharer=line data-url=https://blog.gaoyuexiang.cn/use-gradle-to-build-java-project/ data-title="使用 Gradle 的 Java 插件构建 Java 项目"><i data-svg-src=https://cdn.jsdelivr.net/npm/simple-icons@2.14.0/icons/line.svg></i></a><a href=javascript:void(0); title="分享到 Pocket" data-sharer=pocket data-url=https://blog.gaoyuexiang.cn/use-gradle-to-build-java-project/><i class="fab fa-get-pocket fa-fw"></i></a><a href=javascript:void(0); title="分享到 微博" data-sharer=weibo data-url=https://blog.gaoyuexiang.cn/use-gradle-to-build-java-project/ data-title="使用 Gradle 的 Java 插件构建 Java 项目"><i class="fab fa-weibo fa-fw"></i></a><a href=javascript:void(0); title="分享到 人人" data-sharer=renren data-url=https://blog.gaoyuexiang.cn/use-gradle-to-build-java-project/><i class="fab fa-renren fa-fw"></i></a><a href=javascript:void(0); title="分享到 Evernote" data-sharer=evernote data-url=https://blog.gaoyuexiang.cn/use-gradle-to-build-java-project/ data-title="使用 Gradle 的 Java 插件构建 Java 项目"><i class="fab fa-evernote fa-fw"></i></a><a href=javascript:void(0); title="分享到 Skype" data-sharer=skype data-url=https://blog.gaoyuexiang.cn/use-gradle-to-build-java-project/ data-title="使用 Gradle 的 Java 插件构建 Java 项目"><i class="fab fa-skype fa-fw"></i></a><a href=javascript:void(0); title="分享到 Trello" data-sharer=trello data-url=https://blog.gaoyuexiang.cn/use-gradle-to-build-java-project/ data-title="使用 Gradle 的 Java 插件构建 Java 项目" data-description><i class="fab fa-trello fa-fw"></i></a></span>
-</div>
-</div>
-</div>
-<div class=post-info-more>
-<section class=post-tags><i class="fas fa-tags fa-fw"></i>&nbsp;<a href=/tags/gradle/>gradle</a>,&nbsp;<a href=/tags/java/>Java</a></section>
-<section>
-<span><a href=javascript:void(0); onclick=window.history.back()>返回</a></span>&nbsp;|&nbsp;<span><a href=/>主页</a></span>
-</section>
-</div>
-<div class=post-nav><a href=/use-gradle-to-build-java-project-without-plugin/ class=prev rel=prev title="使用 Gradle 但不使用 Java 插件构建 Java 项目"><i class="fas fa-angle-left fa-fw"></i>使用 Gradle 但不使用 Java 插件构建 Java 项目</a>
-<a href=/spring-security-servlet-overview/ class=next rel=next title="Spring Security Servlet 概览">Spring Security Servlet 概览<i class="fas fa-angle-right fa-fw"></i></a></div>
-</div>
-<div id=comments><div id=valine class=comment></div><noscript>
-Please enable JavaScript to view the comments powered by <a href=https://valine.js.org/>Valine</a>.
-</noscript></div></article></div>
-</main><footer class=footer>
-<div class=footer-container><div class=footer-line>由 <a href=https://gohugo.io/ target=_blank rel="noopener noreffer" title="Hugo 0.92.1">Hugo</a> 强力驱动 | 主题 - <a href=https://github.com/dillonzq/LoveIt target=_blank rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
-</div><div class=footer-line><i class="far fa-copyright fa-fw"></i><span itemprop=copyrightYear>2016 - 2024</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=https://blog.gaoyuexiang.cn/about target=_blank>无糖拿铁</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span><span class=icp-splitter>&nbsp;|&nbsp;</span><br class=icp-br>
-<span class=icp><a href=https://beian.miit.gov.cn/ target=_blank>蜀ICP备15031888号-2</a></span></div>
-</div>
-</footer></div>
-<div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title=回到顶部>
-<i class="fas fa-arrow-up fa-fw"></i>
-</a><a href=# id=view-comments class=fixed-button title=查看评论>
-<i class="fas fa-comment fa-fw"></i>
-</a>
-</div>
-<link rel=stylesheet href=/lib/valine/valine.min.css><script type=text/javascript src=https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/autocomplete.js@0.37.1/dist/autocomplete.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/lunr@2.3.8/lunr.min.js></script><script type=text/javascript src=/lib/lunr/lunr.stemmer.support.min.js></script><script type=text/javascript src=/lib/lunr/lunr.zh.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/lazysizes@5.2.2/lazysizes.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/sharer.js@0.4.0/sharer.min.js></script><script type=text/javascript>window.config={code:{copyTitle:"复制到剪贴板",maxShownLines:100},comment:{valine:{appId:"Voz5TpLaiKvWLiVk63CrRybt-gzGzoHsz",appKey:"xzDAABvBBG6vK7iwgd1VKUnw",avatar:"mm",el:"#valine",emojiCDN:"https://cdn.jsdelivr.net/npm/emoji-datasource-google@5.0.1/img/google/64/",emojiMaps:{100:"1f4af.png",alien:"1f47d.png",anger:"1f4a2.png",angry:"1f620.png",anguished:"1f627.png",astonished:"1f632.png",black_heart:"1f5a4.png",blue_heart:"1f499.png",blush:"1f60a.png",bomb:"1f4a3.png",boom:"1f4a5.png",broken_heart:"1f494.png",brown_heart:"1f90e.png",clown_face:"1f921.png",cold_face:"1f976.png",cold_sweat:"1f630.png",confounded:"1f616.png",confused:"1f615.png",cry:"1f622.png",crying_cat_face:"1f63f.png",cupid:"1f498.png",dash:"1f4a8.png",disappointed:"1f61e.png",disappointed_relieved:"1f625.png",dizzy:"1f4ab.png",dizzy_face:"1f635.png",drooling_face:"1f924.png",exploding_head:"1f92f.png",expressionless:"1f611.png",face_vomiting:"1f92e.png",face_with_cowboy_hat:"1f920.png",face_with_hand_over_mouth:"1f92d.png",face_with_head_bandage:"1f915.png",face_with_monocle:"1f9d0.png",face_with_raised_eyebrow:"1f928.png",face_with_rolling_eyes:"1f644.png",face_with_symbols_on_mouth:"1f92c.png",face_with_thermometer:"1f912.png",fearful:"1f628.png",flushed:"1f633.png",frowning:"1f626.png",ghost:"1f47b.png",gift_heart:"1f49d.png",green_heart:"1f49a.png",grimacing:"1f62c.png",grin:"1f601.png",grinning:"1f600.png",hankey:"1f4a9.png",hear_no_evil:"1f649.png",heart:"2764-fe0f.png",heart_decoration:"1f49f.png",heart_eyes:"1f60d.png",heart_eyes_cat:"1f63b.png",heartbeat:"1f493.png",heartpulse:"1f497.png",heavy_heart_exclamation_mark_ornament:"2763-fe0f.png",hole:"1f573-fe0f.png",hot_face:"1f975.png",hugging_face:"1f917.png",hushed:"1f62f.png",imp:"1f47f.png",innocent:"1f607.png",japanese_goblin:"1f47a.png",japanese_ogre:"1f479.png",joy:"1f602.png",joy_cat:"1f639.png",kiss:"1f48b.png",kissing:"1f617.png",kissing_cat:"1f63d.png",kissing_closed_eyes:"1f61a.png",kissing_heart:"1f618.png",kissing_smiling_eyes:"1f619.png",laughing:"1f606.png",left_speech_bubble:"1f5e8-fe0f.png",love_letter:"1f48c.png",lying_face:"1f925.png",mask:"1f637.png",money_mouth_face:"1f911.png",nauseated_face:"1f922.png",nerd_face:"1f913.png",neutral_face:"1f610.png",no_mouth:"1f636.png",open_mouth:"1f62e.png",orange_heart:"1f9e1.png",partying_face:"1f973.png",pensive:"1f614.png",persevere:"1f623.png",pleading_face:"1f97a.png",pouting_cat:"1f63e.png",purple_heart:"1f49c.png",rage:"1f621.png",relaxed:"263a-fe0f.png",relieved:"1f60c.png",revolving_hearts:"1f49e.png",right_anger_bubble:"1f5ef-fe0f.png",robot_face:"1f916.png",rolling_on_the_floor_laughing:"1f923.png",scream:"1f631.png",scream_cat:"1f640.png",see_no_evil:"1f648.png",shushing_face:"1f92b.png",skull:"1f480.png",skull_and_crossbones:"2620-fe0f.png",sleeping:"1f634.png",sleepy:"1f62a.png",slightly_frowning_face:"1f641.png",slightly_smiling_face:"1f642.png",smile:"1f604.png",smile_cat:"1f638.png",smiley:"1f603.png",smiley_cat:"1f63a.png",smiling_face_with_3_hearts:"1f970.png",smiling_imp:"1f608.png",smirk:"1f60f.png",smirk_cat:"1f63c.png",sneezing_face:"1f927.png",sob:"1f62d.png",space_invader:"1f47e.png",sparkling_heart:"1f496.png",speak_no_evil:"1f64a.png",speech_balloon:"1f4ac.png","star-struck":"1f929.png",stuck_out_tongue:"1f61b.png",stuck_out_tongue_closed_eyes:"1f61d.png",stuck_out_tongue_winking_eye:"1f61c.png",sunglasses:"1f60e.png",sweat:"1f613.png",sweat_drops:"1f4a6.png",sweat_smile:"1f605.png",thinking_face:"1f914.png",thought_balloon:"1f4ad.png",tired_face:"1f62b.png",triumph:"1f624.png",two_hearts:"1f495.png",unamused:"1f612.png",upside_down_face:"1f643.png",weary:"1f629.png",white_frowning_face:"2639-fe0f.png",white_heart:"1f90d.png",wink:"1f609.png",woozy_face:"1f974.png",worried:"1f61f.png",yawning_face:"1f971.png",yellow_heart:"1f49b.png",yum:"1f60b.png",zany_face:"1f92a.png",zipper_mouth_face:"1f910.png",zzz:"1f4a4.png"},enableQQ:!1,highlight:!0,lang:"zh-cn",pageSize:10,placeholder:"你的评论 ...",recordIP:!0,serverURLs:"https://leancloud.gaoyuexiang.cn",visitor:!0}},search:{highlightTag:"em",lunrIndexURL:"/index.json",lunrLanguageCode:"zh",lunrSegmentitURL:"/lib/lunr/lunr.segmentit.js",maxResultLength:10,noResultsFound:"没有找到结果",snippetLength:50,type:"lunr"}}</script><script type=text/javascript src=/js/theme.min.js></script>
-</body>
-</html>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-gradle data-lang=gradle><span class=line><span class=cl><span class=n>plugins</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>  <span class=n>id</span> <span class=s1>&#39;java&#39;</span>
+</span></span><span class=line><span class=cl><span class=o>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>repositories</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>  <span class=n>mavenCentral</span><span class=o>()</span>
+</span></span><span class=line><span class=cl><span class=o>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>dependencies</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>  <span class=n>implementation</span> <span class=nl>group:</span> <span class=s1>&#39;com.google.guava&#39;</span><span class=o>,</span> <span class=nl>name:</span> <span class=s1>&#39;guava&#39;</span><span class=o>,</span> <span class=nl>version:</span> <span class=s1>&#39;28.2-jre&#39;</span>
+</span></span><span class=line><span class=cl><span class=o>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>compileJava</span><span class=o>.</span><span class=na>doLast</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>  <span class=n>println</span> <span class=s1>&#39;compile success!&#39;</span>
+</span></span><span class=line><span class=cl><span class=o>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>jar</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>  <span class=n>archiveBaseName</span> <span class=o>=</span> <span class=s1>&#39;base-name&#39;</span>
+</span></span><span class=line><span class=cl>  <span class=n>archiveAppendix</span> <span class=o>=</span> <span class=s1>&#39;appendix&#39;</span>
+</span></span><span class=line><span class=cl>  <span class=n>archiveVersion</span> <span class=o>=</span> <span class=s1>&#39;0.0.1&#39;</span>
+</span></span><span class=line><span class=cl>  <span class=n>manifest</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>attributes</span><span class=o>(</span><span class=s2>&#34;something&#34;</span><span class=o>:</span> <span class=s2>&#34;value&#34;</span><span class=o>)</span>
+</span></span><span class=line><span class=cl>  <span class=o>}</span>
+</span></span><span class=line><span class=cl><span class=o>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>task</span><span class=o>(</span><span class=s1>&#39;fatJar&#39;</span><span class=o>,</span> <span class=nl>type:</span> <span class=n>Jar</span><span class=o>)</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>  <span class=n>archiveBaseName</span> <span class=o>=</span> <span class=s1>&#39;base-name&#39;</span>
+</span></span><span class=line><span class=cl>  <span class=n>archiveAppendix</span> <span class=o>=</span> <span class=s1>&#39;appendix&#39;</span>
+</span></span><span class=line><span class=cl>  <span class=n>archiveVersion</span> <span class=o>=</span> <span class=s1>&#39;0.0.1&#39;</span>
+</span></span><span class=line><span class=cl>  <span class=n>archiveClassifier</span> <span class=o>=</span> <span class=s1>&#39;boot&#39;</span>
+</span></span><span class=line><span class=cl>  <span class=n>from</span> <span class=n>compileJava</span>
+</span></span><span class=line><span class=cl>  <span class=n>from</span> <span class=n>configurations</span><span class=o>.</span><span class=na>runtimeClasspath</span><span class=o>.</span><span class=na>collect</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>it</span><span class=o>.</span><span class=na>isDirectory</span><span class=o>()</span> <span class=o>?</span> <span class=n>it</span> <span class=o>:</span> <span class=n>zipTree</span><span class=o>(</span><span class=n>it</span><span class=o>)</span>
+</span></span><span class=line><span class=cl>  <span class=o>}</span>
+</span></span><span class=line><span class=cl>  <span class=n>manifest</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>attributes</span> <span class=s2>&#34;Main-Class&#34;</span><span class=o>:</span> <span class=s2>&#34;HelloWorld&#34;</span>
+</span></span><span class=line><span class=cl>  <span class=o>}</span>
+</span></span><span class=line><span class=cl>  <span class=n>setDestinationDir</span> <span class=nf>file</span><span class=o>(</span><span class=s2>&#34;$buildDir/libs&#34;</span><span class=o>)</span>
+</span></span><span class=line><span class=cl><span class=o>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>assemble</span><span class=o>.</span><span class=na>dependsOn</span><span class=o>(</span><span class=n>fatJar</span><span class=o>)</span>
+</span></span></code></pre></td></tr></table></div></div></div><div class=post-footer id=post-footer><div class=post-info><div class=post-info-line><div class=post-info-mod><span>更新于 2023-07-14&nbsp;<a class=git-hash href=https://github.com/kbyyd24/LoveItAgain/commit/913db54d0bedb493700c829afb7d0374a7195a22 target=_blank title="commit by kbyyd24(melo@gaoyuexiang.cn) 913db54d0bedb493700c829afb7d0374a7195a22: fix render issues">
+<i class="fas fa-hashtag fa-fw"></i>913db54</a></span></div><div class=post-info-license></div></div><div class=post-info-line><div class=post-info-md><span><a class=link-to-markdown href=/use-gradle-to-build-java-project/index.md target=_blank>阅读原始文档</a></span></div><div class=post-info-share><span><a href=javascript:void(0); title="分享到 Twitter" data-sharer=twitter data-url=https://blog.gaoyuexiang.cn/use-gradle-to-build-java-project/ data-title="使用 Gradle 的 Java 插件构建 Java 项目" data-hashtags=gradle,java><i class="fab fa-twitter fa-fw"></i></a><a href=javascript:void(0); title="分享到 Facebook" data-sharer=facebook data-url=https://blog.gaoyuexiang.cn/use-gradle-to-build-java-project/ data-hashtag=gradle><i class="fab fa-facebook-square fa-fw"></i></a><a href=javascript:void(0); title="分享到 Linkedin" data-sharer=linkedin data-url=https://blog.gaoyuexiang.cn/use-gradle-to-build-java-project/><i class="fab fa-linkedin fa-fw"></i></a><a href=javascript:void(0); title="分享到 WhatsApp" data-sharer=whatsapp data-url=https://blog.gaoyuexiang.cn/use-gradle-to-build-java-project/ data-title="使用 Gradle 的 Java 插件构建 Java 项目" data-web><i class="fab fa-whatsapp fa-fw"></i></a><a href=javascript:void(0); title="分享到 Hacker News" data-sharer=hackernews data-url=https://blog.gaoyuexiang.cn/use-gradle-to-build-java-project/ data-title="使用 Gradle 的 Java 插件构建 Java 项目"><i class="fab fa-hacker-news fa-fw"></i></a><a href=javascript:void(0); title="分享到 Reddit" data-sharer=reddit data-url=https://blog.gaoyuexiang.cn/use-gradle-to-build-java-project/><i class="fab fa-reddit fa-fw"></i></a><a href=javascript:void(0); title="分享到 Line" data-sharer=line data-url=https://blog.gaoyuexiang.cn/use-gradle-to-build-java-project/ data-title="使用 Gradle 的 Java 插件构建 Java 项目"><i data-svg-src=https://cdn.jsdelivr.net/npm/simple-icons@2.14.0/icons/line.svg></i></a><a href=javascript:void(0); title="分享到 Pocket" data-sharer=pocket data-url=https://blog.gaoyuexiang.cn/use-gradle-to-build-java-project/><i class="fab fa-get-pocket fa-fw"></i></a><a href=javascript:void(0); title="分享到 微博" data-sharer=weibo data-url=https://blog.gaoyuexiang.cn/use-gradle-to-build-java-project/ data-title="使用 Gradle 的 Java 插件构建 Java 项目"><i class="fab fa-weibo fa-fw"></i></a><a href=javascript:void(0); title="分享到 人人" data-sharer=renren data-url=https://blog.gaoyuexiang.cn/use-gradle-to-build-java-project/><i class="fab fa-renren fa-fw"></i></a><a href=javascript:void(0); title="分享到 Evernote" data-sharer=evernote data-url=https://blog.gaoyuexiang.cn/use-gradle-to-build-java-project/ data-title="使用 Gradle 的 Java 插件构建 Java 项目"><i class="fab fa-evernote fa-fw"></i></a><a href=javascript:void(0); title="分享到 Skype" data-sharer=skype data-url=https://blog.gaoyuexiang.cn/use-gradle-to-build-java-project/ data-title="使用 Gradle 的 Java 插件构建 Java 项目"><i class="fab fa-skype fa-fw"></i></a><a href=javascript:void(0); title="分享到 Trello" data-sharer=trello data-url=https://blog.gaoyuexiang.cn/use-gradle-to-build-java-project/ data-title="使用 Gradle 的 Java 插件构建 Java 项目" data-description><i class="fab fa-trello fa-fw"></i></a></span></div></div></div><div class=post-info-more><section class=post-tags><i class="fas fa-tags fa-fw"></i>&nbsp;<a href=/tags/gradle/>Gradle</a>,&nbsp;<a href=/tags/java/>Java</a></section><section><span><a href=javascript:void(0); onclick=window.history.back()>返回</a></span>&nbsp;|&nbsp;<span><a href=/>主页</a></span></section></div><div class=post-nav><a href=/use-gradle-to-build-java-project-without-plugin/ class=prev rel=prev title="使用 Gradle 但不使用 Java 插件构建 Java 项目"><i class="fas fa-angle-left fa-fw"></i>使用 Gradle 但不使用 Java 插件构建 Java 项目</a>
+<a href=/spring-security-servlet-overview/ class=next rel=next title="Spring Security Servlet 概览">Spring Security Servlet 概览<i class="fas fa-angle-right fa-fw"></i></a></div></div><div id=comments><div id=valine class=comment></div><noscript>Please enable JavaScript to view the comments powered by <a href=https://valine.js.org/>Valine</a>.</noscript></div></article></div></main><footer class=footer><div class=footer-container><div class=footer-line>由 <a href=https://gohugo.io/ target=_blank rel="noopener noreffer" title="Hugo 0.127.0">Hugo</a> 强力驱动 | 主题 - <a href=https://github.com/dillonzq/LoveIt target=_blank rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a></div><div class=footer-line><i class="far fa-copyright fa-fw"></i><span itemprop=copyrightYear>2016 - 2024</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=https://blog.gaoyuexiang.cn/about target=_blank>无糖拿铁</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span><span class=icp-splitter>&nbsp;|&nbsp;</span><br class=icp-br><span class=icp><a href=https://beian.miit.gov.cn/ target=_blank>蜀ICP备15031888号-2</a></span></div></div></footer></div><div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title=回到顶部><i class="fas fa-arrow-up fa-fw"></i>
+</a><a href=# id=view-comments class=fixed-button title=查看评论><i class="fas fa-comment fa-fw"></i></a></div><link rel=stylesheet href=/lib/valine/valine.min.css><script type=text/javascript src=https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/autocomplete.js@0.37.1/dist/autocomplete.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/lunr@2.3.8/lunr.min.js></script><script type=text/javascript src=/lib/lunr/lunr.stemmer.support.min.js></script><script type=text/javascript src=/lib/lunr/lunr.zh.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/lazysizes@5.2.2/lazysizes.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/sharer.js@0.4.0/sharer.min.js></script><script type=text/javascript>window.config={code:{copyTitle:"复制到剪贴板",maxShownLines:100},comment:{valine:{appId:"Voz5TpLaiKvWLiVk63CrRybt-gzGzoHsz",appKey:"xzDAABvBBG6vK7iwgd1VKUnw",avatar:"mm",el:"#valine",emojiCDN:"https://cdn.jsdelivr.net/npm/emoji-datasource-google@5.0.1/img/google/64/",emojiMaps:{100:"1f4af.png",alien:"1f47d.png",anger:"1f4a2.png",angry:"1f620.png",anguished:"1f627.png",astonished:"1f632.png",black_heart:"1f5a4.png",blue_heart:"1f499.png",blush:"1f60a.png",bomb:"1f4a3.png",boom:"1f4a5.png",broken_heart:"1f494.png",brown_heart:"1f90e.png",clown_face:"1f921.png",cold_face:"1f976.png",cold_sweat:"1f630.png",confounded:"1f616.png",confused:"1f615.png",cry:"1f622.png",crying_cat_face:"1f63f.png",cupid:"1f498.png",dash:"1f4a8.png",disappointed:"1f61e.png",disappointed_relieved:"1f625.png",dizzy:"1f4ab.png",dizzy_face:"1f635.png",drooling_face:"1f924.png",exploding_head:"1f92f.png",expressionless:"1f611.png",face_vomiting:"1f92e.png",face_with_cowboy_hat:"1f920.png",face_with_hand_over_mouth:"1f92d.png",face_with_head_bandage:"1f915.png",face_with_monocle:"1f9d0.png",face_with_raised_eyebrow:"1f928.png",face_with_rolling_eyes:"1f644.png",face_with_symbols_on_mouth:"1f92c.png",face_with_thermometer:"1f912.png",fearful:"1f628.png",flushed:"1f633.png",frowning:"1f626.png",ghost:"1f47b.png",gift_heart:"1f49d.png",green_heart:"1f49a.png",grimacing:"1f62c.png",grin:"1f601.png",grinning:"1f600.png",hankey:"1f4a9.png",hear_no_evil:"1f649.png",heart:"2764-fe0f.png",heart_decoration:"1f49f.png",heart_eyes:"1f60d.png",heart_eyes_cat:"1f63b.png",heartbeat:"1f493.png",heartpulse:"1f497.png",heavy_heart_exclamation_mark_ornament:"2763-fe0f.png",hole:"1f573-fe0f.png",hot_face:"1f975.png",hugging_face:"1f917.png",hushed:"1f62f.png",imp:"1f47f.png",innocent:"1f607.png",japanese_goblin:"1f47a.png",japanese_ogre:"1f479.png",joy:"1f602.png",joy_cat:"1f639.png",kiss:"1f48b.png",kissing:"1f617.png",kissing_cat:"1f63d.png",kissing_closed_eyes:"1f61a.png",kissing_heart:"1f618.png",kissing_smiling_eyes:"1f619.png",laughing:"1f606.png",left_speech_bubble:"1f5e8-fe0f.png",love_letter:"1f48c.png",lying_face:"1f925.png",mask:"1f637.png",money_mouth_face:"1f911.png",nauseated_face:"1f922.png",nerd_face:"1f913.png",neutral_face:"1f610.png",no_mouth:"1f636.png",open_mouth:"1f62e.png",orange_heart:"1f9e1.png",partying_face:"1f973.png",pensive:"1f614.png",persevere:"1f623.png",pleading_face:"1f97a.png",pouting_cat:"1f63e.png",purple_heart:"1f49c.png",rage:"1f621.png",relaxed:"263a-fe0f.png",relieved:"1f60c.png",revolving_hearts:"1f49e.png",right_anger_bubble:"1f5ef-fe0f.png",robot_face:"1f916.png",rolling_on_the_floor_laughing:"1f923.png",scream:"1f631.png",scream_cat:"1f640.png",see_no_evil:"1f648.png",shushing_face:"1f92b.png",skull:"1f480.png",skull_and_crossbones:"2620-fe0f.png",sleeping:"1f634.png",sleepy:"1f62a.png",slightly_frowning_face:"1f641.png",slightly_smiling_face:"1f642.png",smile:"1f604.png",smile_cat:"1f638.png",smiley:"1f603.png",smiley_cat:"1f63a.png",smiling_face_with_3_hearts:"1f970.png",smiling_imp:"1f608.png",smirk:"1f60f.png",smirk_cat:"1f63c.png",sneezing_face:"1f927.png",sob:"1f62d.png",space_invader:"1f47e.png",sparkling_heart:"1f496.png",speak_no_evil:"1f64a.png",speech_balloon:"1f4ac.png","star-struck":"1f929.png",stuck_out_tongue:"1f61b.png",stuck_out_tongue_closed_eyes:"1f61d.png",stuck_out_tongue_winking_eye:"1f61c.png",sunglasses:"1f60e.png",sweat:"1f613.png",sweat_drops:"1f4a6.png",sweat_smile:"1f605.png",thinking_face:"1f914.png",thought_balloon:"1f4ad.png",tired_face:"1f62b.png",triumph:"1f624.png",two_hearts:"1f495.png",unamused:"1f612.png",upside_down_face:"1f643.png",weary:"1f629.png",white_frowning_face:"2639-fe0f.png",white_heart:"1f90d.png",wink:"1f609.png",woozy_face:"1f974.png",worried:"1f61f.png",yawning_face:"1f971.png",yellow_heart:"1f49b.png",yum:"1f60b.png",zany_face:"1f92a.png",zipper_mouth_face:"1f910.png",zzz:"1f4a4.png"},enableQQ:!1,highlight:!0,lang:"zh-cn",pageSize:10,placeholder:"你的评论 ...",recordIP:!0,serverURLs:"https://leancloud.gaoyuexiang.cn",visitor:!0}},search:{highlightTag:"em",lunrIndexURL:"/index.json",lunrLanguageCode:"zh",lunrSegmentitURL:"/lib/lunr/lunr.segmentit.js",maxResultLength:10,noResultsFound:"没有找到结果",snippetLength:50,type:"lunr"}}</script><script type=text/javascript src=/js/theme.min.js></script></body></html>
